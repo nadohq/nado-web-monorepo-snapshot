@@ -1,0 +1,1 @@
+export const TRADING_TABLE_TAB_PAGE_SIZE = 50;

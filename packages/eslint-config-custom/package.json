@@ -1,0 +1,23 @@
+{
+  "name": "@nadohq/eslint-config-custom",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-config-next": "catalog:",
+    "eslint-config-prettier": "catalog:",
+    "eslint-config-turbo": "catalog:",
+    "eslint-plugin-no-relative-import-paths": "1.6.1",
+    "typescript-eslint": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,0 +1,17 @@
+[install]
+# Temporary until we migrate to full `isolated`
+# This is to avoid automatic migration from configVersion 0 to 1
+linker = "hoisted"
+# Package age guard: only install versions published at least 3 days ago.
+# Add packages to minimumReleaseAgeExcludes when a newer version is required.
+minimumReleaseAge = 259200 # 3 days, in seconds
+minimumReleaseAgeExcludes = [
+  "@nadohq/client",
+  "@nadohq/shared",
+  "@nadohq/engine-client",
+  "@nadohq/indexer-client",
+  "@nadohq/trigger-client",
+]
+
+[run]
+bun = false

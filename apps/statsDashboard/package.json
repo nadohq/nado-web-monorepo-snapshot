@@ -1,0 +1,50 @@
+{
+  "name": "stats-dashboard",
+  "version": "0.0.1",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3008 --webpack",
+    "typecheck": "next typegen && tsc --noEmit",
+    "build": "next build --webpack",
+    "postbuild": "next-sitemap",
+    "clean": "rm -rf .next .turbo tsconfig.tsbuildinfo next-env.d.ts",
+    "start": "next start --port 3008",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "catalog:",
+    "@radix-ui/react-tabs": "catalog:",
+    "@nadohq/client": "catalog:",
+    "@nadohq/react-client": "workspace:*",
+    "@nadohq/web-common": "workspace:*",
+    "@nadohq/web-ui": "workspace:*",
+    "bignumber.js": "catalog:",
+    "date-fns": "catalog:",
+    "jotai": "catalog:",
+    "lodash": "catalog:",
+    "next": "catalog:",
+    "next-sitemap": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "recharts": "catalog:",
+    "sharp": "catalog:",
+    "wagmi": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "catalog:",
+    "@tanstack/react-query-devtools": "catalog:",
+    "@types/lodash": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@nadohq/eslint-config-custom": "workspace:*",
+    "@nadohq/ts-config": "workspace:*",
+    "eslint": "catalog:",
+    "postcss": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:",
+    "viem": "catalog:"
+  }
+}

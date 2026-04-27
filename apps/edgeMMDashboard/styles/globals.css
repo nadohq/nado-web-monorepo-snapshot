@@ -1,0 +1,36 @@
+@import './base.css';
+@import '@nadohq/web-ui/styles/ui-kit-styles.css';
+
+@layer base {
+  html {
+    @apply overscroll-none;
+  }
+
+  body {
+    @apply bg-background text-text-secondary overscroll-none;
+  }
+
+  /*Remove default outline that occurs on focus of different elements*/
+  input,
+  button,
+  div,
+  img,
+  ul,
+  a {
+    @apply outline-hidden focus:outline-hidden active:outline-hidden;
+  }
+
+  ::-webkit-scrollbar {
+    @apply bg-surface-card h-1 w-1;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-2 rounded-full;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-surface-3;
+  }
+}

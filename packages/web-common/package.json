@@ -1,0 +1,36 @@
+{
+  "name": "@nadohq/web-common",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf .eslintcache .turbo tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --cache",
+    "lint:fix": "eslint --cache --fix"
+  },
+  "private": true,
+  "dependencies": {
+    "csv-stringify": "6.6.0",
+    "tailwind-merge": "3.4.0"
+  },
+  "peerDependencies": {
+    "ahooks": "catalog:",
+    "jotai": "catalog:",
+    "lodash": "catalog:",
+    "next": "catalog:",
+    "react": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/lodash": "catalog:",
+    "@types/react": "catalog:",
+    "@nadohq/eslint-config-custom": "workspace:*",
+    "@nadohq/ts-config": "workspace:*",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  }
+}

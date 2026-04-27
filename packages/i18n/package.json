@@ -1,0 +1,30 @@
+{
+  "name": "@nadohq/i18n",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./index.ts",
+    "./locales/en/*": "./locales/en/*.json"
+  },
+  "scripts": {
+    "clean": "rm -rf .eslintcache .turbo tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --cache",
+    "lint:fix": "eslint --cache --fix",
+    "i18n:extract": "i18next-cli extract",
+    "i18n:lint": "i18next-cli lint",
+    "i18n:status": "i18next-cli status"
+  },
+  "devDependencies": {
+    "@nadohq/eslint-config-custom": "workspace:*",
+    "@nadohq/ts-config": "workspace:*",
+    "eslint": "catalog:",
+    "i18next-cli": "1.42.8",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  },
+  "peerDependencies": {
+    "i18next": "catalog:"
+  }
+}

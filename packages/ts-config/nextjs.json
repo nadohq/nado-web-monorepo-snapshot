@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "module": "esnext",
+    "noEmit": true,
+    "paths": {
+      "viem": ["../../node_modules/viem"],
+      "viem/*": ["../../node_modules/viem/*"]
+    },
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "es2020"
+  },
+  "display": "Next.js",
+  "exclude": ["node_modules"],
+  "extends": "./base.json",
+  "include": ["src", "next-env.d.ts"]
+}

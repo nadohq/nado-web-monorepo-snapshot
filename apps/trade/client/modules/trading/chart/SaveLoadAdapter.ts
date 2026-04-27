@@ -1,0 +1,208 @@
+import { random } from 'lodash';
+import {
+  ChartData,
+  ChartMetaInfo,
+  ChartTemplate,
+  ChartTemplateContent,
+  IExternalSaveLoadAdapter,
+  LineToolsAndGroupsLoadRequestContext,
+  LineToolsAndGroupsLoadRequestType,
+  LineToolsAndGroupsState,
+  StudyTemplateData,
+  StudyTemplateMetaInfo,
+} from 'public/charting_library';
+import safeStringify from 'safe-stable-stringify';
+
+/**
+ * ChartData & ChartMetaInfo have conflicting ID types
+ */
+type SavedChartData = ChartData & Omit<ChartMetaInfo, 'id'>;
+
+// Localstorage key for saving chart state
+const LOCALSTORAGE_KEY = 'nado.tvSavedCharts';
+
+/**
+ * Creates a unique ID for a saved chart
+ */
+function createId() {
+  return (Date.now() * 100 + random(100)).toFixed();
+}
+
+/**
+ * Adapter for saving/loading charts to localstorage.
+ * Documentation: https://www.tradingview.com/charting-library-docs/latest/saving_loading/
+ */
+export class SaveLoadAdapter implements IExternalSaveLoadAdapter {
+  private chartsById: Map<string, SavedChartData> = new Map();
+
+  async getAllCharts(): Promise<ChartMetaInfo[]> {
+    this.loadSavedChartsFromStorage();
+
+    return Array.from(this.chartsById.values()).map((item) => {
+      return {
+        ...item,
+        // Chart IDs are strings, but `ChartMetaInfo` expects numbers for whatever reason. This doesn't seem
+        // to impact behavior
+        id: item.id as unknown as number,
+      };
+    });
+  }
+
+  async removeChart(id: string | number) {
+    this.chartsById.delete(id.toString());
+    this.saveChartsToStorage();
+  }
+
+  async saveChart(chartData: ChartData): Promise<string> {
+    let chartId: string;
+    // If chart doesn't have an ID, then create an ID
+    if (!chartData.id) {
+      chartId = createId();
+      chartData.id = chartId;
+    } else {
+      // This toString() call should be safe. We only save charts with string IDs
+      chartId = chartData.id.toString();
+    }
+    this.chartsById.set(chartId, {
+      ...chartData,
+      id: chartId,
+      timestamp: Date.now(),
+    });
+    this.saveChartsToStorage();
+
+    return chartId;
+  }
+
+  async getChartContent(id: string | number): Promise<string> {
+    const chart = this.chartsById.get(id.toString());
+
+    if (chart) {
+      return chart.content;
+    }
+
+    return Promise.reject(`[SaveLoadAdapter] Chart with ID ${id} not found`);
+  }
+
+  /*
+  The rest of these won't be needed
+   */
+
+  getAllChartTemplates(): Promise<string[]> {
+    return Promise.resolve([]);
+  }
+
+  getAllStudyTemplates(): Promise<StudyTemplateMetaInfo[]> {
+    return Promise.resolve([]);
+  }
+
+  getChartTemplateContent(_templateName: string): Promise<ChartTemplate> {
+    return Promise.resolve({ content: undefined });
+  }
+
+  getDrawingTemplates(_toolName: string): Promise<string[]> {
+    return Promise.resolve([]);
+  }
+
+  getStudyTemplateContent(
+    _studyTemplateInfo: StudyTemplateMetaInfo,
+  ): Promise<string> {
+    return Promise.resolve('');
+  }
+
+  saveLineToolsAndGroups(
+    _layoutId: string | undefined,
+    _chartId: string,
+    _state: LineToolsAndGroupsState,
+  ): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  loadLineToolsAndGroups(
+    _layoutId: string | undefined,
+    _chartId: string,
+    _requestType: LineToolsAndGroupsLoadRequestType,
+    _requestContext: LineToolsAndGroupsLoadRequestContext,
+  ): Promise<Partial<LineToolsAndGroupsState> | null> {
+    return Promise.resolve(null);
+  }
+
+  loadDrawingTemplate(
+    _toolName: string,
+    _templateName: string,
+  ): Promise<string> {
+    return Promise.resolve('');
+  }
+
+  removeChartTemplate(_templateName: string): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  removeDrawingTemplate(
+    _toolName: string,
+    _templateName: string,
+  ): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  removeStudyTemplate(
+    _studyTemplateInfo: StudyTemplateMetaInfo,
+  ): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  saveChartTemplate(
+    _newName: string,
+    _theme: ChartTemplateContent,
+  ): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  saveDrawingTemplate(
+    _toolName: string,
+    _templateName: string,
+    _content: string,
+  ): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  saveStudyTemplate(_studyTemplateData: StudyTemplateData): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  private loadSavedChartsFromStorage() {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    try {
+      const savedChartsJson = localStorage.getItem(LOCALSTORAGE_KEY);
+      const savedChartsObj = JSON.parse(savedChartsJson ?? '{}');
+      this.chartsById = new Map(Object.entries(savedChartsObj));
+    } catch (err) {
+      console.warn(
+        '[SaveLoadAdapter] Failed to load saved charts from localstorage',
+        err,
+      );
+    }
+  }
+
+  private saveChartsToStorage() {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    try {
+      // TV discourages using localstorage because of size requirements
+      // To prevent excessive storage, we only save up to 5 charts
+      const entriesToSave = Array.from(this.chartsById.entries()).slice(0, 5);
+      // This is in the try/catch in case there are cyclical structures in entriesToSave
+      const jsonChartsData = safeStringify(Object.fromEntries(entriesToSave));
+      localStorage.setItem(LOCALSTORAGE_KEY, jsonChartsData);
+    } catch (err) {
+      console.error(
+        '[SaveLoadAdapter] Failed to save charts to localstorage',
+        err,
+      );
+    }
+  }
+}

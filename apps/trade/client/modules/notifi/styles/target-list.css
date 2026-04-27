@@ -1,0 +1,175 @@
+/* TargetList styles */
+
+.notifi-target-list {
+  margin: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-radius: 6px;
+  padding: 0.8rem 0 0.8rem 0;
+}
+
+.notifi-target-list-item {
+  align-items: center;
+  background-color: var(--notifi-notifi-target-list-item-bg);
+  border-radius: 6px;
+  position: relative;
+}
+
+.notifi-target-list-item-target {
+  display: flex;
+  align-items: center;
+  margin-right: 0.5rem;
+  max-width: 100%;
+}
+
+.has-remove-button {
+  max-width: 80% !important;
+}
+
+.notifi-target-list-target-verify-message {
+  font-size: 0.9rem;
+  color: var(--notifi-target-list-target-verify-message-text);
+  display: flex;
+  align-items: center;
+}
+
+.notifi-target-list-target-confirmed-message {
+  font-size: 0.875rem;
+  color: var(--notifi-target-list-target-verify-message-text);
+  text-align: center;
+  text-align: center;
+  display: flex;
+  align-items: center;
+}
+
+.notifi-target-list-target-confirmed-message.inbox {
+  text-align: left;
+}
+
+.notifi-target-list-icon {
+  color: var(--notifi-color-heather);
+  /* width: 24px;
+  height: 24px; */
+  display: flex;
+  align-items: flex-start;
+  margin-right: 0.5rem;
+}
+
+.notifi-target-list-item-target-id {
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline;
+  overflow: auto;
+  word-wrap: break-word;
+  padding-right: 25px;
+  letter-spacing: 0.42px;
+  overflow: hidden;
+}
+
+.notifi-target-list-item-remove {
+  position: absolute;
+  top: 0.8rem;
+  right: 1rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+  z-index: 2;
+}
+
+.notifi-target-list-item-remove-link {
+  color: var(--notifi-target-list-remove-text) !important;
+}
+
+/* TargetCta styles */
+
+.notifi-target-cta {
+  display: inline;
+  margin-left: auto;
+}
+
+.no-action-required {
+  margin-left: 0;
+  display: inline-block;
+  width: 0px;
+  height: 16px;
+  border-radius: 10rem;
+  position: relative;
+}
+
+.disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5;
+}
+
+.notifi-target-cta-button {
+  background-color: transparent;
+  color: var(--notifi-target-list-cta-button-text);
+  border: 1px solid var(--notifi-target-list-cta-button-text);
+  padding: 0.5rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 6px;
+  min-width: 5.5rem;
+  min-height: 1.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 37px;
+  font-size: 14px;
+}
+
+.notifi-target-cta-loading-spinner {
+  border-top: 2px solid var(--notifi-spinner-color) !important;
+  border-right: 2px solid var(--notifi-spinner-color) !important;
+  height: 0.75rem !important;
+  width: 0.75rem !important;
+}
+
+.notifi-target-cta-link {
+  color: var(--notifi-target-list-cta-link-text);
+  cursor: pointer;
+  display: inline-block;
+  margin-left: 0.5rem;
+  min-height: 1rem;
+}
+
+.notifi-target-cta-action-not-required {
+  color: var(--notifi-target-cta-action-not-require-text);
+  background-color: var(--notifi-target-cta-action-not-require-bg);
+  border-radius: 10rem;
+  stroke-width: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 3px;
+  left: 0.5rem;
+}
+
+.notifi-target-list-item-warning {
+  position: relative;
+  background: var(--notifi-target-list-item-warning-bg);
+  color: var(--notifi-target-list-item-warning-text);
+  border-radius: 0 0 6px 6px;
+  margin-top: -6px;
+  padding: calc(0.37rem + 6px) 1rem 0.37rem 1rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+}
+.notifi-target-list-item-content {
+  background-color: var(--notifi-notifi-target-list-item-bg);
+  position: relative;
+  padding: 0.62rem 1rem 0.62rem 1rem;
+  border-radius: 6px;
+  display: flex;
+  z-index: 2;
+  min-height: 3.5rem;
+  align-items: center;
+}
+
+.notifi-target-list-item-input-form {
+  padding: 0 1rem 0.62rem 1rem;
+}

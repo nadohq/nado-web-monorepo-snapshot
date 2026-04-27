@@ -1,0 +1,115 @@
+import { useRunWithDelayOnCondition } from 'client/hooks/util/useRunWithDelayOnCondition';
+import { useNotificationManagerContext } from 'client/modules/notifications/NotificationManagerContext';
+import { useExecuteExportHistory } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/useExecuteExportHistory';
+import {
+  ExportHistoryDialogParams,
+  HistoryExportType,
+} from 'client/pages/Portfolio/subpages/History/exportHistory/types';
+import { BaseActionButtonState } from 'client/types/BaseActionButtonState';
+import { endOfDay, startOfDay, subMonths, subWeeks, subYears } from 'date-fns';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+export function useExportHistoryDialog({
+  initialExportType,
+}: ExportHistoryDialogParams) {
+  const { t } = useTranslation();
+
+  const { dispatchNotification } = useNotificationManagerContext();
+  // We can safely assume that the current date will not meaningfully change during the lifetime of this hook
+  const nowDate = useMemo(() => {
+    return new Date();
+  }, []);
+
+  const [startDate, setStartDateState] = useState<Date>();
+  const [endDate, setEndDateState] = useState<Date>();
+  const [progressFrac, setProgressFrac] = useState<number>(0);
+  const [selectedExportType, setSelectedExportType] =
+    useState<HistoryExportType>(initialExportType ?? 'trades');
+
+  const { mutateAsync, isSuccess, isPending, reset } =
+    useExecuteExportHistory(setProgressFrac);
+
+  useRunWithDelayOnCondition({
+    condition: isSuccess,
+    fn: reset,
+  });
+
+  /*
+  Util fns for setting start and end dates that span to the beginning and end of the day, respectively
+   */
+  const setStartDate = (date: Date | null | undefined) => {
+    setStartDateState(date ? startOfDay(date) : undefined);
+  };
+
+  const setEndDate = (date: Date | null | undefined) => {
+    setEndDateState(date ? endOfDay(date) : undefined);
+  };
+
+  const onLastWeekClick = () => {
+    setStartDate(subWeeks(nowDate, 1));
+    setEndDate(nowDate);
+  };
+
+  const onLastMonthClick = () => {
+    setStartDate(subMonths(nowDate, 1));
+    setEndDate(nowDate);
+  };
+
+  const onLastYearClick = () => {
+    setStartDate(subYears(nowDate, 1));
+    setEndDate(nowDate);
+  };
+
+  const onSubmit = async () => {
+    if (!startDate || !endDate) {
+      return;
+    }
+
+    const mutationPromise = mutateAsync({
+      endTimeMillis: endDate.getTime(),
+      startTimeMillis: startDate.getTime(),
+      type: selectedExportType,
+    });
+
+    dispatchNotification({
+      type: 'action_error_handler',
+      data: {
+        executionData: {
+          serverExecutionResult: mutationPromise,
+        },
+        errorNotificationTitle: t(($) => $.dialogTitles.exportHistory),
+      },
+    });
+  };
+
+  const buttonState = useMemo((): BaseActionButtonState => {
+    if (isPending) {
+      return 'loading';
+    }
+    if (isSuccess) {
+      return 'success';
+    }
+    // Export type is required, so just need to check dates here
+    if (!startDate || !endDate || startDate > endDate) {
+      return 'disabled';
+    }
+    return 'idle';
+  }, [endDate, isPending, isSuccess, startDate]);
+
+  return {
+    startDate,
+    endDate,
+    nowDate,
+    setStartDate,
+    setEndDate,
+    onLastWeekClick,
+    onLastMonthClick,
+    onLastYearClick,
+    selectedExportType,
+    setSelectedExportType,
+    onSubmit,
+    buttonState,
+    progressFrac,
+  };
+}

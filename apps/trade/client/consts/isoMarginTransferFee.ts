@@ -1,0 +1,1 @@
+export const ISO_MARGIN_TRANSFER_FEE_AMOUNT_USDT = 0.1;

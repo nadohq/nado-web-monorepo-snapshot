@@ -1,0 +1,1 @@
+export const ACCOUNT_BUTTON_ICON_SIZE = 36;

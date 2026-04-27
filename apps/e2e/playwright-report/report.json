@@ -1,0 +1,2528 @@
+{
+  "config": {
+    "configFile": "/Users/frankjia/Desktop/dev/nado/nado-web-monorepo/apps/e2e/playwright.config.ts",
+    "rootDir": "/Users/frankjia/Desktop/dev/nado/nado-web-monorepo/apps/e2e/src/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/frankjia/Desktop/dev/nado/nado-web-monorepo/apps/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "setup",
+        "name": "setup",
+        "testDir": "/Users/frankjia/Desktop/dev/nado/nado-web-monorepo/apps/e2e/src/fixtures",
+        "testIgnore": [],
+        "testMatch": [
+          "/auth\\.setup\\.ts/"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/frankjia/Desktop/dev/nado/nado-web-monorepo/apps/e2e/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "default",
+        "name": "default",
+        "testDir": "/Users/frankjia/Desktop/dev/nado/nado-web-monorepo/apps/e2e/src/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "playwright-report/report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.2",
+    "workers": 9,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "../fixtures/auth.setup.ts",
+      "file": "../fixtures/auth.setup.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "authenticate and accept terms",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "setup",
+              "projectName": "setup",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 13,
+                  "error": {
+                    "message": "Error: PRIVATE_KEY environment variable is required.",
+                    "stack": "Error: PRIVATE_KEY environment variable is required.\n    at Object.account (/Users/frankjia/Desktop/dev/nado/nado-web-monorepo/apps/e2e/src/fixtures/web3Fixture.ts:207:13)",
+                    "location": {
+                      "file": "/Users/frankjia/Desktop/dev/nado/nado-web-monorepo/apps/e2e/src/fixtures/web3Fixture.ts",
+                      "column": 13,
+                      "line": 207
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39m../fixtures/web3Fixture.ts:207\n\n\u001b[0m \u001b[90m 205 |\u001b[39m   account\u001b[33m:\u001b[39m \u001b[36masync\u001b[39m ({}\u001b[33m,\u001b[39m use) \u001b[33m=>\u001b[39m {\n \u001b[90m 206 |\u001b[39m     \u001b[36mif\u001b[39m (\u001b[33m!\u001b[39mprocess\u001b[33m.\u001b[39menv\u001b[33m.\u001b[39m\u001b[33mPRIVATE_KEY\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 207 |\u001b[39m       \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m'PRIVATE_KEY environment variable is required.'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 208 |\u001b[39m     }\n \u001b[90m 209 |\u001b[39m\n \u001b[90m 210 |\u001b[39m     \u001b[36mconst\u001b[39m pk \u001b[33m=\u001b[39m process\u001b[33m.\u001b[39menv\u001b[33m.\u001b[39m\u001b[33mPRIVATE_KEY\u001b[39m \u001b[36mas\u001b[39m \u001b[33mHex\u001b[39m\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/frankjia/Desktop/dev/nado/nado-web-monorepo/apps/e2e/src/fixtures/web3Fixture.ts",
+                        "column": 13,
+                        "line": 207
+                      },
+                      "message": "Error: PRIVATE_KEY environment variable is required.\n\n\u001b[90m   at \u001b[39m../fixtures/web3Fixture.ts:207\n\n\u001b[0m \u001b[90m 205 |\u001b[39m   account\u001b[33m:\u001b[39m \u001b[36masync\u001b[39m ({}\u001b[33m,\u001b[39m use) \u001b[33m=>\u001b[39m {\n \u001b[90m 206 |\u001b[39m     \u001b[36mif\u001b[39m (\u001b[33m!\u001b[39mprocess\u001b[33m.\u001b[39menv\u001b[33m.\u001b[39m\u001b[33mPRIVATE_KEY\u001b[39m) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 207 |\u001b[39m       \u001b[36mthrow\u001b[39m \u001b[36mnew\u001b[39m \u001b[33mError\u001b[39m(\u001b[32m'PRIVATE_KEY environment variable is required.'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m             \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 208 |\u001b[39m     }\n \u001b[90m 209 |\u001b[39m\n \u001b[90m 210 |\u001b[39m     \u001b[36mconst\u001b[39m pk \u001b[33m=\u001b[39m process\u001b[33m.\u001b[39menv\u001b[33m.\u001b[39m\u001b[33mPRIVATE_KEY\u001b[39m \u001b[36mas\u001b[39m \u001b[33mHex\u001b[39m\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at Object.account (/Users/frankjia/Desktop/dev/nado/nado-web-monorepo/apps/e2e/src/fixtures/web3Fixture.ts:207:13)\u001b[22m"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-03-25T23:56:02.312Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/frankjia/Desktop/dev/nado/nado-web-monorepo/apps/e2e/test-results/auth.setup.ts-authenticate-and-accept-terms-setup/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/frankjia/Desktop/dev/nado/nado-web-monorepo/apps/e2e/src/fixtures/web3Fixture.ts",
+                    "column": 13,
+                    "line": 207
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "17e3fe6f4d9d8bd79c6b-df047f9ee85594b43ff4",
+          "file": "../fixtures/auth.setup.ts",
+          "line": 7,
+          "column": 6
+        }
+      ]
+    },
+    {
+      "title": "general/deposit-collateral.spec.ts",
+      "file": "general/deposit-collateral.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Collateral Deposit",
+          "file": "general/deposit-collateral.spec.ts",
+          "line": 7,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deposits USDT0 via wallet deposit dialog @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "11cadc7ecc34953b9830-58670b76e178f979bb31",
+              "file": "general/deposit-collateral.spec.ts",
+              "line": 15,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "general/login.spec.ts",
+      "file": "general/login.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Authentication",
+          "file": "general/login.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "connects wallet via browser extension @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "6581734ec113949992f8-315d9a617917992f8897",
+              "file": "general/login.spec.ts",
+              "line": 7,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "general/routing-smoke.spec.ts",
+      "file": "general/routing-smoke.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Route: /vault",
+          "file": "general/routing-smoke.spec.ts",
+          "line": 87,
+          "column": 8,
+          "specs": [
+            {
+              "title": "should load and interact without error @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7794ab0546b14416c3d4-b75bff27cf987d053387",
+              "file": "general/routing-smoke.spec.ts",
+              "line": 88,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Route: /portfolio/overview",
+          "file": "general/routing-smoke.spec.ts",
+          "line": 87,
+          "column": 8,
+          "specs": [
+            {
+              "title": "should load and interact without error @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7794ab0546b14416c3d4-296c8e0dbf3037fa81a3",
+              "file": "general/routing-smoke.spec.ts",
+              "line": 88,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Route: /portfolio/margin-manager",
+          "file": "general/routing-smoke.spec.ts",
+          "line": 87,
+          "column": 8,
+          "specs": [
+            {
+              "title": "should load and interact without error @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7794ab0546b14416c3d4-a358306ed461c73cdbbf",
+              "file": "general/routing-smoke.spec.ts",
+              "line": 88,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Route: /portfolio/history",
+          "file": "general/routing-smoke.spec.ts",
+          "line": 87,
+          "column": 8,
+          "specs": [
+            {
+              "title": "should load and interact without error @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7794ab0546b14416c3d4-8062be91d343e03a4831",
+              "file": "general/routing-smoke.spec.ts",
+              "line": 88,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Route: /portfolio/faucet",
+          "file": "general/routing-smoke.spec.ts",
+          "line": 87,
+          "column": 8,
+          "specs": [
+            {
+              "title": "should load and interact without error @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7794ab0546b14416c3d4-16f4a567671bd8c2dc81",
+              "file": "general/routing-smoke.spec.ts",
+              "line": 88,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Route: /points",
+          "file": "general/routing-smoke.spec.ts",
+          "line": 87,
+          "column": 8,
+          "specs": [
+            {
+              "title": "should load and interact without error @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7794ab0546b14416c3d4-adfd7c45fdc904cfc906",
+              "file": "general/routing-smoke.spec.ts",
+              "line": 88,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Route: /referrals",
+          "file": "general/routing-smoke.spec.ts",
+          "line": 87,
+          "column": 8,
+          "specs": [
+            {
+              "title": "should load and interact without error @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7794ab0546b14416c3d4-695fec428a639ecbb753",
+              "file": "general/routing-smoke.spec.ts",
+              "line": 88,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Route: /spot",
+          "file": "general/routing-smoke.spec.ts",
+          "line": 87,
+          "column": 8,
+          "specs": [
+            {
+              "title": "should load and interact without error @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7794ab0546b14416c3d4-4c1b465decbe0864be3a",
+              "file": "general/routing-smoke.spec.ts",
+              "line": 88,
+              "column": 9
+            }
+          ]
+        },
+        {
+          "title": "Route: /perpetuals",
+          "file": "general/routing-smoke.spec.ts",
+          "line": 87,
+          "column": 8,
+          "specs": [
+            {
+              "title": "should load and interact without error @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "7794ab0546b14416c3d4-84089249f6128a55b720",
+              "file": "general/routing-smoke.spec.ts",
+              "line": 88,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "general/withdraw-collateral.spec.ts",
+      "file": "general/withdraw-collateral.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Collateral Withdraw",
+          "file": "general/withdraw-collateral.spec.ts",
+          "line": 7,
+          "column": 6,
+          "specs": [
+            {
+              "title": "withdraws USDT0 via withdraw dialog @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "beb374a5932f62da954d-306bc74076542f8fe54a",
+              "file": "general/withdraw-collateral.spec.ts",
+              "line": 17,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "nlp/deposit-nlp.spec.ts",
+      "file": "nlp/deposit-nlp.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Nado Liquidity Provider - NLP",
+          "file": "nlp/deposit-nlp.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "deposit to NLP Vault @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1cd70365180bf73a5516-45a9ac7ce10a6257093c",
+              "file": "nlp/deposit-nlp.spec.ts",
+              "line": 13,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/close-and-cancel.spec.ts",
+      "file": "perp/close-and-cancel.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Close & Cancel",
+          "file": "perp/close-and-cancel.spec.ts",
+          "line": 9,
+          "column": 6,
+          "specs": [
+            {
+              "title": "cancels individual limit order and verifies removal from open orders @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "82db86c8053777c2b6db-2f50f0d33fd4ce84214b",
+              "file": "perp/close-and-cancel.spec.ts",
+              "line": 25,
+              "column": 7
+            },
+            {
+              "title": "closes single position via row action and verifies removal @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "82db86c8053777c2b6db-eb86e81851f2678c3d96",
+              "file": "perp/close-and-cancel.spec.ts",
+              "line": 61,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/limit-orders-integrity.spec.ts",
+      "file": "perp/limit-orders-integrity.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Limit Orders - Integrity and Logic",
+          "file": "perp/limit-orders-integrity.spec.ts",
+          "line": 18,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Maker Logic: Orderbook Placement (Buy & Sell)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cce098f41e4270be0b7c-2eb806cbeb5705d88633",
+              "file": "perp/limit-orders-integrity.spec.ts",
+              "line": 34,
+              "column": 7
+            },
+            {
+              "title": "Reduce-Only fails if it would open a new position",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cce098f41e4270be0b7c-b2e290c2062f8b8fdfb4",
+              "file": "perp/limit-orders-integrity.spec.ts",
+              "line": 81,
+              "column": 7
+            },
+            {
+              "title": "Execution: Crossing the Spread (Taker behavior) @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cce098f41e4270be0b7c-fad4b55121a56ceaa670",
+              "file": "perp/limit-orders-integrity.spec.ts",
+              "line": 114,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/limit-orders-tpsl.spec.ts",
+      "file": "perp/limit-orders-tpsl.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Limit Orders with TP/SL",
+          "file": "perp/limit-orders-tpsl.spec.ts",
+          "line": 148,
+          "column": 6,
+          "specs": [
+            {
+              "title": "places long limit order with TP and SL (% gain/loss) @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "97921e7f6fa87eb8f3a3-95d917aa38c0180368a0",
+              "file": "perp/limit-orders-tpsl.spec.ts",
+              "line": 165,
+              "column": 9
+            },
+            {
+              "title": "places short limit order with TP and SL (% gain/loss) @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "97921e7f6fa87eb8f3a3-c2052f600cd7ed31b3df",
+              "file": "perp/limit-orders-tpsl.spec.ts",
+              "line": 165,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/limit-orders.spec.ts",
+      "file": "perp/limit-orders.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Limit Orders",
+          "file": "perp/limit-orders.spec.ts",
+          "line": 112,
+          "column": 6,
+          "specs": [
+            {
+              "title": "places long limit order (Cross Margin) with shared collateral ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "bba7385192b706714a7b-036aa56a535c395647db",
+              "file": "perp/limit-orders.spec.ts",
+              "line": 130,
+              "column": 9
+            },
+            {
+              "title": "places long limit order (Isolated Margin) with segregated margin @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "bba7385192b706714a7b-dcaf4f8977f08670c469",
+              "file": "perp/limit-orders.spec.ts",
+              "line": 130,
+              "column": 9
+            },
+            {
+              "title": "places short limit order (Cross Margin) with shared collateral @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "bba7385192b706714a7b-c2a485fa7baf139ffc37",
+              "file": "perp/limit-orders.spec.ts",
+              "line": 130,
+              "column": 9
+            },
+            {
+              "title": "places short limit order (Isolated Margin) with segregated margin ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "bba7385192b706714a7b-ec2c2ccb8de12490d5e3",
+              "file": "perp/limit-orders.spec.ts",
+              "line": 130,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/market-orders-increase-size.spec.ts",
+      "file": "perp/market-orders-increase-size.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Market Orders",
+          "file": "perp/market-orders-increase-size.spec.ts",
+          "line": 8,
+          "column": 6,
+          "specs": [
+            {
+              "title": "increases position size with a second market order @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5bcce61ad14a420dd6b2-09b7bfae80c1d5a1a608",
+              "file": "perp/market-orders-increase-size.spec.ts",
+              "line": 22,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/market-orders-leverage.spec.ts",
+      "file": "perp/market-orders-leverage.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Market Orders - Leverage Max Size",
+          "file": "perp/market-orders-leverage.spec.ts",
+          "line": 29,
+          "column": 6,
+          "specs": [
+            {
+              "title": "max size scales correctly with leverage multiplier",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "614782524d01b9d59596-e291f69116859883b92c",
+              "file": "perp/market-orders-leverage.spec.ts",
+              "line": 43,
+              "column": 7
+            },
+            {
+              "title": "max size scales correctly for short side",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "614782524d01b9d59596-3b51420e8a660c5b253d",
+              "file": "perp/market-orders-leverage.spec.ts",
+              "line": 70,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/market-orders-max-lev.spec.ts",
+      "file": "perp/market-orders-max-lev.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Market Orders - Max Leverage",
+          "file": "perp/market-orders-max-lev.spec.ts",
+          "line": 110,
+          "column": 6,
+          "specs": [
+            {
+              "title": "opens long position (Cross Margin) with cross margin",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1a41bb978b07b9a0f18e-4cacbca5722bbea7a6b3",
+              "file": "perp/market-orders-max-lev.spec.ts",
+              "line": 125,
+              "column": 9
+            },
+            {
+              "title": "opens long position (Isolated Margin) with isolated margin",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1a41bb978b07b9a0f18e-751e754053808059a5c5",
+              "file": "perp/market-orders-max-lev.spec.ts",
+              "line": 125,
+              "column": 9
+            },
+            {
+              "title": "opens short position (Cross Margin) with cross margin",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1a41bb978b07b9a0f18e-c6384ae5026f7519b811",
+              "file": "perp/market-orders-max-lev.spec.ts",
+              "line": 125,
+              "column": 9
+            },
+            {
+              "title": "opens short position (Isolated Margin) with isolated margin",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "1a41bb978b07b9a0f18e-678b47f7d65bfc257511",
+              "file": "perp/market-orders-max-lev.spec.ts",
+              "line": 125,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/market-orders-opposite-direction.spec.ts",
+      "file": "perp/market-orders-opposite-direction.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Market Orders - Opposite Direction",
+          "file": "perp/market-orders-opposite-direction.spec.ts",
+          "line": 62,
+          "column": 6,
+          "specs": [
+            {
+              "title": "closes long position by closing with opposite direction (Cross) ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "45723a70cedd2a098828-3a84584eee4bda69f5be",
+              "file": "perp/market-orders-opposite-direction.spec.ts",
+              "line": 79,
+              "column": 9
+            },
+            {
+              "title": "closes long position by closing with opposite direction (Isolated) @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "45723a70cedd2a098828-7536229ce9ef8ac77874",
+              "file": "perp/market-orders-opposite-direction.spec.ts",
+              "line": 79,
+              "column": 9
+            },
+            {
+              "title": "closes short position by closing with opposite direction (Cross) @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "45723a70cedd2a098828-3204c2e6fb3028625f9d",
+              "file": "perp/market-orders-opposite-direction.spec.ts",
+              "line": 79,
+              "column": 9
+            },
+            {
+              "title": "closes short position by closing with opposite direction (Isolated) ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "45723a70cedd2a098828-6f0eab2f1b6a96b94980",
+              "file": "perp/market-orders-opposite-direction.spec.ts",
+              "line": 79,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/market-orders-reduce-only.spec.ts",
+      "file": "perp/market-orders-reduce-only.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Market Orders - Reduce Only",
+          "file": "perp/market-orders-reduce-only.spec.ts",
+          "line": 76,
+          "column": 6,
+          "specs": [
+            {
+              "title": "fails reduce-only sell without position @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e9455e3e82402180b4e8-5bcb05004fd462d27323",
+              "file": "perp/market-orders-reduce-only.spec.ts",
+              "line": 93,
+              "column": 9
+            },
+            {
+              "title": "fails reduce-only buy without position ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e9455e3e82402180b4e8-978af310fbd9b116755d",
+              "file": "perp/market-orders-reduce-only.spec.ts",
+              "line": 93,
+              "column": 9
+            },
+            {
+              "title": "executes partial reduce-only sell on long position @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e9455e3e82402180b4e8-c45dcd63ee29f18f4a88",
+              "file": "perp/market-orders-reduce-only.spec.ts",
+              "line": 120,
+              "column": 9
+            },
+            {
+              "title": "executes partial reduce-only buy on short position ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e9455e3e82402180b4e8-ce8d3d5f7939b2c71565",
+              "file": "perp/market-orders-reduce-only.spec.ts",
+              "line": 120,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/market-orders-reverse.spec.ts",
+      "file": "perp/market-orders-reverse.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Market Orders - Reverse Position",
+          "file": "perp/market-orders-reverse.spec.ts",
+          "line": 31,
+          "column": 6,
+          "specs": [
+            {
+              "title": "reverses long to short (Cross) ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e1d0ae606bb45f5e6b0a-13077437559a4fc11e4a",
+              "file": "perp/market-orders-reverse.spec.ts",
+              "line": 50,
+              "column": 9
+            },
+            {
+              "title": "reverses long to short (Isolated) @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e1d0ae606bb45f5e6b0a-a86964464b369fe6ea6a",
+              "file": "perp/market-orders-reverse.spec.ts",
+              "line": 50,
+              "column": 9
+            },
+            {
+              "title": "reverses short to long (Cross) @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e1d0ae606bb45f5e6b0a-8cad9ca159614f5d9646",
+              "file": "perp/market-orders-reverse.spec.ts",
+              "line": 50,
+              "column": 9
+            },
+            {
+              "title": "reverses short to long (Isolated) ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e1d0ae606bb45f5e6b0a-57db83f091fbb38710fd",
+              "file": "perp/market-orders-reverse.spec.ts",
+              "line": 50,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/market-orders-tpsl.spec.ts",
+      "file": "perp/market-orders-tpsl.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Market Orders with TP/SL",
+          "file": "perp/market-orders-tpsl.spec.ts",
+          "line": 288,
+          "column": 6,
+          "specs": [
+            {
+              "title": "opens long position with TP and SL (% gain/loss) @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2c848ae589fcf12ff34a-ecb63951f3e072dbfcfd",
+              "file": "perp/market-orders-tpsl.spec.ts",
+              "line": 310,
+              "column": 9
+            },
+            {
+              "title": "opens short position with TP and SL (% gain/loss) @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2c848ae589fcf12ff34a-a99d7b8607f6f3d71aef",
+              "file": "perp/market-orders-tpsl.spec.ts",
+              "line": 310,
+              "column": 9
+            },
+            {
+              "title": "opens long position with TP and SL (trigger prices) ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2c848ae589fcf12ff34a-1ba2c9c90c82c6da9238",
+              "file": "perp/market-orders-tpsl.spec.ts",
+              "line": 310,
+              "column": 9
+            },
+            {
+              "title": "opens long position with TP only ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2c848ae589fcf12ff34a-04f070697f2671f71299",
+              "file": "perp/market-orders-tpsl.spec.ts",
+              "line": 310,
+              "column": 9
+            },
+            {
+              "title": "opens short position with SL only ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2c848ae589fcf12ff34a-610d38407ba6cf42f04e",
+              "file": "perp/market-orders-tpsl.spec.ts",
+              "line": 310,
+              "column": 9
+            },
+            {
+              "title": "modifies TP trigger price via Manage TP/SL dialog @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2c848ae589fcf12ff34a-f4b59e30dcc7dbe415d0",
+              "file": "perp/market-orders-tpsl.spec.ts",
+              "line": 344,
+              "column": 7
+            },
+            {
+              "title": "adds a second TP order via Manage TP/SL dialog",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2c848ae589fcf12ff34a-1d2afdf4065b6201852f",
+              "file": "perp/market-orders-tpsl.spec.ts",
+              "line": 403,
+              "column": 7
+            },
+            {
+              "title": "cancels TP order via Manage TP/SL dialog",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "2c848ae589fcf12ff34a-7e253d9141067151d86e",
+              "file": "perp/market-orders-tpsl.spec.ts",
+              "line": 448,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/market-orders.spec.ts",
+      "file": "perp/market-orders.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Market Orders",
+          "file": "perp/market-orders.spec.ts",
+          "line": 116,
+          "column": 6,
+          "specs": [
+            {
+              "title": "opens long position (Cross Margin) with shared collateral @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "39c7a23157b108354080-b260d6b1b9f16054b772",
+              "file": "perp/market-orders.spec.ts",
+              "line": 133,
+              "column": 9
+            },
+            {
+              "title": "opens long position (Isolated Margin) with segregated margin ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "39c7a23157b108354080-63dbfe73aa4a13e20008",
+              "file": "perp/market-orders.spec.ts",
+              "line": 133,
+              "column": 9
+            },
+            {
+              "title": "opens short position (Cross Margin) with shared collateral ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "39c7a23157b108354080-6bcf2c5bf7f0e36a81b1",
+              "file": "perp/market-orders.spec.ts",
+              "line": 133,
+              "column": 9
+            },
+            {
+              "title": "opens short position (Isolated Margin) with segregated margin @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "39c7a23157b108354080-a55d0a95d9b1f4133a5e",
+              "file": "perp/market-orders.spec.ts",
+              "line": 133,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/preview-scaled-orders.spec.ts",
+      "file": "perp/preview-scaled-orders.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Scaled Orders",
+          "file": "perp/preview-scaled-orders.spec.ts",
+          "line": 155,
+          "column": 6,
+          "specs": [
+            {
+              "title": "displays 5 long orders | size: evenly-split | price: flat @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "74264a4b4db7abf45a2e-40a767f43d20991f0284",
+              "file": "perp/preview-scaled-orders.spec.ts",
+              "line": 159,
+              "column": 9
+            },
+            {
+              "title": "displays 5 long orders | size: evenly-split | price: increasing ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "74264a4b4db7abf45a2e-68cce903b3c6d34acc96",
+              "file": "perp/preview-scaled-orders.spec.ts",
+              "line": 159,
+              "column": 9
+            },
+            {
+              "title": "displays 5 long orders | size: evenly-split | price: decreasing ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "74264a4b4db7abf45a2e-359e05dcdf61030f039a",
+              "file": "perp/preview-scaled-orders.spec.ts",
+              "line": 159,
+              "column": 9
+            },
+            {
+              "title": "displays 5 long orders | size: increasing | price: flat ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "74264a4b4db7abf45a2e-c690c3db8602c9b67d4d",
+              "file": "perp/preview-scaled-orders.spec.ts",
+              "line": 159,
+              "column": 9
+            },
+            {
+              "title": "displays 5 long orders | size: increasing | price: increasing ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "74264a4b4db7abf45a2e-63e2eba1b77ce4d0a82e",
+              "file": "perp/preview-scaled-orders.spec.ts",
+              "line": 159,
+              "column": 9
+            },
+            {
+              "title": "displays 5 long orders | size: increasing | price: decreasing ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "74264a4b4db7abf45a2e-f33ea3389402dcc92607",
+              "file": "perp/preview-scaled-orders.spec.ts",
+              "line": 159,
+              "column": 9
+            },
+            {
+              "title": "displays 5 long orders | size: decreasing | price: flat ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "74264a4b4db7abf45a2e-edce0ce694e1df015573",
+              "file": "perp/preview-scaled-orders.spec.ts",
+              "line": 159,
+              "column": 9
+            },
+            {
+              "title": "displays 5 long orders | size: decreasing | price: increasing ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "74264a4b4db7abf45a2e-d1d2f3e2f9ba8b27eded",
+              "file": "perp/preview-scaled-orders.spec.ts",
+              "line": 159,
+              "column": 9
+            },
+            {
+              "title": "displays 5 long orders | size: decreasing | price: decreasing ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "74264a4b4db7abf45a2e-8d8b80c6aab6137c8770",
+              "file": "perp/preview-scaled-orders.spec.ts",
+              "line": 159,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/scaled-orders.spec.ts",
+      "file": "perp/scaled-orders.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Scaled Orders",
+          "file": "perp/scaled-orders.spec.ts",
+          "line": 108,
+          "column": 6,
+          "specs": [
+            {
+              "title": "places 2 long limit orders @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ca6057a6da8daf242ed0-2c834a609b1e033d164c",
+              "file": "perp/scaled-orders.spec.ts",
+              "line": 126,
+              "column": 9
+            },
+            {
+              "title": "places 2 short limit orders @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ca6057a6da8daf242ed0-0c35be7dfe9a0088a426",
+              "file": "perp/scaled-orders.spec.ts",
+              "line": 126,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/stop-limit-orders.spec.ts",
+      "file": "perp/stop-limit-orders.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Stop Limit Orders",
+          "file": "perp/stop-limit-orders.spec.ts",
+          "line": 94,
+          "column": 6,
+          "specs": [
+            {
+              "title": "places long stop limit (cross) @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9d1078be58d9886b9b1c-54dc6225eb260448bc93",
+              "file": "perp/stop-limit-orders.spec.ts",
+              "line": 114,
+              "column": 9
+            },
+            {
+              "title": "places long stop limit (isolated) ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9d1078be58d9886b9b1c-13f569ee5e0ebbf55e7a",
+              "file": "perp/stop-limit-orders.spec.ts",
+              "line": 114,
+              "column": 9
+            },
+            {
+              "title": "places short stop limit (cross) ",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9d1078be58d9886b9b1c-cdfeeff8f4f8f61dda12",
+              "file": "perp/stop-limit-orders.spec.ts",
+              "line": 114,
+              "column": 9
+            },
+            {
+              "title": "places short stop limit (isolated) @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9d1078be58d9886b9b1c-5d7a04f8034e6febe4b9",
+              "file": "perp/stop-limit-orders.spec.ts",
+              "line": 114,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/stop-market-orders.spec.ts",
+      "file": "perp/stop-market-orders.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Stop Market Orders",
+          "file": "perp/stop-market-orders.spec.ts",
+          "line": 48,
+          "column": 6,
+          "specs": [
+            {
+              "title": "STOP-MARKET-01: Stop Market Buy (Long) - place and assert pending @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d6e8523c8d8b361ca70b-107ecc90c361735f2966",
+              "file": "perp/stop-market-orders.spec.ts",
+              "line": 65,
+              "column": 7
+            },
+            {
+              "title": "STOP-MARKET-02: Stop Market Sell (Short) - place and assert pending @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "d6e8523c8d8b361ca70b-65901ccd458236384f07",
+              "file": "perp/stop-market-orders.spec.ts",
+              "line": 99,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/switch-market.spec.ts",
+      "file": "perp/switch-market.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Switch Market",
+          "file": "perp/switch-market.spec.ts",
+          "line": 52,
+          "column": 6,
+          "specs": [
+            {
+              "title": "switches market and places order on correct market @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "5a9d1ad9e1efefb2bbb6-f27662048cc9d05d9713",
+              "file": "perp/switch-market.spec.ts",
+              "line": 66,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "perp/twap-orders.spec.ts",
+      "file": "perp/twap-orders.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "TWAP Orders",
+          "file": "perp/twap-orders.spec.ts",
+          "line": 6,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TWAP-01: Execution progress via toast notifications @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8710acba64b1d32653d5-a7489a8109388d91efcf",
+              "file": "perp/twap-orders.spec.ts",
+              "line": 20,
+              "column": 7
+            },
+            {
+              "title": "TWAP-02: Cancel after first execution stops further fills @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "8710acba64b1d32653d5-a5094ef76f5623849039",
+              "file": "perp/twap-orders.spec.ts",
+              "line": 81,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "spot/spot-limit-orders.spec.ts",
+      "file": "spot/spot-limit-orders.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Spot Limit Orders",
+          "file": "spot/spot-limit-orders.spec.ts",
+          "line": 88,
+          "column": 6,
+          "specs": [
+            {
+              "title": "SPOT-LMT-01: Buy limit order @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a3190a7248f242c236ec-d1e23af194a3d46c9149",
+              "file": "spot/spot-limit-orders.spec.ts",
+              "line": 104,
+              "column": 9
+            },
+            {
+              "title": "SPOT-LMT-02: Sell limit order @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a3190a7248f242c236ec-3ce0baf4e2291c1cb4a9",
+              "file": "spot/spot-limit-orders.spec.ts",
+              "line": 104,
+              "column": 9
+            },
+            {
+              "title": "SPOT-LMT-03: Cancel a placed limit order @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "a3190a7248f242c236ec-84b9e805f6b7dd89f05b",
+              "file": "spot/spot-limit-orders.spec.ts",
+              "line": 129,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "spot/spot-market-orders.spec.ts",
+      "file": "spot/spot-market-orders.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Spot Market Orders",
+          "file": "spot/spot-market-orders.spec.ts",
+          "line": 27,
+          "column": 6,
+          "specs": [
+            {
+              "title": "SPOT-MKT-01: Buy market order @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "774d1f5ffaf3af2d6351-967bde0bde17699959ce",
+              "file": "spot/spot-market-orders.spec.ts",
+              "line": 39,
+              "column": 9
+            },
+            {
+              "title": "SPOT-MKT-02: Sell market order @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "774d1f5ffaf3af2d6351-23d2875616eacbc26e25",
+              "file": "spot/spot-market-orders.spec.ts",
+              "line": 39,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "spot/spot-scaled-orders.spec.ts",
+      "file": "spot/spot-scaled-orders.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Spot Scaled Orders",
+          "file": "spot/spot-scaled-orders.spec.ts",
+          "line": 109,
+          "column": 6,
+          "specs": [
+            {
+              "title": "SPOT-SCALED-01: 2 buy scaled limit orders @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4663816602e1dad59e6a-a78917a9af0679cecbd3",
+              "file": "spot/spot-scaled-orders.spec.ts",
+              "line": 127,
+              "column": 9
+            },
+            {
+              "title": "SPOT-SCALED-02: 2 sell scaled limit orders @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "4663816602e1dad59e6a-16272dd0a55dd9fc8c4c",
+              "file": "spot/spot-scaled-orders.spec.ts",
+              "line": 127,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "spot/spot-stop-limit-orders.spec.ts",
+      "file": "spot/spot-stop-limit-orders.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Spot Stop Limit Orders",
+          "file": "spot/spot-stop-limit-orders.spec.ts",
+          "line": 65,
+          "column": 6,
+          "specs": [
+            {
+              "title": "SPOT-STOP-LMT-01: Stop Limit Buy - place and assert pending @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9124c92a175f3793e2f2-c23dbb27a7522a85f044",
+              "file": "spot/spot-stop-limit-orders.spec.ts",
+              "line": 80,
+              "column": 7
+            },
+            {
+              "title": "SPOT-STOP-LMT-02: Stop Limit Sell - place and assert pending",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "9124c92a175f3793e2f2-1b2cd07a410b937b9ffa",
+              "file": "spot/spot-stop-limit-orders.spec.ts",
+              "line": 115,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "spot/spot-stop-market-orders.spec.ts",
+      "file": "spot/spot-stop-market-orders.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Spot Stop Market Orders",
+          "file": "spot/spot-stop-market-orders.spec.ts",
+          "line": 54,
+          "column": 6,
+          "specs": [
+            {
+              "title": "SPOT-STOP-MKT-01: Stop Market Buy - place and assert pending @smoke",
+              "ok": true,
+              "tags": [
+                "smoke"
+              ],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e1b1a474066d5c33ed0e-1bd35434383a5b80ba2c",
+              "file": "spot/spot-stop-market-orders.spec.ts",
+              "line": 69,
+              "column": 7
+            },
+            {
+              "title": "SPOT-STOP-MKT-02: Stop Market Sell - place and assert pending",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "default",
+                  "projectName": "default",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "e1b1a474066d5c33ed0e-376fe77d3f2b68363e86",
+              "file": "spot/spot-stop-market-orders.spec.ts",
+              "line": 101,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-03-25T23:56:01.700Z",
+    "duration": 2116.886,
+    "expected": 0,
+    "skipped": 86,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

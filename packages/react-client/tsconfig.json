@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {},
+  "exclude": ["dist", "build", "node_modules"],
+  "extends": "@nadohq/ts-config/react-library.json",
+  "include": ["."]
+}

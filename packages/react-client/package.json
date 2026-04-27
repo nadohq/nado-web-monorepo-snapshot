@@ -1,0 +1,39 @@
+{
+  "name": "@nadohq/react-client",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf .eslintcache .turbo tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --cache",
+    "lint:fix": "eslint --cache --fix"
+  },
+  "private": true,
+  "dependencies": {
+    "@nadohq/client": "catalog:",
+    "d3-format": "catalog:",
+    "safe-stable-stringify": "catalog:"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "catalog:",
+    "bignumber.js": "catalog:",
+    "lodash": "catalog:",
+    "next": "catalog:",
+    "react": "catalog:",
+    "viem": "catalog:",
+    "wagmi": "catalog:"
+  },
+  "devDependencies": {
+    "@types/d3-format": "catalog:",
+    "@types/lodash": "catalog:",
+    "@types/react": "catalog:",
+    "@nadohq/eslint-config-custom": "workspace:*",
+    "@nadohq/ts-config": "workspace:*",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  }
+}

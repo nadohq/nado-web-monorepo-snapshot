@@ -1,0 +1,2 @@
+export const TABLE_CELL_LEFT_PADDING_CLASSNAME = 'pl-3';
+export const TABLE_CELL_RIGHT_PADDING_CLASSNAME = 'pr-3';

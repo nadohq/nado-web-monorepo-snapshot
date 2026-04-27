@@ -1,0 +1,75 @@
+@import './base.css';
+@import '@nadohq/web-ui/styles/ui-kit-styles.css';
+
+@layer base {
+  /*Remove default outline that occurs on focus of different elements*/
+  input,
+  button,
+  div,
+  img,
+  ul,
+  a,
+  svg {
+    @apply outline-hidden focus:outline-hidden active:outline-hidden;
+  }
+
+  input {
+    /* Fixes rounded borders on inputs on Mobile */
+    border-radius: 0;
+    -webkit-border-radius: 0;
+  }
+
+  input[type='number'] {
+    -webkit-appearance: textfield;
+    appearance: textfield;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+
+  ::-webkit-scrollbar {
+    @apply bg-surface-card h-1 w-1;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-2 rounded-full;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-surface-3;
+  }
+
+  p {
+    @apply leading-normal;
+  }
+
+  /**
+    * Separates label and value, e.g. "Leverage: 10x"
+    * Apply this class on the label element when you want to separate label and value with a separator eg. ':'.
+    *
+    * Add language-specific rules when needed, using :lang() pseudo-class for languages that use a different
+    * separator, spacing, or order.
+    *
+    * For example:
+    * 
+    * // in French, spaces are expected around the ":"
+    * :lang(fr) .label-separator::after {
+    *   content: " : ";
+    * }
+    *
+    * // in Chinese or Arabic, it's usually safer to drop it
+    * :lang(zh) .label-separator::after {
+    *   content: "";
+    *   margin-inline-end: 1ch;
+    * }
+    */
+  .label-separator::after {
+    /* Using display: contents so it works with any parent element (flex, grid, etc.) */
+    display: contents;
+    content: ':';
+  }
+}

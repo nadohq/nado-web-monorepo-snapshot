@@ -1,0 +1,54 @@
+/* To apply this theme, add the following to the <html> tag: data-theme="nadoDark" */
+/* Then apply these variables to any custom Tailwind config variables located inside `@theme` */
+
+/* Nado Dark Theme */
+[data-theme='nadoDark'] {
+  /* Background Color */
+  --color-background: #020203;
+
+  /* Surface Colors */
+  /* Border Colors */
+  --color-stroke: #1f1f21;
+
+  --color-surface-card: #131316;
+  --color-surface-1: #19191a;
+  --color-surface-2: #28282a;
+  --color-surface-3: #323234;
+
+  /* Text Colors */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #d7d5d5;
+  --color-text-tertiary: #a5a5a5;
+  --color-text-button-primary: #1b231c;
+
+  /* Misc Theme Colors */
+  /* Note: accent & primary currently use the same color. We may remove this differentiation in the future */
+  /* Accent is used primarily to create contrast. Primary is reserved for CTAs */
+  /* https://ink-foundation.slack.com/archives/C09629VRJ64/p1760710082737389?thread_ts=1760502074.830909&cid=C09629VRJ64 */
+  --color-accent: #dfdfe1;
+  --color-accent-alt: #59cd78;
+  --color-accent-warning: #e7bd5a;
+  --color-accent-info: #5ab3e7;
+  --color-disabled: #454545;
+  --color-primary: #dfdfe1;
+  --color-positive: #59cd78;
+  --color-positive-muted: #26332b;
+  --color-negative: #ff707d;
+  --color-negative-muted: #341d20;
+  --color-warning: #f5ca47;
+  --color-warning-muted: #26200d;
+
+  /* Overlay Colors */
+  --color-overlay-divider: hsl(0 0% 100% / 0.1);
+  --color-overlay-accent: hsl(248 92% 72% / 0.1);
+  --color-overlay-hover: hsl(0 0% 100% / 0.05);
+  --color-overlay-disabled: hsl(240 20% 1% / 0.5);
+  --color-overlay-dialog: hsl(240 20% 1% / 0.6);
+
+  /* Box Shadows */
+  --shadow-elevation-card: 0px 2px 4px 0px hsl(0 0% 0% / 0.02);
+  --shadow-elevation-strong: 0px 8px 36px 8px hsl(240 13% 5% / 0.8);
+  --shadow-elevation-dialog:
+    0px 50px 80px 0px hsl(0 0% 0% / 0.05),
+    0px 36px 36px -18px hsl(0 0% 0% / 0.07);
+}

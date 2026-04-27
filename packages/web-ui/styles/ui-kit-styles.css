@@ -1,0 +1,22 @@
+@import './base-tooltip.css';
+@import './scroll-shadows.css';
+
+.no-scrollbar {
+  /* IE and Edge */
+  -ms-overflow-style: none;
+  /* Firefox */
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.product-label-border-container:has(.product-label-border-negative) {
+  box-shadow: inset 2px 0 0 0 var(--color-negative);
+}
+
+.product-label-border-container:has(.product-label-border-positive) {
+  box-shadow: inset 2px 0 0 0 var(--color-positive);
+}

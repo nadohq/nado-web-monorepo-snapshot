@@ -1,0 +1,14 @@
+phrase:
+  project_id: "f0955a3725ca14cdbf3d2ea067bb78e5"
+  file_format: i18next_4
+
+  push:
+    sources:
+      - file: "./packages/i18n/locales/en/common.json"
+        params:
+          locale_id: "en"
+          update_translations: true
+
+  pull:
+    targets:
+      - file: "./packages/i18n/locales/<locale_code>/common.json"

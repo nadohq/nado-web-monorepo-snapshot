@@ -1,0 +1,37 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["SENTRY_AUTH_TOKEN"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "env": [
+        "NEXT_RUNTIME",
+        "NODE_ENV",
+        "SENTRY_AUTH_TOKEN",
+        "FUUL_GENERATE_CODE_KEY",
+        "AIRDROP_FUNDS_PRIVATE_KEY"
+      ],
+      "outputs": ["dist/**", ".next/**"]
+    },
+    "clean": {
+      "outputs": []
+    },
+    "dev": {
+      "cache": false,
+      "env": ["NEXT_ALLOWED_DEV_ORIGINS"],
+      "persistent": true
+    },
+    "lint": {
+      "outputs": []
+    },
+    "test:e2e": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "env": ["BASE_URL", "CI", "PRIVATE_KEY"],
+      "outputs": ["apps/e2e/playwright-report/**", "apps/e2e/test-results/**"]
+    },
+    "typecheck": {
+      "outputs": []
+    }
+  }
+}

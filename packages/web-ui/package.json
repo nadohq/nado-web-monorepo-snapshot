@@ -1,0 +1,46 @@
+{
+  "name": "@nadohq/web-ui",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf .eslintcache .turbo tsconfig.tsbuildinfo",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint --cache",
+    "lint:fix": "eslint --cache --fix"
+  },
+  "private": true,
+  "dependencies": {
+    "@phosphor-icons/react": "catalog:",
+    "@radix-ui/react-checkbox": "catalog:",
+    "@radix-ui/react-dialog": "catalog:",
+    "@radix-ui/react-radio-group": "catalog:",
+    "@radix-ui/react-select": "2.2.6",
+    "@radix-ui/react-slot": "1.2.4",
+    "@radix-ui/react-switch": "1.2.6",
+    "@nadohq/web-common": "workspace:*",
+    "ahooks": "catalog:",
+    "date-fns": "catalog:",
+    "motion": "catalog:",
+    "react-merge-refs": "3.0.2",
+    "react-popper-tooltip": "catalog:",
+    "type-fest": "catalog:"
+  },
+  "peerDependencies": {
+    "lodash": "catalog:",
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@nadohq/eslint-config-custom": "workspace:*",
+    "@nadohq/ts-config": "workspace:*",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  }
+}
