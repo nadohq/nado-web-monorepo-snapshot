@@ -55,7 +55,7 @@ export function SpotActionButtonCell({
           icon={Icons.ArrowDownLeft}
           onClick={() => {
             showDialogForProduct({
-              dialogType: 'deposit_options',
+              dialogType: 'deposit_entrypoint',
               productId,
             });
           }}

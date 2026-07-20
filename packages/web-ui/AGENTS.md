@@ -23,4 +23,4 @@ import { Select } from '@nadohq/web-ui';
 
 ## Time Formatting
 
-Use `formatTimestamp` / `formatDurationMillis` with `TimeFormatSpecifier` presets — don't use date-fns directly for formatting.
+Use `formatTimestamp` / `formatDurationMillis` with `TimeFormatSpecifier` presets — both are backed by `Intl.DateTimeFormat`. Don't reach for `Intl` or other formatting libraries directly.

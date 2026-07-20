@@ -30,7 +30,9 @@ export function usePushTradePage() {
         (isOnPerp && startsWith(productIdLink, ROUTES.perpTrading));
       const routerUpdateFn = useReplace ? replace : push;
 
-      routerUpdateFn(productIdLink);
+      routerUpdateFn(productIdLink, {
+        scroll: true,
+      });
     },
     [productIdLinks, isOnSpot, isOnPerp, replace, push],
   );

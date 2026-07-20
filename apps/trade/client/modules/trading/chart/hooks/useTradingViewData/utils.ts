@@ -1,10 +1,18 @@
 import { Candlestick, removeDecimals } from '@nadohq/client';
+import {
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
+import { BigNumber } from 'bignumber.js';
 import type { Bar } from 'public/charting_library';
 
-export function toTVCandlesticks(candlesticks: Candlestick[]) {
+export function toTVCandlesticks(
+  candlesticks: Candlestick[],
+  exchangeRate: BigNumber,
+) {
   // Candlesticks are in descending order, but TV wants them to be in ascending order
   const bars = candlesticks.reverse().map((candlestick) => {
-    return toTVCandlestick(candlestick);
+    return toTVCandlestick(candlestick, exchangeRate);
   });
 
   return bars.map((bar, index) => {
@@ -18,14 +26,20 @@ export function toTVCandlesticks(candlesticks: Candlestick[]) {
   });
 }
 
-export function toTVCandlestick(candlestick: Candlestick): Bar {
+export function toTVCandlestick(
+  candlestick: Candlestick,
+  exchangeRate: BigNumber,
+): Bar {
   return {
-    volume: removeDecimals(candlestick.volume).toNumber(),
+    volume: toXStocksDisplayAmount(
+      removeDecimals(candlestick.volume),
+      exchangeRate,
+    ).toNumber(),
     time: candlestick.time.times(1000).toNumber(),
-    high: candlestick.high.toNumber(),
-    low: candlestick.low.toNumber(),
-    close: candlestick.close.toNumber(),
-    open: candlestick.open.toNumber(),
+    high: toXStocksDisplayPrice(candlestick.high, exchangeRate).toNumber(),
+    low: toXStocksDisplayPrice(candlestick.low, exchangeRate).toNumber(),
+    close: toXStocksDisplayPrice(candlestick.close, exchangeRate).toNumber(),
+    open: toXStocksDisplayPrice(candlestick.open, exchangeRate).toNumber(),
   };
 }
 
@@ -44,6 +58,21 @@ export function syncBarOpenWithValue(bar: Bar, value: number): Bar {
   syncedBar.low = Math.min(value, bar.low);
 
   return syncedBar;
+}
+
+/**
+ * Sets the bar's close to the given mid-price and expands high/low
+ * to include it. This keeps the wick consistent with the running
+ * close on thin markets where the mid can drift outside the last
+ * trade range between matches.
+ */
+export function applyMidPriceToBar(bar: Bar, midPrice: number): Bar {
+  return {
+    ...bar,
+    close: midPrice,
+    high: Math.max(bar.high, midPrice),
+    low: Math.min(bar.low, midPrice),
+  };
 }
 
 export function getProductIdIntervalKey(

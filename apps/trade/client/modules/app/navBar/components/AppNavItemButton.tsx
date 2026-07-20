@@ -4,17 +4,25 @@ import {
   ButtonProps,
   getStateOverlayClassNames,
   Icons,
+  StatusIndicator,
 } from '@nadohq/web-ui';
 
 export type AppNavItemButtonProps = ButtonProps & {
   withCaret?: boolean;
   active?: boolean;
+  /**
+   * When enabled, renders a pulsing status indicator to call attention to the
+   * item (e.g. a nav dropdown containing a "live" page).
+   */
+  showLiveIndicator?: boolean;
 };
 
 export function AppNavItemButton({
   className,
   withCaret,
   active,
+  showLiveIndicator,
+  children,
   ...rest
 }: AppNavItemButtonProps) {
   const stateOverlayClassNames = getStateOverlayClassNames({
@@ -39,6 +47,11 @@ export function AppNavItemButton({
         )
       }
       {...rest}
-    />
+    >
+      {children}
+      {showLiveIndicator && (
+        <StatusIndicator sizeVariant="sm" colorVariant="positive" pulse />
+      )}
+    </Button>
   );
 }

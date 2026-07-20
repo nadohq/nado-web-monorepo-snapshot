@@ -1,5 +1,7 @@
 import { WithClassnames } from '@nadohq/web-common';
 import { ROUTES } from 'client/modules/app/consts/routes';
+import { DesktopEarnLinksPopover } from 'client/modules/app/navBar/earnLinks/DesktopEarnLinksPopover';
+import { MobileEarnLinksCollapsible } from 'client/modules/app/navBar/earnLinks/MobileEarnLinksCollapsible';
 import { DesktopMoreLinksPopover } from 'client/modules/app/navBar/moreLinks/DesktopMoreLinksPopover';
 import { MobileMoreLinksCollapsible } from 'client/modules/app/navBar/moreLinks/MobileMoreLinksCollapsible';
 import { ComponentType, ReactNode, useMemo } from 'react';
@@ -59,11 +61,11 @@ export function useAppNavItems() {
         basePath: ROUTES.portfolio.base,
       },
       {
-        id: 'vault',
+        id: 'markets',
         type: 'link',
-        href: ROUTES.vault,
-        label: t(($) => $.navigation.vault),
-        basePath: ROUTES.vault,
+        href: ROUTES.markets,
+        label: t(($) => $.pageTitles.markets),
+        basePath: ROUTES.markets,
       },
       {
         id: 'points',
@@ -73,11 +75,12 @@ export function useAppNavItems() {
         basePath: ROUTES.points,
       },
       {
-        id: 'referrals',
-        type: 'link',
-        href: ROUTES.referrals,
-        label: t(($) => $.pageTitles.referrals),
-        basePath: ROUTES.referrals,
+        id: 'earn',
+        type: 'custom',
+        content: {
+          Desktop: DesktopEarnLinksPopover,
+          Mobile: MobileEarnLinksCollapsible,
+        },
       },
       {
         id: 'more',

@@ -1,13 +1,11 @@
 import { useRequiredContext } from '@nadohq/react-client';
-import { AnalyticsEvent } from 'client/modules/analytics/types';
+import type { GTMDataLayerEvent } from 'client/modules/analytics/types';
 import { createContext } from 'react';
 
 export interface AnalyticsContextData {
   areCookiesAccepted: boolean | null;
 
-  updateUserAddress(address: string): Promise<void>;
-
-  trackEvent(event: AnalyticsEvent): void;
+  sendGTMEvent(event: GTMDataLayerEvent): void;
 }
 
 export const AnalyticsContext = createContext<AnalyticsContextData | null>(

@@ -18,7 +18,8 @@ export async function getExportHistorySettlementsData(
   params: GetExportHistoryDataParams,
   context: GetExportHistoryDataContext,
 ) {
-  const { subaccount, nadoClient, allMarketsStaticData } = context;
+  const { subaccount, nadoClient, allMarketsStaticData, getExchangeRate } =
+    context;
   const items: ExportHistorySettlementItem[] = [];
 
   let startCursor: string | undefined = undefined;
@@ -41,6 +42,7 @@ export async function getExportHistorySettlementsData(
       const tableItem = getHistoricalSettlementsTableItem({
         event,
         allMarketsStaticData,
+        exchangeRate: getExchangeRate(event.snapshot.market.productId),
       });
       if (tableItem.timestampMillis < params.startTimeMillis) {
         break queryLoop;

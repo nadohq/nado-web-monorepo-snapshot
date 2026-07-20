@@ -4,7 +4,13 @@ import {
   ProductEngineType,
   removeDecimals,
 } from '@nadohq/client';
-import { getFundingRates } from '@nadohq/react-client';
+import {
+  getFundingRates,
+  getMarketPriceFormatSpecifier,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
+import { BigNumber } from 'bignumber.js';
+import { MarketPointsBoost } from 'client/hooks/markets/useAllMarketsPointsBoosts';
 import { AllMarketsStats } from 'client/hooks/markets/useAllMarketsStats';
 import { StaticMarketData } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
 import { AllLatestMarketPricesData } from 'client/hooks/query/markets/useQueryAllMarketsLatestPrices';
@@ -13,18 +19,38 @@ import { bigNumberComparator } from 'client/utils/comparators';
 import { getSharedProductMetadata } from 'client/utils/getSharedProductMetadata';
 import { get } from 'lodash';
 
-export function getMappedMarket(
-  market: StaticMarketData,
-  latestMarketPrices: AllLatestMarketPricesData | undefined,
-  marketStats: AllMarketsStats | undefined,
-  fundingRates: GetIndexerMultiProductFundingRatesResponse | undefined,
-  isFavoritedMarket: boolean,
-  href: string,
-): MarketSwitcherItem {
+export interface GetMappedMarketParams {
+  market: StaticMarketData;
+  latestMarketPrices: AllLatestMarketPricesData | undefined;
+  marketStats: AllMarketsStats | undefined;
+  fundingRates: GetIndexerMultiProductFundingRatesResponse | undefined;
+  isFavoritedMarket: boolean;
+  href: string;
+  pointsBoost: MarketPointsBoost | undefined;
+  exchangeRate: BigNumber;
+  isXStock: boolean;
+  isZeroFeesMarket: boolean;
+}
+
+export function getMappedMarket({
+  market,
+  latestMarketPrices,
+  marketStats,
+  fundingRates,
+  isFavoritedMarket,
+  href,
+  pointsBoost,
+  exchangeRate,
+  isXStock,
+  isZeroFeesMarket,
+}: GetMappedMarketParams): MarketSwitcherItem {
   const { productId, metadata, priceIncrement, type: productType } = market;
   const { marketCategories: categories, altSearchTerms } = metadata;
   const { marketName, symbol, icon } = getSharedProductMetadata(metadata);
-  const currentPrice = latestMarketPrices?.[productId]?.safeMidPrice;
+  const currentPrice = toXStocksDisplayPrice(
+    latestMarketPrices?.[productId]?.safeMidPrice,
+    exchangeRate,
+  );
   const priceChangeFrac =
     marketStats?.statsByMarket[productId]?.pastDayPriceChangeFrac;
   const volume24h = removeDecimals(
@@ -47,12 +73,18 @@ export function getMappedMarket(
       categories,
       altSearchTerms,
     },
+    pointsBoost,
     currentPrice,
     priceChangeFrac,
-    priceIncrement,
+    priceFormatSpecifier: getMarketPriceFormatSpecifier({
+      priceIncrement,
+      exchangeRate,
+    }),
     annualizedFundingFrac,
     volume24h,
     maxLeverage,
+    isXStock,
+    isZeroFees: isZeroFeesMarket,
     isNew: market.isNew,
     isFavorited: isFavoritedMarket,
     productId,

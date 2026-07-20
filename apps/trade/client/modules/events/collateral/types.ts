@@ -17,12 +17,9 @@ export interface BaseCollateralEvent extends WithDataTableRowId {
   valueUsd: BigNumber;
 }
 
-export interface DepositCollateralEvent extends BaseCollateralEvent {
-  eventType: 'deposit_collateral';
-}
+export type DepositCollateralEvent = BaseCollateralEvent;
 
 export interface TransferCollateralEvent extends BaseCollateralEvent {
-  eventType: 'transfer_quote';
   fromSubaccount: SubaccountNames;
   toSubaccount: SubaccountNames;
 }
@@ -33,7 +30,9 @@ interface SubaccountNames {
 }
 
 export interface WithdrawCollateralEvent extends BaseCollateralEvent {
-  eventType: 'withdraw_collateral';
   isProcessing: boolean | undefined;
   hasWithdrawPoolLiquidity: boolean;
+  // Recipient of the withdrawal. The subaccount owner unless a custom address
+  // was specified via a `withdraw_collateral_v2` withdrawal.
+  recipientAddress: string;
 }

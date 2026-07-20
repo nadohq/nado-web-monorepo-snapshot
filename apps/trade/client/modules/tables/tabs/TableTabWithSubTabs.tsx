@@ -1,5 +1,7 @@
+import { joinClassNames } from '@nadohq/web-common';
 import {
   CountIndicator,
+  Divider,
   PillTabs,
   ScrollShadowsContainer,
 } from '@nadohq/web-ui';
@@ -12,7 +14,7 @@ import {
 import { useSubaccountCountIndicators } from 'client/hooks/subaccount/useSubaccountCountIndicators';
 import { useTabs } from 'client/hooks/ui/tabs/useTabs';
 import { TradingSubTab } from 'client/modules/trading/layout/types';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 interface Props<T extends string> {
   subTabs: TradingSubTab<T>[];
@@ -39,37 +41,58 @@ export function TableTabWithSubTabs<T extends string>({
     [onSelectedSubTabIdChange, setSelectedUntypedTabId],
   );
 
+  const headerEndElement = useMemo(() => {
+    return subTabs.find(({ id }) => id === selectedTabId)?.headerEndElement;
+  }, [subTabs, selectedTabId]);
+
   return (
     <TabsRoot value={selectedTabId} onValueChange={handleSubTabChange}>
-      <TabsList asChild>
-        <ScrollShadowsContainer orientation="horizontal">
-          <PillTabs.TabsList>
-            {tabs.map(({ id, countIndicatorKey, label }) => {
-              const associatedCount = countIndicatorKey
-                ? countIndicators[countIndicatorKey]
-                : undefined;
-              const active = selectedTabId === id;
-              return (
-                <TabsTrigger asChild key={id} value={id}>
-                  <PillTabs.Button
-                    id={id}
-                    active={active}
-                    endIcon={
-                      <CountIndicator
-                        variant="secondary"
-                        count={associatedCount}
-                      />
-                    }
-                    dataTestId={`table-sub-tab-trigger-${id}`}
-                  >
-                    {label}
-                  </PillTabs.Button>
-                </TabsTrigger>
-              );
-            })}
-          </PillTabs.TabsList>
-        </ScrollShadowsContainer>
-      </TabsList>
+      <div
+        className={joinClassNames(
+          'flex flex-col',
+          'sm:flex-row sm:items-center sm:justify-between sm:gap-x-4',
+        )}
+      >
+        <TabsList asChild>
+          <ScrollShadowsContainer
+            className="sm:flex-1"
+            orientation="horizontal"
+          >
+            <PillTabs.TabsList>
+              {tabs.map(({ id, countIndicatorKey, label }) => {
+                const associatedCount = countIndicatorKey
+                  ? countIndicators[countIndicatorKey]
+                  : undefined;
+                const active = selectedTabId === id;
+                return (
+                  <TabsTrigger asChild key={id} value={id}>
+                    <PillTabs.Button
+                      id={id}
+                      active={active}
+                      sizeVariant="xs"
+                      endIcon={
+                        <CountIndicator
+                          variant="secondary"
+                          count={associatedCount}
+                        />
+                      }
+                      dataTestId={`table-sub-tab-trigger-${id}`}
+                    >
+                      {label}
+                    </PillTabs.Button>
+                  </TabsTrigger>
+                );
+              })}
+            </PillTabs.TabsList>
+          </ScrollShadowsContainer>
+        </TabsList>
+        {headerEndElement && (
+          <>
+            <Divider className="sm:hidden" />
+            {headerEndElement}
+          </>
+        )}
+      </div>
       {tabs.map(({ id, content }) => (
         <TabsContent
           key={id}

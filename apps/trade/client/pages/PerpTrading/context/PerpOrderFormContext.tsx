@@ -391,6 +391,7 @@ export function PerpOrderFormContextProvider({ children }: WithChildren) {
     priceIncrement,
     decimalAdjustedSizeIncrement,
     minAssetOrderSize,
+    isXStocksMarket,
     roundPrice,
     roundAssetAmount,
   } = useOrderFormProductData({
@@ -438,8 +439,11 @@ export function PerpOrderFormContextProvider({ children }: WithChildren) {
    * Max order sizes
    */
   const maxOrderSizes = usePerpOrderFormMaxOrderSizes({
+    orderType,
     inputConversionPrice,
     executionConversionPrice,
+    validatedScaledOrderStartPriceInput,
+    validatedScaledOrderEndPriceInput,
     orderSide,
     productId,
     roundAssetAmount,
@@ -512,6 +516,7 @@ export function PerpOrderFormContextProvider({ children }: WithChildren) {
     minAssetOrderSize,
     enableMaxSizeLogic,
     sizeDenom,
+    isXStocksMarket,
   });
 
   /**

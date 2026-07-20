@@ -11,7 +11,7 @@ import {
 
 interface Props extends TableCellProps, BaseTestProps {
   value: NumberFormatValue | undefined;
-  formatSpecifier: NumberFormatSpecifier | string;
+  formatSpecifier: NumberFormatSpecifier;
 }
 
 export function NumberCell({

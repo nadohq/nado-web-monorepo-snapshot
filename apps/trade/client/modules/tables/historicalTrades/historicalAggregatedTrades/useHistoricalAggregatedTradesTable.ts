@@ -5,6 +5,7 @@ import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStati
 import { usePaginatedSubaccountHistoricalEngineOrders } from 'client/hooks/query/subaccount/usePaginatedSubaccountHistoricalEngineOrders';
 import { getHistoricalEngineOrderTableItem } from 'client/modules/tables/historicalOrders/historicalEngineOrders/useHistoricalEngineOrdersTable';
 import { HistoricalEngineOrderTableItem } from 'client/modules/tables/types/HistoricalEngineOrderTableItem';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -25,6 +26,7 @@ export function useHistoricalAggregatedTradesTable({
 
   const { data: allMarketsStaticData, isLoading: marketsDataLoading } =
     useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const {
     isLoading,
@@ -61,10 +63,11 @@ export function useHistoricalAggregatedTradesTable({
             order,
             allMarketsStaticData,
             t,
+            exchangeRate: getExchangeRate(order.productId),
           });
         })
         .filter(nonNullFilter);
-    }, [historicalOrders, allMarketsStaticData, t]);
+    }, [historicalOrders, allMarketsStaticData, t, getExchangeRate]);
 
   return {
     isLoading: isLoading || marketsDataLoading || isFetchingCurrPage,

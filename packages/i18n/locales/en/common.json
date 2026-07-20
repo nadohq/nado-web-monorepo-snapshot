@@ -1,6 +1,5 @@
 {
   "about": "About",
-  "accessLimitedJoinWaitlistGetYourSpot": "Access is limited to invited users. Join the waitlist and follow Nado on X to get your spot.",
   "account": "Account",
   "accountDetails": "Account Details",
   "accountEquity": "Account Equity",
@@ -50,23 +49,29 @@
   "availableMaintMargin": "Available Maint. Margin",
   "availableMargin": "Available Margin",
   "avatar": "Avatar",
+  "avgDailyVol7d": "7d Avg. Daily Vol.",
   "avgEntryPrice": "Avg. Entry Price",
   "avgFilledPrice": "Avg Filled Price",
   "avgOrderPrice": "Avg / Order Price",
+  "avgPrice": "Avg. Price",
   "balance": "Balance",
   "balanceChange": "Balance Change",
   "balances": "Balances",
   "balanceValue": "Balance / Value",
+  "boost": "Boost",
   "borrow": "Borrow",
   "borrowApy": "Borrow APY",
   "borrowing": "Borrowing",
   "borrowRate": "Borrow Rate",
   "borrowRiskWarningDescription": "You can borrow assets against your existing collateral. Borrowing increases your margin usage and account risk.",
   "bought": "Bought",
+  "bridgeDepositDisclosure": {
+    "description": "You are bridging funds into your Nado account. You can monitor the status of your deposits <action>here</action>.",
+    "title": "Bridge Deposit"
+  },
   "bridgeUsdcApprovalInfo": "You may be prompted to sign an approval transaction before the deposit transaction.",
   "bridgeUsdcNative": "Bridge USDC (Native)",
   "bridgeUsdcNativeDescription": "Bridge USDC natively via Circle CCTP",
-  "browserExtension": "Browser Extension",
   "buttons": {
     "acceptAll": "Accept All",
     "actionSubmitted": "{{action}} Submitted",
@@ -97,6 +102,7 @@
     "cancelOrder": "Cancel Order",
     "cancelOrders": "Cancel Orders",
     "cancelSide": "Cancel <sidecolor>{{side}}</sidecolor>",
+    "changeRecipient": "Change Recipient",
     "changesApplied": "Changes Applied",
     "close": "Close",
     "closeAll": "Close All",
@@ -110,17 +116,15 @@
     "confirm": "Confirm",
     "confirmDeposit": "Confirm Deposit",
     "confirmingReferral": "Confirming Referral",
-    "confirmReferral": "Confirm Referral",
     "confirmTransaction": "Confirm Transaction",
     "confirmTransfer": "Confirm Transfer",
     "connect": "Connect",
-    "connectWallet": "Connect Wallet",
+    "connectXSocial": "Connect X Social",
     "copied": "Copied",
     "copy": "Copy",
     "copyAddress": "Copy address",
     "copyPrivateKey": "Copy private key",
     "createKey": "Create Key",
-    "createWallet": "Create One",
     "customize": "Customize",
     "deleteReferee": "Delete referee",
     "deposit": "Deposit",
@@ -129,9 +133,11 @@
     "depositingLiquidity": "Depositing Liquidity",
     "depositInitiated": "Deposit Initiated",
     "depositLiquidity": "Deposit Liquidity",
+    "depositNow": "Deposit Now",
     "depositSymbol": "Deposit {{symbol}}",
     "depositToStartTrading": "Deposit Funds to Start Trading",
-    "disconnect": "Disconnect",
+    "disconnectXSocial": "Disconnect X Social",
+    "discord": "Discord",
     "docs": "Docs",
     "done": "Done",
     "dontShowAgain": "Don't show me this again",
@@ -175,6 +181,7 @@
     "marketDetails": "Market Details",
     "maxRepay": "Max Repay",
     "mintTokens": "Mint Tokens",
+    "nextSlide": "Next slide",
     "ok": "OK",
     "openDialog": "Open Dialog",
     "orderSubmitted": "Order Submitted",
@@ -182,9 +189,11 @@
     "placingOrder": "Placing Order",
     "post": "Post",
     "previewOrders": "Preview Orders",
+    "previousSlide": "Previous slide",
     "privateKeyCopied": "Private key copied",
     "referralConfirmed": "Referral Confirmed",
     "rejectAll": "Reject All",
+    "reload": "Reload",
     "rememberApproval": "Remember Approval",
     "remove": "Remove",
     "removeMargin": "Remove Margin",
@@ -210,8 +219,9 @@
     "showMore": "Show more",
     "showPrivateKey": "Show private key",
     "signEveryTransactionInstead": "Sign every transaction instead",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
     "skip": "Skip",
-    "startTrading": "Start Trading",
     "submittingBorrow": "Submitting Borrow",
     "submittingTpSl": "Submitting TP/SL",
     "submittingWithdrawal": "Submitting Withdrawal",
@@ -233,8 +243,6 @@
     "viewFullHistory": "View full history",
     "viewHistory": "View History",
     "viewTutorial": "View tutorial",
-    "waitingForWallet": "Waiting for wallet",
-    "waitlist": "Waitlist",
     "withdraw": "Withdraw",
     "withdrawalSuccessful": "Withdrawal Successful",
     "withdrawingLiquidity": "Withdrawing Liquidity",
@@ -259,7 +267,6 @@
   "changeInBalances": "Change In Balances",
   "changeOneClickTradingPreferencesInSettings": "You can change your 1CT preferences in Settings.",
   "changesApplied": "Changes Applied",
-  "chaosLabsAggregate": "Chaos Labs Aggregate",
   "chart": "Chart",
   "chartBuySellMarks": "Chart Buy/Sell Marks",
   "chartOrderLines": "Chart Order Lines",
@@ -267,6 +274,7 @@
   "checkBoxToContinue": "Check the box to continue.",
   "chooseAsset": "Choose Asset",
   "chooseMarket": "Choose Market",
+  "classicDepositUi": "Classic Deposit UI",
   "closeAll": "Close All",
   "closeAllPositionsDescription": "Are you sure you want to close all of your{{sideContent}} positions at market price?",
   "closeDirectionSide": "Close {{side}}",
@@ -417,7 +425,7 @@
       },
       "marginManagerSpreadMarginCalc": {
         "description": "The protocol gives a margin benefit for accounts with spot and perp positions that offset one another.",
-        "learnMore": "To learn how this is calculated, refer to <link>Spread Docs</link>.",
+        "learnMore": "To learn how this is calculated, refer to <action>Spread Docs</action>.",
         "title": "Spread Benefit"
       },
       "marginUsageInitial": {
@@ -684,6 +692,10 @@
       "content": "Enable position lines on the price chart.",
       "title": "Chart Position Lines"
     },
+    "settingsClassicDepositUi": {
+      "content": "Selecting this option will replace the new deposit flow with the classic deposit experience.",
+      "title": "Classic Deposit UI"
+    },
     "settingsDefaultMarginMode": {
       "content": "The default margin mode used for markets you have not traded before.",
       "title": "Default Margin Mode"
@@ -719,6 +731,30 @@
     "totalAccountBalance": {
       "content": "The total combined balance of all accounts shown. This does not include accounts created via our API.",
       "title": "Total Balance"
+    },
+    "tradingCompMinAccountValue": {
+      "content": "The minimum account value required to be eligible for this track.",
+      "title": "Min. Account Value"
+    },
+    "tradingCompMinTradingVolume": {
+      "content": "The minimum trading volume required to be eligible for this track.",
+      "title": "Min. Trading Volume"
+    },
+    "tradingCompRoi": {
+      "content": "Your return on investment over the competition period. This determines your rank on the ROI leaderboard.",
+      "title": "ROI"
+    },
+    "tradingCompRoiTrackEligibility": {
+      "content": "To be eligible for the ROI track, you must meet the minimum requirements shown above. Status updates hourly.",
+      "title": "Status"
+    },
+    "tradingCompVolume": {
+      "content": "Your total trading volume over the competition period. This determines your rank on the Volume leaderboard.",
+      "title": "Volume"
+    },
+    "tradingCompVolumeTrackEligibility": {
+      "content": "To be eligible for the Volume track, you must meet the minimum requirements shown above. Status updates hourly.",
+      "title": "Status"
     },
     "tradingOrderbookOpenOrder": {
       "content": "You have an order at this price level.",
@@ -784,18 +820,17 @@
     "closePosition": "{{priceType}} Close",
     "commandCenter": "Command Center",
     "connectCustomWallet": "Custom Wallet",
-    "connectWallet": "Connect",
     "crossChainDeposit": "Cross-Chain Deposit",
     "deposit": "Deposit",
     "editAccount": "Edit Account",
     "editColumns": "Edit Columns",
     "editOrderViaChart": "Modifying Order Price",
     "enableOneClickTrading": "Enable 1-Click Trading",
+    "enterReferralCode": "Enter Referral Code",
     "exportHistory": "Export History",
     "externalWalletDeposit": "External Wallet Deposit",
     "fastWithdraw": "Fast Withdraw",
     "helpCenter": "Help Center",
-    "keyFeaturesWelcome": "Welcome!",
     "manageTpSl": "Manage TP/SL",
     "marketDetails": "Market Details",
     "modifySl": "Modify SL",
@@ -841,7 +876,15 @@
     "seconds": "Seconds",
     "secondsAbbrev": "S"
   },
+  "earn": {
+    "label": "Earn",
+    "referralsDescription": "Invite friends and earn rewards",
+    "tradingCompetitionDescription": "Compete on the leaderboards for prizes",
+    "vaultDescription": "Provide liquidity and earn vault yield"
+  },
   "earningRate": "Earning {{formattedEffectiveAPY}}",
+  "ecosystem": "Ecosystem",
+  "ecosystemDescription": "View projects building on top of Nado",
   "editOrderViaChartDescription": "You can modify orders by dragging order lines on the chart. This results in the cancellation of the original order and placement of a new one. The order modification may fail if the price of the new order is invalid.",
   "emptyPlaceholders": {
     "balances": "Your balances will appear here.",
@@ -868,6 +911,7 @@
     "symbolBalance": "Your {{symbol}} balance will appear here.",
     "symbolEvents": "Your {{symbol}} events will appear here.",
     "trades": "Your trades will appear here.",
+    "tradingCompetitionLeaderboard": "Trading competition leaderboard data will appear here.",
     "transfers": "Your transfers will appear here.",
     "withdrawals": "Your withdrawals will appear here."
   },
@@ -895,6 +939,7 @@
     "closePositionFailed": "Close Position Failed",
     "confirmReferralFailed": "Confirm Referral Failed",
     "connectionError": "Connection Error",
+    "connectSocialAccountFailed": "Connect Social Account Failed",
     "deleteRefereeFailed": "Delete Referee Failed",
     "deleteReferralActiveAccount": "Cannot delete referral. Referee has an active account",
     "depositFailed": "Deposit Failed",
@@ -933,7 +978,6 @@
     "noAvailableBalancesToConvert": "No available balances to convert.",
     "noConnectedAddress": "No connected address found",
     "noEnsConnected": "No ENS Connected",
-    "noInvitesRemaining": "No Invites Remaining",
     "notBorrowingThisAsset": "You are not borrowing this asset.",
     "oneClickTradingApprovalRequired": "1-Click Trading Approval required.",
     "oneClickTradingNotEnabled": "1-Click Trading is not enabled.",
@@ -956,6 +1000,7 @@
     "removeMaxExceeded": "Amount exceeds your available withdrawable margin. Please reduce the entered amount.",
     "repayConvertMaxExceeded": "Amount exceeds maximum convert order size. Please reduce the entered amount.",
     "reversePositionFailed": "Reverse Position Failed",
+    "revokeSocialAccountFailed": "Disconnect Social Account Failed",
     "saveFailed": "Save Failed",
     "serverError": "Server error",
     "suborderSizeBelowMin": "Amount per suborder must be greater than minimum order size of {{minOrderSize}}. Please increase your order size.",
@@ -963,6 +1008,7 @@
     "symbolNotFoundDetailed": "Symbol not found: {{symbolInfo}}",
     "timeInForceInDaysInvalidInput": "Unable to recognize Time in Force. Please enter a number between 1 and 365.",
     "timeInForceInDaysOutOfRange": "Time in force must be between 1 and 365 days.",
+    "tradingCompetitionEnrollFailed": "Enrollment failed",
     "transferFailed": "Transfer Failed",
     "triggerPriceAbove": "{{orderTypeLabel}} price must be above the {{priceTypeLabel}}: {{formattedReferencePrice}}",
     "triggerPriceBelow": "{{orderTypeLabel}} price must be below the {{priceTypeLabel}}: {{formattedReferencePrice}}",
@@ -1028,6 +1074,7 @@
     "fromDisplayName": "From (display name)",
     "fundingPaymentAmount": "Funding Payment Amount",
     "interestPaymentAmount": "Interest Payment Amount",
+    "lastUpdated": "Last Updated",
     "liquidatedValue": "Liquidated Value",
     "liquidationId": "Liquidation ID",
     "marginType": "Margin Type",
@@ -1041,10 +1088,12 @@
     "product": "Product",
     "quoteChange": "Change in Quote",
     "realizedPnl": "Realized PnL",
+    "recipient": "Recipient",
     "reduceOnly": "Reduce Only",
     "referencePrice": "Reference Price",
     "runtimeSeconds": "Runtime (seconds)",
     "settlementAmount": "Settlement Amount",
+    "size": "Size",
     "status": "Status",
     "statusDetails": "Status Details",
     "time": "Time",
@@ -1052,12 +1101,15 @@
     "toDisplayName": "To (display name)",
     "total": "Total",
     "totalSize": "Total Size",
+    "tradeValue": "Trade Value",
     "triggerPrice": "Trigger Price",
     "type": "Type"
   },
   "exportTypes": {
+    "aggregatedTrades": "Trades › Aggregated",
     "deposits": "Deposits",
     "fundingPayments": "Funding Payments",
+    "individualTrades": "Trades › Individual",
     "interestPayments": "Interest Payments",
     "limitAndMarketOrders": "Orders › Limit & Market",
     "liquidations": "Liquidations",
@@ -1065,7 +1117,6 @@
     "settlements": "Perp Settlements",
     "stopOrders": "Orders › Stop Orders",
     "tpslOrders": "Orders › TP/SL",
-    "trades": "Trades",
     "transfers": "Transfers",
     "twapOrders": "Orders › TWAP",
     "withdrawals": "Withdrawals"
@@ -1108,6 +1159,10 @@
   "getStartedDescription": "Learn how to get set up on {{primaryChainName}} and deposit assets to start trading.",
   "getStartedOnChain": "Get started on {{primaryChainName}}",
   "helpCenter": {
+    "depositHelp": {
+      "description": "Get help with your deposit",
+      "title": "Deposit Help"
+    },
     "faq": {
       "description": "Answers to common questions",
       "title": "FAQ"
@@ -1130,7 +1185,6 @@
   "imageAltText": {
     "actionSymbol": "{{label}} {{symbol}}",
     "assetIcon": "Asset Icon",
-    "brandLogo": "Nado",
     "chainIcon": "Chain Icon",
     "depositAddressQRCode": "Nado Deposit Address QR Code",
     "editOrderField": "Edit order {{label}}",
@@ -1176,12 +1230,12 @@
   "isolatedAbbrev": "Iso",
   "isolatedLeverage": "Isolated {{leverage}}",
   "isolatedPositions": "Isolated Positions",
-  "isoUnrealizedPnl": "Iso. Unrealized PnL",
-  "keyFeatures": {
-    "collateralInterest": "All collateral earns interest",
-    "fastLiquidity": "Fast and deep liquidity",
-    "lowTradingFees": "Low trading fees"
+  "isoOnlyMarketsCrossMarginOverride": {
+    "description": "Allow cross margin mode on isolated-only markets (e.g. RWAs). Intended for market makers — when enabled, the isolated-only restriction is ignored in the UI and cross margin can be selected for these markets.",
+    "header": "Cross Margin Override",
+    "toggleLabel": "Enable cross margin on iso-only markets"
   },
+  "isoUnrealizedPnl": "Iso. Unrealized PnL",
   "lastChangeAllowedForThisWeek": "Last change allowed for this week",
   "lastPrice": "Last Price",
   "lastPriceAbbrev": "Last",
@@ -1238,15 +1292,12 @@
   "market": "Market",
   "marketCategory": {
     "all": "All",
-    "chains": "Chains",
     "commodities": "Commodities",
-    "defi": "DeFi",
-    "equities": "Equities",
-    "forex": "FX",
-    "indices": "Indices",
-    "memes": "Memes",
+    "crypto": "Crypto",
+    "forex": "Forex",
     "perps": "Perps",
-    "spot": "Spot"
+    "spot": "Spot",
+    "stocks": "Stocks"
   },
   "marketDelistedWarning": "{{marketName}} will be delisted",
   "marketDetails": "Market Details",
@@ -1255,6 +1306,31 @@
   "marketOpensIn": "Market opens in:",
   "marketOrder": "Market Order",
   "markets": "Markets",
+  "marketsPage": {
+    "allTimeVolume": "All Time Volume",
+    "annualized": "Annualized",
+    "avg24h": "24h Avg.",
+    "avg30d": "30d Avg.",
+    "avg3d": "3d Avg.",
+    "avg7d": "7d Avg.",
+    "fundingRates": "Funding Rates",
+    "gainersAndLosers": "Gainers & Losers",
+    "hotMarkets": "🔥 Hot Markets",
+    "markPrice": "Mark Price",
+    "moreDetails": "More Details",
+    "nextPayment": "Next Payment",
+    "openInterestAbbrev": "Open Int. {{symbol}}",
+    "predicted": "Predicted",
+    "recentlyAdded": "Recently Added",
+    "searchMarkets": "Search markets",
+    "spotIndexPrice": "Spot Index Price",
+    "subtitle24hChange": "24h Change",
+    "subtitle24hVolume": "24h Volume",
+    "topDepositRates": "Top Deposit Rates",
+    "topPredictedFunding": "Top Predicted Funding",
+    "trades24h": "24h Trades",
+    "volume24hWithSymbol": "24h Volume {{symbol}}"
+  },
   "marketStatus": "Market Status",
   "marketStatusLiveDescription": "Market is open for trading. The market will enter reduce-only mode at {{reduceOnlyTime}}.",
   "marketStatusReduceOnlyDescription": "Market is in reduce-only mode. You can close or reduce existing positions, but creating or increasing positions is not available until the market reopens at {{reopenTime}}.",
@@ -1282,13 +1358,13 @@
     "submitting": "Submitting",
     "transactionError": "Transaction Error"
   },
-  "missingWalletPrompt": "Don't see your wallet?",
   "modifyingOrder": "Modifying Order",
   "more": "More",
+  "nadoAccount": "Nado Account",
   "nadoDepositAddress": "Nado Deposit Address",
   "nadoDesktopWalletLink": "Nado Desktop Wallet Link",
   "name": "Name",
-  "navigateToAppLinkWithYourMobileDevice": "Navigate to <highlight>{{appLink}}</highlight> with your mobile device and tap the <highlight>Desktop Wallet Link</highlight> in the Connect dialog. Or scan the QR code below:",
+  "navigateToAppLinkWithYourMobileDevice": "Scan the QR code below with your mobile device:",
   "navigation": {
     "borrow": "Borrow",
     "deposit": "Deposit",
@@ -1305,8 +1381,10 @@
     "withdraw": "Withdraw"
   },
   "netBalance": "Net Balance",
+  "netDelta": "Net Delta",
   "netPnl": "Net PnL",
   "newMarket": "New market",
+  "newMarketTradingNotice": "This is a newly listed market. Spreads may be wider than usual and liquidity may be limited during the early trading period. Trade with caution and size positions accordingly.",
   "newRewards": "New Rewards",
   "nextSnapshot": "Next Snapshot",
   "nlpBalance": "NLP Balance",
@@ -1328,6 +1406,10 @@
       "remainingOrderCancelled": "The remaining portion of your {{marketName}} order was cancelled.",
       "title": "{{orderType}} Order Cancelled"
     },
+    "classicDepositUiNotification": {
+      "description": "You're using the new deposit flow. Switch back to the classic deposit experience anytime in Settings.",
+      "title": "New Deposit Experience"
+    },
     "closePositionAmountValue": "{{size}} ({{fraction}})",
     "copied": "Copied",
     "depositReceived": "Deposit Received",
@@ -1348,6 +1430,12 @@
       "description": "GM! You can now Deposit and use {{symbol}} as collateral. You can also trade {{marketName}}.",
       "title": "New Collateral & Spot Market"
     },
+    "newSpotMarkets": {
+      "content_one": "GM! We've added <highlight>one new spot market</highlight>",
+      "content_other": "GM! We've added <highlight>{{count}} new spot markets</highlight>",
+      "title_one": "New Collateral & Spot Market",
+      "title_other": "New Collateral & Spot Markets"
+    },
     "oneClickTradingRequired": "1-Click Trading Required",
     "orderPlaced": "{{orderType}} Order Placed",
     "orderPriceRange": "{{startPrice}} - {{endPrice}}",
@@ -1362,6 +1450,14 @@
     "smartContractWalletRequirement": "Smart contract wallets require 1-Click Trading to interact with the app. Please enable 1CT now.",
     "spotAndPerpLiquidated": "Your spot balance and perp position were liquidated.",
     "spotLiquidated": "Your spot balance was liquidated.",
+    "staleData": {
+      "body": "Your connection was interrupted or this tab was inactive. Reload to get the latest data.",
+      "title": "Stale Data"
+    },
+    "tradingCompEnrollSuccess": {
+      "body": "You're in. Track your ROI and Volume rankings on the leaderboards.",
+      "title": "Successfully Enrolled"
+    },
     "updating": "Updating…",
     "usdt0BridgeSuccess": {
       "description": "Your USDT deposit transaction has been submitted. Track the cross-chain delivery on LayerZero Scan.",
@@ -1371,7 +1467,6 @@
   },
   "notificationSettings": "Notification Settings",
   "notional": "Notional",
-  "noWalletPrompt": "Don't have a wallet?",
   "numberOfOrders": "Number of orders",
   "numDetails": "{{numTpSlOrders}} Details",
   "obtainTestnetFundsWithLimits": "Obtain testnet funds. 10 tokens per request. (95 for {{primaryQuoteTokenSymbol}})",
@@ -1396,11 +1491,11 @@
   "operational": "Operational",
   "oraclePrice": "Oracle Price",
   "oraclePriceAbbrev": "Oracle",
-  "oracleSpotIndexPrice": "Oracle (Spot Index Price)",
   "order": "Order",
   "orderAmount": "Order Amount",
   "orderbookAbbrev": "Book",
   "orderbookAnimations": "Orderbook Animations",
+  "orderbookOpenOrderMessage": "You have an order at this price level.",
   "orderCancelled": "Order Cancelled",
   "orderExpired": "Order expired",
   "orderHistory": "Order History",
@@ -1457,18 +1552,21 @@
     "faucet": "Faucet",
     "history": "History",
     "marginManager": "Margin Manager",
+    "markets": "Markets",
     "overview": "Overview",
     "perpetuals": "Perpetuals",
     "points": "Points",
     "portfolio": "Portfolio",
     "referrals": "Referrals",
     "spot": "Spot",
+    "tradingCompetition": "Trading Competition",
     "vault": "Nado Liquidity Provider (NLP)"
   },
   "partiallyFilled": "Partially Filled",
   "partialOrder": "Partial Order",
   "payingRate": "Paying {{formattedEffectiveAPY}}",
   "payment": "Payment",
+  "pendingBridgeDeposits": "Pending Bridge Deposits",
   "period": "{{period}}",
   "perp": "Perp",
   "perpetuals": "Perpetuals",
@@ -1499,6 +1597,11 @@
   "pnl": "PnL",
   "pnlValueWithPercentage": "{{pnlUsd}} ({{pnlFrac}})",
   "points": "Points",
+  "pointsBoostTooltip": {
+    "both": "{{takerBoost}}x Taker, {{makerBoost}}x Maker",
+    "maker": "{{makerBoost}}x Maker",
+    "taker": "{{takerBoost}}x Taker"
+  },
   "pointsTierShareDialog": {
     "shareTierXPostText": "Just hit {{tierName}} Tier on @nadoHQ! 🌪\nRanked #{{lastWeekRank}} last week | #{{allTimeRank}} all-time",
     "shareYourTier": "Share Your Tier"
@@ -1524,7 +1627,6 @@
   "priceDistribution": "Price Distribution",
   "priceRange": "Price Range",
   "priceRangeValue": "{{startPrice}} - {{endPrice}}",
-  "privateBeta": "Private Beta",
   "protocolFee": "Protocol fee",
   "qrCodeLoginDescription": "The QR code allows you to log in to your account from a mobile device.",
   "qrCodeTrustWarning": "Only scan the QR code with devices you trust.",
@@ -1538,14 +1640,14 @@
   "realizedPnl": "Realized PnL",
   "reason": "Reason",
   "receive": "Receive",
+  "recipient": "Recipient",
   "reduceOnly": "Reduce Only",
   "reduceOnlyStartsIn": "Reduce only starts in:",
   "reducePriceType": "{{priceType}} Reduce",
   "referrals": {
     "cannotDeleteRefereeWithTradingVolume": "Cannot delete referee with trading volume",
-    "invitesLeft": "Invites Left",
+    "enterReferralCodeDescription": "Have a referral code? Enter it below.",
     "joined": "Joined",
-    "pageDescription": "You're part of Nado's first wave. Trade to unlock 1 invite for every $250k in volume, up to 100 in total.",
     "referralCode": "Your Referral Code",
     "referredTraders": "Referred Traders",
     "referredUsers": "Referred Users",
@@ -1572,6 +1674,7 @@
     "flat": "Flat",
     "increasing": "Increasing"
   },
+  "scanningInvalidQrCodeNotice": "This is not a valid QR code for linking your wallet. Please click <highlight>{{revealButton}}</highlight> in the desktop app.",
   "scanQrCodeToLogin": "Scan the QR code on your desktop to log in.",
   "sell": "Sell",
   "sellAbbrev": "S",
@@ -1592,6 +1695,7 @@
   "short": "Short",
   "showAllMarkets": "All Markets",
   "showChart": "Show Chart",
+  "signInToTrade": "Sign in to trade",
   "singleSignatureSession": {
     "step1CreateSigningKey": "Step 1: Create Signing Key",
     "step2ApproveTransaction": "Step 2: Approve Transaction"
@@ -1648,6 +1752,7 @@
   "supportedAssets": "supported assets",
   "symbolBalance": "{{symbol}} Balance",
   "symbolOrEth": "{{symbol}} or ETH",
+  "symbolOrWrappedSymbol": "{{symbol}} or {{wrappedSymbol}}",
   "tabs": {
     "notifications": "Notifications"
   },
@@ -1704,6 +1809,7 @@
   "totalEquity": "Total Equity",
   "totalMarginInIsolatedPositions": "Total Margin in Isolated Positions",
   "totalPnl": "Total PnL",
+  "totals": "Totals",
   "totalSize": "Total Size",
   "totalSizeWithSymbol": "{{formattedSize}} {{symbol}}",
   "totalSupplied": "Total Supplied",
@@ -1711,18 +1817,10 @@
   "totalVolume": "Total Volume",
   "tpSl": "TP/SL",
   "tpslAbbrev": "TP/SL",
-  "tpslEstimatedPnlBoth": "Est. <0/> and <1/>",
-  "tpslEstimatedPnlParts": {
-    "sl": {
-      "loss": "SL loss of <0>{{usd}} (ROE: {{roe}})</0>",
-      "profit": "SL profit of <0>{{usd}} (ROE: {{roe}})</0>"
-    },
-    "tp": {
-      "loss": "TP loss of <0>{{usd}} (ROE: {{roe}})</0>",
-      "profit": "TP profit of <0>{{usd}} (ROE: {{roe}})</0>"
-    }
+  "tpslEstimatedPnl": {
+    "loss": "Est. loss of <highlight>{{usd}} (ROE: {{roe}})</highlight>",
+    "profit": "Est. profit of <highlight>{{usd}} (ROE: {{roe}})</highlight>"
   },
-  "tpslEstimatedPnlSingle": "Est. <0/>",
   "trade": "Trade",
   "tradeHistory": "Trade History",
   "tradePerpContracts": "Trade perp contracts",
@@ -1733,9 +1831,13 @@
   "tradingChart": {
     "backfillMark": "BF",
     "backfillMarkTooltip": "Candlesticks before this time are backfilled with external data",
+    "broker": {
+      "notTradableReason": "Connect your wallet to start trading",
+      "placeOrderFailed": "Place Order Failed",
+      "tradingAccount": "Trading Account"
+    },
     "dragToAdjustPriceTooltip": "Drag to adjust price",
     "estLiquidationLabel": "Est. Liquidation ({{marginTypeLabel}})",
-    "orderLineLabel": "{{orderTypeLabel}} ({{marginTypeLabel}}) {{comparator}} {{formattedPrice}}",
     "pnlLabel": "PnL {{formattedPnl}} ({{marginTypeLabel}})",
     "tooltips": {
       "crossLiquidationPriceDesc": "Cross margin liquidation prices are less accurate as they depend on overall account equity.",
@@ -1746,8 +1848,45 @@
     },
     "tradeMarkTooltip": "{{formattedTime}}: {{formattedSize}}@{{formattedPrice}}"
   },
+  "tradingCompetition": {
+    "accountValueRequirementNotMet": "Account value requirement not met",
+    "bothRequirementsNotMet": "Both requirements not met",
+    "competitionEnded": "Competition ended",
+    "competitionEndsIn": "Competition ends in",
+    "competitionStartsIn": "Competition starts in",
+    "depositMoreForTrackEligibility": "Deposit {{amount}} more to be eligible for {{track}}",
+    "eligibility": "Eligibility",
+    "enrolled": "Enrolled",
+    "enrolling": "Enrolling",
+    "enrollNow": "Enroll now",
+    "initialDepositRequired": "Make an initial deposit to participate",
+    "lastUpdatedAt": "Last updated at {{time}}",
+    "leaderboard": "Leaderboard",
+    "minAccountValue": "Min. Account Value",
+    "minTradingVolume": "Min. Trading Volume",
+    "notEnrolled": "Not enrolled",
+    "notificationDescription": "$100k on the line. 7 days to compete.<linebreak />Trade your way onto either leaderboard - ROI and Volume. Top 10 on each get paid.",
+    "notificationTitle": "Trading Competition",
+    "prize": "Prize",
+    "qualified": "Qualified",
+    "rankDisplay": "Rank <rank>#{{rank}}</rank>",
+    "restrictedRegion": {
+      "description": "You are trying to access this page from a restricted area. The trading competition is not available in your region.",
+      "title": "Region Restricted"
+    },
+    "status": "Status",
+    "totalPrizePool": "Total Prize Pool",
+    "totalPrizePoolDescription": "{{prizePoolAmount}} in prizes across two leaderboards. ROI rewards precision, volume rewards conviction. Both pay out in cash to the traders who perform. Refer a friend that places in the competition and earn a referral cash bonus. Choose who you bring carefully. Leaderboard and status update hourly.",
+    "tracks": {
+      "roi": "ROI",
+      "volume": "Volume"
+    },
+    "trackTitle": "{{track}} Track",
+    "trader": "Trader",
+    "volumeRequirementNotMet": "Volume requirement not met"
+  },
   "tradingConsole": "Trading Console",
-  "tradingConsoleLocation": "Trading Console Location",
+  "tradingGridLayout": "Grid Layout",
   "tradingPageTitle": "{{price}} {{marketName}} | Nado",
   "transaction": "Transaction",
   "transactionCost": "Transaction Cost",
@@ -1813,14 +1952,13 @@
   "volume30d": "30d Volume",
   "volumeSymbol": "Volume {{primaryQuoteTokenSymbol}}",
   "wallet": "Wallet",
-  "walletConnect": "WalletConnect",
-  "walletConnectSupportsManyOptions": "WalletConnect supports 50+ options",
   "walletDeposit": "Wallet Deposit",
   "website": "Website",
   "weeklyActivationsRemaining": "Weekly activations remaining",
-  "weeklyPoints": "Weekly Points",
+  "weeklyPoints": "Est. Weekly Points",
   "weeklyRank": "Weekly Rank",
   "withdraw": "Withdraw",
+  "withdrawalDestinationDisclosure": "The withdrawal will be sent to <highlight>{{destinationLabel}}</highlight> on <highlight>{{chainName}}</highlight>.",
   "withdrawals": "Withdrawals",
   "withdrawalsSubmittedOnChainOnceGasThresholdReached": "Withdrawals will be submitted on-chain once the gas threshold is reached.",
   "withdrawalStatus": {
@@ -1830,10 +1968,20 @@
   "withdrawingBorrowedFunds": "Withdrawing Borrowed Funds",
   "withdrawLiquidity": "Withdraw Liquidity",
   "withdrawNlpLiquidity": "Withdraw NLP Liquidity",
+  "xPoints": "xPoints",
+  "xStocksDepositDisclosure": {
+    "description": "Only wrapped xStocks tokens are accepted. To wrap an xStocks token please visit <action>here</action>.",
+    "title": "Wrapping xStocks"
+  },
+  "xStocksLaunchPromo": {
+    "description": "Deposit xSPY & xQQQ as collateral.",
+    "title": "xStocks Available"
+  },
   "yes": "Yes",
   "yourAccounts": "Your Accounts",
   "yourPosition": "Your Position",
   "yourPositions": "Your positions",
   "yourWeeklyTier": "Your Weekly Tier",
-  "youWillReceive": "You will receive"
+  "youWillReceive": "You will receive",
+  "zeroFees": "0 Fees"
 }

@@ -22,6 +22,10 @@ interface ContainerProps extends WithClassnames, WithChildren {
   flashOnMount?: boolean;
   definitionId?: DefinitionTooltipID;
   enableAnimations: boolean;
+  // Highlights rows in the center-to-hover sweep range.
+  isInHoveredRange?: boolean;
+  // Draws the sweep boundary on the hovered row.
+  showHoverBoundary?: boolean;
 }
 
 function Container({
@@ -34,6 +38,8 @@ function Container({
   flashOnMount,
   definitionId,
   enableAnimations,
+  isInHoveredRange,
+  showHoverBoundary,
 }: WithChildren<ContainerProps>) {
   const shouldFlash = useShouldFlash({
     flashKey,
@@ -47,6 +53,9 @@ function Container({
 
     return isSell ? 'bg-negative/20' : 'bg-positive/20';
   })();
+  const rowHoverClassName = isSell
+    ? 'hover:bg-negative/20'
+    : 'hover:bg-positive/20';
   const highlightWidthPercentage = clamp(
     highlightWidthFraction.times(100).toNumber(),
     0,
@@ -63,14 +72,19 @@ function Container({
       <Button
         onClick={onClick}
         className={mergeClassNames(
-          'group relative flex gap-x-1 transition-colors duration-150',
+          'group relative isolate flex gap-x-1 transition-colors duration-150',
           'text-text-secondary text-xs tabular-nums',
-          isSell ? 'hover:bg-negative/20' : 'hover:bg-positive/20',
+          rowHoverClassName,
           flashClassName,
           CONTAINER_PADDING_CLASSNAMES,
           className,
         )}
       >
+        {/* Overlay instead of row bg, which is already used by the flash
+            animations. Kept behind row content and depth bars via -z-10. */}
+        {isInHoveredRange && (
+          <div className="bg-overlay-hover absolute inset-0 -z-10" />
+        )}
         <div
           className={joinClassNames(
             'absolute inset-0 border-l',
@@ -83,6 +97,15 @@ function Container({
           }}
         />
         {children}
+        {showHoverBoundary && (
+          <div
+            className={joinClassNames(
+              'border-text-tertiary absolute right-0 left-0 border-dashed',
+              // Asks render with reverseRows, so the boundary visually faces away from the center price on each side.
+              isSell ? 'top-0 border-t' : 'bottom-0 border-b',
+            )}
+          />
+        )}
       </Button>
     </DefinitionTooltip>
   );

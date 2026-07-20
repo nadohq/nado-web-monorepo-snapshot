@@ -3,11 +3,11 @@ import { joinClassNames } from '@nadohq/web-common';
 import {
   BaseDefinitionTooltip,
   formatTimestamp,
+  StatusIndicator,
   TimeFormatSpecifier,
 } from '@nadohq/web-ui';
 import { TextCountdown } from 'client/components/Countdown/TextCountdown';
 import { MarketInfoCard } from 'client/components/MarketInfoCard';
-import { StatusIndicator } from 'client/components/StatusIndicator';
 import { useTranslation } from 'react-i18next';
 
 interface Props {

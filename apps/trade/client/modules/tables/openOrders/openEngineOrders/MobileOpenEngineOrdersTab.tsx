@@ -12,7 +12,7 @@ import { QuoteAmount } from 'client/modules/tables/components/QuoteAmount';
 import { useOpenEngineOrdersTable } from 'client/modules/tables/openOrders/openEngineOrders/useOpenEngineOrdersTable';
 import { MobileDataTabCard } from 'client/modules/tables/tabs/mobile/components/MobileDataTabCard';
 import { MobileDataTabCards } from 'client/modules/tables/tabs/mobile/components/MobileDataTabCards';
-import { ORDER_DISPLAY_TYPES } from 'client/modules/trading/consts/orderDisplayTypes';
+import { ORDER_DISPLAY_TYPES_BY_CATEGORY } from 'client/modules/trading/consts/orderDisplayTypesByCategory';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -33,7 +33,7 @@ export function MobileOpenEngineOrdersTab({ productIds }: Props) {
       <CancelOrdersButtons
         cancelOrdersFilter={{
           productIds,
-          orderDisplayTypes: ORDER_DISPLAY_TYPES.engine,
+          orderDisplayTypes: ORDER_DISPLAY_TYPES_BY_CATEGORY.engine,
         }}
       />
       {data?.map((order) => {

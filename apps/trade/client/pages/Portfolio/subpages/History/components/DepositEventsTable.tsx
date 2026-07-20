@@ -1,15 +1,18 @@
 import { CustomNumberFormatSpecifier } from '@nadohq/react-client';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HeaderCell } from 'client/components/DataTable/cells/HeaderCell';
-import { MarketProductInfoCell } from 'client/components/DataTable/cells/MarketProductInfoCell';
+import { TableCell } from 'client/components/DataTable/cells/TableCell';
 import { DataTable } from 'client/components/DataTable/DataTable';
 import { bigNumberSortFn } from 'client/components/DataTable/utils/sortingFns';
+import { ProductLabel } from 'client/components/ProductLabel';
 import { DepositCollateralEvent } from 'client/modules/events/collateral/types';
 import { AmountWithSymbolCell } from 'client/modules/tables/cells/AmountWithSymbolCell';
 import { CurrencyCell } from 'client/modules/tables/cells/CurrencyCell';
 import { DateTimeCell } from 'client/modules/tables/cells/DateTimeCell';
 import { TABLE_CELL_CONTAINER_CLASSNAME } from 'client/modules/tables/consts';
 import { EmptyTablePlaceholder } from 'client/modules/tables/EmptyTablePlaceholder';
+import { useEnableClassicDepositUi } from 'client/modules/trading/hooks/useEnableClassicDepositUi';
+import { PendingDepositsLinks } from 'client/pages/Portfolio/subpages/History/components/PendingDepositsLinks';
 import { useDepositEventsTable } from 'client/pages/Portfolio/subpages/History/hooks/useDepositEventsTable';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +30,8 @@ export function DepositEventsTable({ pageSize, showPagination }: Props) {
   const { mappedData, pagination, isLoading } = useDepositEventsTable({
     pageSize,
   });
+
+  const { enableClassicDepositUi } = useEnableClassicDepositUi();
 
   const columns: ColumnDef<DepositCollateralEvent, any>[] = useMemo(() => {
     return [
@@ -49,10 +54,12 @@ export function DepositEventsTable({ pageSize, showPagination }: Props) {
         cell: (context) => {
           const metadata = context.getValue<DepositCollateralEvent['token']>();
           return (
-            <MarketProductInfoCell
-              symbol={metadata.symbol}
-              iconSrc={metadata.icon.asset}
-            />
+            <TableCell>
+              <ProductLabel
+                symbol={metadata.symbol}
+                iconSrc={metadata.icon.asset}
+              />
+            </TableCell>
           );
         },
         enableSorting: false,
@@ -91,12 +98,15 @@ export function DepositEventsTable({ pageSize, showPagination }: Props) {
   }, [t]);
 
   return (
-    <DataTable
-      columns={columns}
-      data={mappedData}
-      isLoading={isLoading}
-      pagination={showPagination ? pagination : undefined}
-      emptyState={<EmptyTablePlaceholder type="history_deposits" />}
-    />
+    <div className="flex flex-col">
+      {enableClassicDepositUi && <PendingDepositsLinks />}
+      <DataTable
+        columns={columns}
+        data={mappedData}
+        isLoading={isLoading}
+        pagination={showPagination ? pagination : undefined}
+        emptyState={<EmptyTablePlaceholder type="history_deposits" />}
+      />
+    </div>
   );
 }

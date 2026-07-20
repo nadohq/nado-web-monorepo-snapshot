@@ -15,12 +15,9 @@ import { useTranslation } from 'react-i18next';
 
 interface Props {
   isSmartContractWalletConnected: boolean | undefined;
-
-  onEnableSuccess(): void;
 }
 
 export function SignatureModeEnable1CTDialogContent({
-  onEnableSuccess,
   isSmartContractWalletConnected,
 }: Props) {
   const { t } = useTranslation();
@@ -35,9 +32,7 @@ export function SignatureModeEnable1CTDialogContent({
     setSavePrivateKey,
     requiresSingleSignatureSetup,
     skipSignOnceSuggestion,
-  } = useSignatureModeEnable1CTDialogContent({
-    onEnableSuccess,
-  });
+  } = useSignatureModeEnable1CTDialogContent();
 
   const userStateErrorButtonProps = useButtonUserStateErrorProps({
     handledErrors: HANDLED_BUTTON_USER_STATE_ERRORS.onlyIncorrectConnectedChain,

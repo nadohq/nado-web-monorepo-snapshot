@@ -5,8 +5,6 @@ export interface BaseClientEnv {
   dataEnv: DataEnv;
   // Enables any WIP / experimental features
   enableExperimentalFeatures: boolean;
-  // Enables beta gating
-  enableBetaGating: boolean;
   // An identifier for the current build
   buildId: string;
 }
@@ -19,5 +17,4 @@ export const baseClientEnv: BaseClientEnv = {
     process.env.NEXT_PUBLIC_ENABLE_EXPERIMENTAL_FEATURES === 'true',
   dataEnv,
   buildId: process.env.NEXT_PUBLIC_BUILD_ID ?? 'dev',
-  enableBetaGating: process.env.NEXT_PUBLIC_ENABLE_BETA_GATING === 'true',
 };

@@ -2,6 +2,7 @@
  * Product IDs that are referenced in multiple places in the codebase.
  */
 export const KNOWN_PRODUCT_IDS = {
+  kbtc: 1,
   btcPerp: 2,
   weth: 3,
   ethPerp: 4,
@@ -9,4 +10,22 @@ export const KNOWN_PRODUCT_IDS = {
   xrpPerp: 8,
   solPerp: 10,
   bnbPerp: 14,
+  qqqPerp: 98,
+  qqqx: 115,
+  spyPerp: 100,
+  spyx: 117,
+  aaplPerp: 102,
+  amznPerp: 104,
+  googlPerp: 106,
+  metaPerp: 108,
+  msftPerp: 110,
+  nvdaPerp: 112,
+  tslaPerp: 114,
+  aaplx: 143,
+  amznx: 145,
+  googlx: 147,
+  metax: 149,
+  msftx: 151,
+  nvdax: 153,
+  tslax: 155,
 } as const;

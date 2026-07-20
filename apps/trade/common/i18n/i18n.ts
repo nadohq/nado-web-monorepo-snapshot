@@ -5,8 +5,6 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 if (!i18n.isInitialized) {
   i18n.use(LanguageDetector).init({
-    // disable i18next+locize advertisement console.info on init
-    showSupportNotice: false,
     // enable additional logging on dev/testnet
     debug: baseClientEnv.enableExperimentalFeatures,
 

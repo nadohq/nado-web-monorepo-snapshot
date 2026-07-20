@@ -1,18 +1,28 @@
-import { WithdrawErrorType } from 'client/modules/collateral/withdraw/types';
+import {
+  WithdrawErrorType,
+  WithdrawFormValues,
+} from 'client/modules/collateral/withdraw/types';
+import { watchFormError } from 'client/utils/form/watchFormError';
+import { UseFormReturn } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 interface Params {
-  formError: WithdrawErrorType | undefined;
+  form: UseFormReturn<WithdrawFormValues>;
   suggestBorrowing: boolean;
 }
 
 export function useWithdrawAmountErrorTooltipContent({
-  formError,
+  form,
   suggestBorrowing,
 }: Params) {
   const { t } = useTranslation();
 
-  if (!formError) {
+  const amountError: WithdrawErrorType | undefined = watchFormError(
+    form,
+    'amount',
+  );
+
+  if (!amountError) {
     return null;
   }
 
@@ -22,5 +32,6 @@ export function useWithdrawAmountErrorTooltipContent({
       : t(($) => $.errors.withdrawAmountExceedsBorrowable),
     below_min: t(($) => $.errors.withdrawAmountBelowMinFee),
     invalid_input: t(($) => $.errors.invalidAmountInput),
-  }[formError];
+    invalid_address: null,
+  }[amountError];
 }

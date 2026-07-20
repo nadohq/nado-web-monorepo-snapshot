@@ -2,9 +2,10 @@
 
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HeaderCell } from 'client/components/DataTable/cells/HeaderCell';
-import { MarketProductInfoCell } from 'client/components/DataTable/cells/MarketProductInfoCell';
+import { TableCell } from 'client/components/DataTable/cells/TableCell';
 import { DataTable } from 'client/components/DataTable/DataTable';
 import { bigNumberSortFn } from 'client/components/DataTable/utils/sortingFns';
+import { ProductLabel } from 'client/components/ProductLabel';
 import { AmountWithSymbolCell } from 'client/modules/tables/cells/AmountWithSymbolCell';
 import { PnlCell } from 'client/modules/tables/cells/PnlCell';
 import { TABLE_CELL_CONTAINER_CLASSNAME } from 'client/modules/tables/consts';
@@ -35,10 +36,12 @@ export function TradingSpreadsTable({ productIds }: Props) {
         cell: ({ getValue }) => {
           const metadata = getValue<TradingSpreadTableItem['metadata']>();
           return (
-            <MarketProductInfoCell
-              symbol={metadata.symbol}
-              iconSrc={metadata.icon.asset}
-            />
+            <TableCell>
+              <ProductLabel
+                symbol={metadata.symbol}
+                iconSrc={metadata.icon.asset}
+              />
+            </TableCell>
           );
         },
         enableSorting: false,

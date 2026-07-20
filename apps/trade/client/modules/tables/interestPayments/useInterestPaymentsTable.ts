@@ -4,7 +4,10 @@ import {
   QUOTE_PRODUCT_ID,
   removeDecimals,
 } from '@nadohq/client';
-import { SpotProductMetadata } from '@nadohq/react-client';
+import {
+  SpotProductMetadata,
+  toXStocksDisplayAmount,
+} from '@nadohq/react-client';
 import { nonNullFilter } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
 import { useDataTablePaginatedQuery } from 'client/components/DataTable/hooks/useDataTablePaginatedQuery';
@@ -14,6 +17,7 @@ import { getStaticMarketDataForProductId } from 'client/hooks/query/markets/allM
 import { SpotStaticMarketData } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
 import { usePaginatedSubaccountPaymentEvents } from 'client/hooks/query/subaccount/usePaginatedSubaccountPaymentEvents';
 import { MarginModeType } from 'client/modules/localstorage/userState/types/tradingSettings';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { createRowId } from 'client/utils/createRowId';
 import { secondsToMilliseconds } from 'date-fns';
 import { useMemo } from 'react';
@@ -40,6 +44,7 @@ function extractItems(data: GetIndexerInterestFundingPaymentsResponse) {
 
 export function useInterestPaymentsTable({ pageSize }: Params) {
   const { data: allMarketsStaticData } = useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const productIds = allMarketsStaticData
     ? [QUOTE_PRODUCT_ID, ...allMarketsStaticData.spotMarketsProductIds]
@@ -73,7 +78,12 @@ export function useInterestPaymentsTable({ pageSize }: Params) {
         }
 
         const { metadata } = spotProduct;
-        const interestPaidAmount = removeDecimals(item.paymentAmount);
+        const rawInterestPaidAmount = removeDecimals(item.paymentAmount);
+        const exchangeRate = getExchangeRate(item.productId);
+        const interestPaidAmount = toXStocksDisplayAmount(
+          rawInterestPaidAmount,
+          exchangeRate,
+        );
 
         const marginModeType: MarginModeType = item.isolated
           ? 'isolated'
@@ -84,10 +94,13 @@ export function useInterestPaymentsTable({ pageSize }: Params) {
           timestampMillis: secondsToMilliseconds(item.timestamp.toNumber()),
           submissionIndex: item.submissionIndex,
           metadata,
-          balanceAmount: removeDecimals(item.balanceAmount),
+          balanceAmount: toXStocksDisplayAmount(
+            removeDecimals(item.balanceAmount),
+            exchangeRate,
+          ),
           interestRateFrac: item.annualPaymentRate,
           interestPaidAmount,
-          valueUsd: interestPaidAmount.multipliedBy(item.oraclePrice),
+          valueUsd: rawInterestPaidAmount.multipliedBy(item.oraclePrice),
           marginModeType,
           rowId: createRowId(
             item.submissionIndex,
@@ -97,7 +110,7 @@ export function useInterestPaymentsTable({ pageSize }: Params) {
         };
       })
       .filter(nonNullFilter);
-  }, [allMarketsStaticData, currentPageData]);
+  }, [allMarketsStaticData, currentPageData, getExchangeRate]);
 
   return {
     mappedData,

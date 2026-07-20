@@ -2,6 +2,8 @@ import { useMarketRestrictions } from '@nadohq/react-client';
 import { useAllMarkets } from 'client/hooks/markets/useAllMarkets';
 import { MarginMode } from 'client/modules/localstorage/userState/types/tradingSettings';
 import { useSavedUserState } from 'client/modules/localstorage/userState/useSavedUserState';
+import { getIsIsolatedOnly } from 'client/modules/trading/utils/getIsIsolatedOnly';
+import { resolvePerpMarginMode } from 'client/modules/trading/utils/resolvePerpMarginMode';
 import { useCallback, useMemo } from 'react';
 
 export function useSelectedPerpMarginMode(productId: number | undefined) {
@@ -11,8 +13,12 @@ export function useSelectedPerpMarginMode(productId: number | undefined) {
   const leverageByProductId = savedUserState.trading.leverageByProductId;
   const marginModeSettings = savedUserState.trading.marginMode;
 
-  const isIsolatedOnly =
-    !!productId && Boolean(marketRestrictions?.[productId]?.isolatedOnly);
+  const isIsolatedOnly = getIsIsolatedOnly({
+    productId,
+    marketRestrictions,
+    enableCrossMarginForIsoOnlyMarkets:
+      savedUserState.trading.enableCrossMarginForIsoOnlyMarkets,
+  });
 
   const market = productId ? allMarketsData?.perpMarkets[productId] : undefined;
   const maxLeverage = market?.maxLeverage ?? 1;
@@ -57,50 +63,21 @@ export function useSelectedPerpMarginMode(productId: number | undefined) {
     ? marginModeSettings.lastSelected[productId]
     : undefined;
 
-  const selectedMarginMode = useMemo((): MarginMode => {
-    const selectedLeverage = Math.min(
-      savedMarginModeForProduct?.leverage ?? maxLeverage,
+  const selectedMarginMode = useMemo(
+    (): MarginMode =>
+      resolvePerpMarginMode({
+        isIsolatedOnly,
+        marketMaxLeverage: maxLeverage,
+        savedMarginModeForProduct,
+        defaultMarginModeType: marginModeSettings.default,
+      }),
+    [
+      isIsolatedOnly,
+      marginModeSettings.default,
       maxLeverage,
-    );
-    const selectedIsoEnableBorrows =
-      savedMarginModeForProduct?.enableBorrows ?? true;
-
-    if (isIsolatedOnly) {
-      return {
-        mode: 'isolated',
-        leverage: selectedLeverage,
-        enableBorrows: selectedIsoEnableBorrows,
-      };
-    }
-
-    if (!savedMarginModeForProduct) {
-      switch (marginModeSettings.default) {
-        case 'isolated':
-          return {
-            mode: 'isolated',
-            // Without a saved setting, these will just be computed as defaults
-            leverage: selectedLeverage,
-            enableBorrows: selectedIsoEnableBorrows,
-          };
-        case 'cross':
-          return {
-            mode: 'cross',
-            leverage: selectedLeverage,
-          };
-      }
-    }
-
-    // Perform a sanity check on the saved leverage selection
-    return {
-      ...savedMarginModeForProduct,
-      leverage: selectedLeverage,
-    };
-  }, [
-    isIsolatedOnly,
-    marginModeSettings.default,
-    maxLeverage,
-    savedMarginModeForProduct,
-  ]);
+      savedMarginModeForProduct,
+    ],
+  );
 
   const setSelectedMarginMode = useCallback(
     (newValue: MarginMode) => {
@@ -124,5 +101,6 @@ export function useSelectedPerpMarginMode(productId: number | undefined) {
     setSelectedCrossMarginLeverage,
     selectedMarginMode,
     setSelectedMarginMode,
+    isIsolatedOnly,
   };
 }

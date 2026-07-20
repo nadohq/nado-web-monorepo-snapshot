@@ -1,6 +1,6 @@
 import {
   formatNumber,
-  getMarketPriceFormatSpecifier,
+  NumberFormatSpecifier,
   PresetNumberFormatSpecifier,
   signDependentValue,
 } from '@nadohq/react-client';
@@ -18,14 +18,14 @@ import { useTranslation } from 'react-i18next';
 
 interface Props {
   lastPrice: BigNumber | undefined;
-  priceIncrement: BigNumber | undefined;
+  priceFormatSpecifier: NumberFormatSpecifier;
   setPriceInput: (val: BigNumber) => void;
   spread: OrderbookSpreadData | undefined;
 }
 
 export function OrderbookPriceBox({
   lastPrice,
-  priceIncrement,
+  priceFormatSpecifier,
   setPriceInput,
   spread,
   className,
@@ -54,7 +54,7 @@ export function OrderbookPriceBox({
       >
         <div>
           {formatNumber(lastPrice, {
-            formatSpecifier: getMarketPriceFormatSpecifier(priceIncrement),
+            formatSpecifier: priceFormatSpecifier,
           })}{' '}
           {signDependentValue(lastPriceChange, {
             positive: '↑',

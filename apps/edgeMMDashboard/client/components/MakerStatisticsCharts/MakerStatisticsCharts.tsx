@@ -1,7 +1,6 @@
 import {
   getIntervalAxisFormatter,
   largeNumberAbbreviatedAxisFormatter,
-  largeNumberAsExponentialAxisFormatter,
   percentageAxisFormatter,
 } from 'client/components/MakerStatisticsCharts/MakerMetricChart/axisFormatters';
 import { MakerMetricChart } from 'client/components/MakerStatisticsCharts/MakerMetricChart/MakerMetricChart';
@@ -103,7 +102,7 @@ export function MakerStatisticsCharts({ productId, epoch, interval }: Props) {
           tickFormatter: xAxisTickFormatter,
         }}
         yAxisProps={{
-          tickFormatter: largeNumberAsExponentialAxisFormatter,
+          tickFormatter: largeNumberAbbreviatedAxisFormatter,
           scale: 'log',
         }}
         chartType="line"
@@ -119,7 +118,7 @@ export function MakerStatisticsCharts({ productId, epoch, interval }: Props) {
           tickFormatter: xAxisTickFormatter,
         }}
         yAxisProps={{
-          tickFormatter: largeNumberAsExponentialAxisFormatter,
+          tickFormatter: largeNumberAbbreviatedAxisFormatter,
           scale: 'log',
         }}
         chartType="line"
@@ -135,7 +134,7 @@ export function MakerStatisticsCharts({ productId, epoch, interval }: Props) {
           tickFormatter: xAxisTickFormatter,
         }}
         yAxisProps={{
-          tickFormatter: largeNumberAsExponentialAxisFormatter,
+          tickFormatter: largeNumberAbbreviatedAxisFormatter,
           scale: 'log',
         }}
         chartType="line"

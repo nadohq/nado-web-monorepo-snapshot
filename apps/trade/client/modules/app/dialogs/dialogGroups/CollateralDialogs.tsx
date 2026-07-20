@@ -1,6 +1,6 @@
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { CctpBridgeDialog } from 'client/modules/collateral/deposit/CctpBridgeDialog/CctpBridgeDialog';
-import { DepositOptionsDialog } from 'client/modules/collateral/deposit/DepositOptionsDialog/DepositOptionsDialog';
+import { DepositDialogEntrypoint } from 'client/modules/collateral/deposit/DepositDialogEntrypoint';
 import { DirectDepositReceiveDialog } from 'client/modules/collateral/deposit/DirectDepositReceiveDialog/DirectDepositReceiveDialog';
 import { LiFiWidgetDialog } from 'client/modules/collateral/deposit/LiFiWidgetDialog/LiFiWidgetDialog';
 import { Usdt0BridgeDialog } from 'client/modules/collateral/deposit/Usdt0BridgeDialog/Usdt0BridgeDialog';
@@ -17,8 +17,10 @@ export function CollateralDialogs() {
       {currentDialog?.type === 'wallet_deposit' && (
         <WalletDepositDialog {...currentDialog.params} />
       )}
-      {currentDialog?.type === 'deposit_options' && (
-        <DepositOptionsDialog {...currentDialog.params} />
+      {currentDialog?.type === 'deposit_entrypoint' && (
+        <DepositDialogEntrypoint
+          initialProductId={currentDialog.params.initialProductId}
+        />
       )}
       {currentDialog?.type === 'withdraw' && (
         <WithdrawDialog

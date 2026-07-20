@@ -1,5 +1,6 @@
 import {
   BalanceSide,
+  BigNumberish,
   ChainEnv,
   GetEngineMaxOrderSizeParams,
   toBigNumber,
@@ -16,9 +17,10 @@ import { useMemo } from 'react';
 
 export type UseQueryMaxOrderSizeParams = Omit<
   GetEngineMaxOrderSizeParams,
-  'subaccountOwner' | 'subaccountName' | 'price'
+  'subaccountOwner' | 'subaccountName' | 'price' | 'avgPrice'
 > & {
-  price: BigNumber | number;
+  price: BigNumberish;
+  avgPrice?: BigNumberish;
 };
 
 export function maxOrderSizeQueryKey(
@@ -28,6 +30,7 @@ export function maxOrderSizeQueryKey(
   productId?: number,
   side?: BalanceSide,
   price?: BigNumber,
+  avgPrice?: BigNumber,
   reduceOnly?: boolean,
   spotLeverage?: boolean,
   isoBorrowMargin?: boolean,
@@ -40,6 +43,7 @@ export function maxOrderSizeQueryKey(
     productId,
     side,
     price?.toString(),
+    avgPrice?.toString() ?? null,
     reduceOnly ?? null,
     spotLeverage ?? null,
     isoBorrowMargin ?? null,
@@ -58,6 +62,8 @@ export function useQueryMaxOrderSize(params?: UseQueryMaxOrderSizeParams) {
     return {
       ...params,
       price: toBigNumber(params.price),
+      avgPrice:
+        params.avgPrice != null ? toBigNumber(params.avgPrice) : undefined,
       subaccountOwner: currentSubaccount.address,
       subaccountName: currentSubaccount.name,
     };
@@ -73,6 +79,7 @@ export function useQueryMaxOrderSize(params?: UseQueryMaxOrderSizeParams) {
       queryParams?.productId,
       queryParams?.side,
       queryParams?.price,
+      queryParams?.avgPrice,
       queryParams?.reduceOnly,
       queryParams?.spotLeverage,
       queryParams?.isoBorrowMargin,

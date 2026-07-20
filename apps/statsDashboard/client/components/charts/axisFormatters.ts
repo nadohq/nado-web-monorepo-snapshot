@@ -65,16 +65,6 @@ export function integerNumberAxisFormatter(value: number): string {
 }
 
 /**
- * Formats larger numbers on the y axis as exponential representation ex. 1.56e6
- * @param value as number
- */
-export function largeNumberAsExponentialAxisFormatter(value: number): string {
-  return formatNumber(value, {
-    formatSpecifier: '.3',
-  });
-}
-
-/**
  * Formats percentages on the y axis
  * @param value as fraction
  */

@@ -1,15 +1,14 @@
 import { MarketDataTabs } from 'client/modules/trading/components/MarketDataTabs';
-import { LargeScreenTradingLayout } from 'client/modules/trading/layout/LargeScreenTradingLayout';
+import { TabletGridTradingLayout } from 'client/modules/trading/layout/TabletGridTradingLayout';
 import { TradingLayoutProps } from 'client/modules/trading/layout/types';
 
 export function TabletTradingLayout({
   productId,
-  marketSwitcherDefaultCategory,
   InfoCards,
   OrderPlacement,
 }: TradingLayoutProps) {
   return (
-    <LargeScreenTradingLayout
+    <TabletGridTradingLayout
       heroComponent={
         <MarketDataTabs
           className="h-full"
@@ -18,7 +17,6 @@ export function TabletTradingLayout({
         />
       }
       productId={productId}
-      marketSwitcherDefaultCategory={marketSwitcherDefaultCategory}
       InfoCards={InfoCards}
       OrderPlacement={OrderPlacement}
     />

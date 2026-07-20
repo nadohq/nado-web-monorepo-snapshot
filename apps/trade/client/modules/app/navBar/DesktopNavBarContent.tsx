@@ -1,5 +1,6 @@
 import { PrimaryButton } from '@nadohq/web-ui';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
+import { useShowConnectWalletUI } from 'client/context/wagmi/useShowConnectWalletUI';
 import { useIsConnected } from 'client/hooks/util/useIsConnected';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { AppNavItemButton } from 'client/modules/app/navBar/components/AppNavItemButton';
@@ -17,6 +18,7 @@ export function DesktopNavBarContent() {
   const getIsActiveRoute = useGetIsActiveRoute();
   const isConnected = useIsConnected();
   const appNavItems = useAppNavItems();
+  const { onConnectWalletClick } = useShowConnectWalletUI();
 
   const navButtons = appNavItems.map((navItem) => {
     if (navItem.type === 'link') {
@@ -44,12 +46,12 @@ export function DesktopNavBarContent() {
     if (!isConnected) {
       return (
         <PrimaryButton
-          onClick={() => show({ type: 'connect', params: {} })}
+          onClick={onConnectWalletClick}
           // This needs a bit more spacing to the right than the account popover
           className="mr-1.5"
           dataTestId="navbar-connect-wallet-button"
         >
-          {t(($) => $.buttons.connectWallet)}
+          {t(($) => $.buttons.signIn)}
         </PrimaryButton>
       );
     }
@@ -76,7 +78,7 @@ export function DesktopNavBarContent() {
               size="sm"
               onClick={() =>
                 show({
-                  type: 'deposit_options',
+                  type: 'deposit_entrypoint',
                   params: {},
                 })
               }

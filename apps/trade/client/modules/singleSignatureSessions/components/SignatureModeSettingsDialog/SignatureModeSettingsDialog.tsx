@@ -8,7 +8,6 @@ import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { SignatureModeDisable1CTDialogContent } from 'client/modules/singleSignatureSessions/components/SignatureModeSettingsDialog/SignatureModeDisable1CTDialogContent/SignatureModeDisable1CTDialogContent';
 import { SignatureModeEnable1CTDialogContent } from 'client/modules/singleSignatureSessions/components/SignatureModeSettingsDialog/SignatureModeEnable1CTDialogContent/SignatureModeEnable1CTDialogContent';
 import { SignatureModeInfo } from 'client/modules/singleSignatureSessions/components/SignatureModeSettingsDialog/SignatureModeInfo';
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export function SignatureModeSettingsDialog() {
@@ -16,23 +15,15 @@ export function SignatureModeSettingsDialog() {
   const { hide } = useDialog();
   const { signingPreference } = useSubaccountContext();
   const { isDesktopWalletLinkConnected } = useDesktopWalletLinkConnector();
-  const signingPreferenceIsSignOnce =
-    signingPreference.current?.type === 'sign_once';
   const isSmartContractWalletConnected = useIsSmartContractWalletConnected();
 
-  const [showDisable1CTContent, setShowDisable1CTContent] = useState<boolean>(
-    signingPreferenceIsSignOnce,
-  );
+  // Wait for the persisted preference so we don't flash the wrong panel before it loads.
+  if (!signingPreference.didLoadPersistedValue) {
+    return null;
+  }
 
-  // Ensure that content stays in sync with signing preference on initial load
-  useEffect(() => {
-    if (!signingPreference.didLoadPersistedValue) {
-      return;
-    }
-
-    setShowDisable1CTContent(signingPreferenceIsSignOnce);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [signingPreference.didLoadPersistedValue]);
+  const signingPreferenceIsSignOnce =
+    signingPreference.current?.type === 'sign_once';
 
   const content = (() => {
     if (isDesktopWalletLinkConnected) {
@@ -48,14 +39,12 @@ export function SignatureModeSettingsDialog() {
       );
     }
 
-    return showDisable1CTContent ? (
+    return signingPreferenceIsSignOnce ? (
       <SignatureModeDisable1CTDialogContent
-        onDisableSuccess={() => setShowDisable1CTContent(false)}
         isSmartContractWalletConnected={isSmartContractWalletConnected}
       />
     ) : (
       <SignatureModeEnable1CTDialogContent
-        onEnableSuccess={() => setShowDisable1CTContent(true)}
         isSmartContractWalletConnected={isSmartContractWalletConnected}
       />
     );

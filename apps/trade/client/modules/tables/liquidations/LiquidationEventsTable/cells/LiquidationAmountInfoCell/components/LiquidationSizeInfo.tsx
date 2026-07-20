@@ -1,5 +1,6 @@
 import {
   formatNumber,
+  NumberFormatSpecifier,
   PresetNumberFormatSpecifier,
 } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
@@ -7,7 +8,7 @@ import { AmountWithSymbol } from 'client/components/AmountWithSymbol';
 
 interface Props {
   amountLiquidated: BigNumber;
-  amountFormatSpecifier: string;
+  amountFormatSpecifier: NumberFormatSpecifier;
   amountLiquidatedValueUsd: BigNumber;
   symbol: string;
 }

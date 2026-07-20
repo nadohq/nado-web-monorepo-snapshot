@@ -3,9 +3,8 @@ import { Form } from 'client/components/Form';
 import { BaseAppDialog } from 'client/modules/app/dialogs/BaseAppDialog';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { TpSlAmountSection } from 'client/modules/trading/tpsl/components/TpSlAmountSection';
-import { TpSlDialogEstimatedPnl } from 'client/modules/trading/tpsl/components/TpSlDialogEstimatedPnl';
+import { TpSlDialogPriceInputs } from 'client/modules/trading/tpsl/components/TpSlDialogPriceInputs';
 import { TpSlHeaderMetrics } from 'client/modules/trading/tpsl/components/TpSlHeaderMetrics';
-import { TpSlPriceInputs } from 'client/modules/trading/tpsl/components/TpSlPriceInputs';
 import { ModifyTpSlDialogSubmitButton } from 'client/modules/trading/tpsl/modifyTpSlDialog/ModifyTpSlDialogSubmitButton';
 import { useModifyTpSlDialog } from 'client/modules/trading/tpsl/modifyTpSlDialog/hooks/useModifyTpSlDialog';
 import { ModifyTpSlDialogParams } from 'client/modules/trading/tpsl/modifyTpSlDialog/types';
@@ -45,7 +44,7 @@ export function ModifyTpSlDialog({
             staticMarketData={staticMarketData}
             onPriceClick={handlePriceClick}
           />
-          <TpSlPriceInputs
+          <TpSlDialogPriceInputs
             form={form}
             priceState={priceState}
             isTakeProfit={isTakeProfit}
@@ -64,10 +63,6 @@ export function ModifyTpSlDialog({
                 ? getSharedProductMetadata(staticMarketData.metadata).symbol
                 : undefined
             }
-          />
-          <TpSlDialogEstimatedPnl
-            tpState={isTakeProfit ? priceState : undefined}
-            slState={!isTakeProfit ? priceState : undefined}
           />
           <ModifyTpSlDialogSubmitButton state={buttonState} />
         </Form>

@@ -7,7 +7,7 @@ import {
 import { useMemo } from 'react';
 
 interface TickSpacingSelectProps {
-  priceIncrement: BigNumber | undefined;
+  roundedPriceIncrement: BigNumber | undefined;
   currentTickSpacing: number;
   tickSpacingMultiplier: OrderbookPriceTickSpacingMultiplier;
   setTickSpacingMultiplier: (
@@ -16,17 +16,17 @@ interface TickSpacingSelectProps {
 }
 
 export function TickSpacingSelect({
-  priceIncrement,
+  roundedPriceIncrement,
   tickSpacingMultiplier,
   currentTickSpacing,
   setTickSpacingMultiplier,
 }: TickSpacingSelectProps) {
   const options = useMemo(() => {
     return ORDERBOOK_PRICE_TICK_SPACING_MULTIPLIERS.map((multiplier) => ({
-      label: priceIncrement?.multipliedBy(multiplier).toFixed() ?? 1,
+      label: roundedPriceIncrement?.multipliedBy(multiplier).toFixed() ?? 1,
       value: multiplier,
     }));
-  }, [priceIncrement]);
+  }, [roundedPriceIncrement]);
 
   const { selectOptions, open, onValueChange, value, onOpenChange } = useSelect(
     {
@@ -46,13 +46,15 @@ export function TickSpacingSelect({
       <Select.TextTrigger className="text-2xs" open={open} withChevron>
         {currentTickSpacing}
       </Select.TextTrigger>
-      <Select.Options className="min-w-20" align="end">
-        {selectOptions.map(({ label, value }) => (
-          <Select.Option key={value} value={value}>
-            {label}
-          </Select.Option>
-        ))}
-      </Select.Options>
+      <Select.Portal>
+        <Select.Options className="min-w-20" align="end">
+          {selectOptions.map(({ label, value }) => (
+            <Select.Option key={value} value={value}>
+              {label}
+            </Select.Option>
+          ))}
+        </Select.Options>
+      </Select.Portal>
     </Select.Root>
   );
 }

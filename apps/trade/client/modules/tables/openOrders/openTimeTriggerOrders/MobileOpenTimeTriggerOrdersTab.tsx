@@ -13,7 +13,7 @@ import { useOpenTimeTriggerOrdersTable } from 'client/modules/tables/openOrders/
 import { MobileDataTabCard } from 'client/modules/tables/tabs/mobile/components/MobileDataTabCard';
 import { MobileDataTabCards } from 'client/modules/tables/tabs/mobile/components/MobileDataTabCards';
 import { TwapOrderRuntimeDisplay } from 'client/modules/trading/components/twap/TwapOrderRuntimeDisplay';
-import { ORDER_DISPLAY_TYPES } from 'client/modules/trading/consts/orderDisplayTypes';
+import { ORDER_DISPLAY_TYPES_BY_CATEGORY } from 'client/modules/trading/consts/orderDisplayTypesByCategory';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -39,7 +39,7 @@ export function MobileOpenTimeTriggerOrdersTab({ productIds }: Props) {
       <CancelOrdersButtons
         cancelOrdersFilter={{
           productIds,
-          orderDisplayTypes: ORDER_DISPLAY_TYPES.twap,
+          orderDisplayTypes: ORDER_DISPLAY_TYPES_BY_CATEGORY.twap,
         }}
       />
       {data?.map((order) => {

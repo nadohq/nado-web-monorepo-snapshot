@@ -11,7 +11,6 @@ import {
 import { UserDisclosureKey } from 'client/modules/localstorage/userState/types/userDisclosureTypes';
 import { FundingRatePeriod } from 'client/modules/localstorage/userState/types/userFundingRatePeriodTypes';
 import { UserTutorialFlowState } from 'client/modules/localstorage/userState/types/userTutorialFlowTypes';
-import { PrivacySettings } from 'client/modules/privacy/types';
 
 export interface SavedUserState {
   /** Whether the user has completed the onboarding process */
@@ -26,8 +25,8 @@ export interface SavedUserState {
   trading: SavedTradingUserSettings;
   /** The user's notification position */
   notificationPosition: NotificationPosition;
-  /** The user's privacy settings */
-  privacy: PrivacySettings;
+  /** Whether the user's sensitive values are private */
+  isPrivacyModeEnabled: boolean;
   /** The user's signing preference by subaccount key */
   signingPreferenceBySubaccountKey: SavedSigningPreferenceBySubaccountKey;
   /** The user's profile by subaccount key */

@@ -45,6 +45,14 @@ export function OpenAppStage({ onNext }: OpenAppStageProps) {
       requiresApproveSignOnce,
     ]);
 
+  if (generateWalletLinkQRCodeError) {
+    return (
+      <DesktopWalletLinkQRCodeErrorPanel
+        error={generateWalletLinkQRCodeError}
+      />
+    );
+  }
+
   return (
     <>
       <p className="text-xs">
@@ -70,9 +78,6 @@ export function OpenAppStage({ onNext }: OpenAppStageProps) {
       <p className="text-text-secondary text-xs">
         {t(($) => $.revealInstructions)}
       </p>
-      <DesktopWalletLinkQRCodeErrorPanel
-        error={generateWalletLinkQRCodeError}
-      />
       <PrimaryButton
         disabled={!!generateWalletLinkQRCodeError}
         onClick={onNext}

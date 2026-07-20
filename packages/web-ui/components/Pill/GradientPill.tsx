@@ -5,11 +5,15 @@ import {
   WithClassnames,
 } from '@nadohq/web-common';
 import { IconComponent } from '../Icons';
-import { PillColorVariant, PillSizeVariant } from './Pill';
+import { PillColorVariant } from './Pill';
+
+export type GradientPillColorVariant = Exclude<
+  PillColorVariant,
+  'primary' | 'secondary'
+>;
 
 interface Props extends WithChildren<WithClassnames> {
-  colorVariant: Exclude<PillColorVariant, 'primary' | 'secondary'>;
-  sizeVariant: PillSizeVariant;
+  colorVariant: GradientPillColorVariant;
   icon?: IconComponent;
 }
 
@@ -17,7 +21,6 @@ export function GradientPill({
   children,
   className,
   colorVariant,
-  sizeVariant,
   icon: Icon,
 }: Props) {
   const gradientBorderStopColorClassName = {
@@ -25,6 +28,7 @@ export function GradientPill({
     negative: 'to-negative',
     warning: 'to-warning',
     'accent-info': 'to-accent-info',
+    'accent-yellow': 'to-accent-yellow',
   }[colorVariant];
 
   const textColorClassName = {
@@ -32,12 +36,8 @@ export function GradientPill({
     negative: 'text-negative',
     warning: 'text-warning',
     'accent-info': 'text-accent-info',
+    'accent-yellow': 'text-accent-yellow',
   }[colorVariant];
-
-  const sizeClassNames = {
-    '2xs': 'px-1.5 py-px',
-    xs: 'px-2 py-0.5',
-  }[sizeVariant];
 
   return (
     <div
@@ -50,12 +50,12 @@ export function GradientPill({
     >
       <div
         className={mergeClassNames(
-          'text-3xs h-max',
-          'bg-surface-1 flex items-center gap-x-0.5 rounded-[3px]',
-          // Using `2px` less padding on the left when an icon is preset to make the icon and text look more centered
-          !!Icon && 'pl-1.5',
+          'text-2xs rounded-sm p-0.75',
+          'h-max',
+          'bg-surface-1 flex items-center gap-x-0.5',
+          // Using less padding on the left when an icon is present to make the icon and text look more centered
+          !!Icon && 'pl-0.5',
           textColorClassName,
-          sizeClassNames,
         )}
       >
         {!!Icon && <Icon fill="currentColor" />}

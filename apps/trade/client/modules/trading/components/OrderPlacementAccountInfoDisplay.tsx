@@ -12,6 +12,7 @@ import {
   OrderFormValues,
   RoundAmountFn,
 } from 'client/modules/trading/types/orderFormTypes';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { getSignDependentColorClassName } from 'client/utils/ui/getSignDependentColorClassName';
 import { useCallback } from 'react';
 import { UseFormReturn, useWatch } from 'react-hook-form';
@@ -35,6 +36,7 @@ export function OrderPlacementAccountInfoDisplay({
   roundAssetAmount,
 }: Props) {
   const { t } = useTranslation();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const isPerp = currentMarket?.type === ProductEngineType.PERP;
 
@@ -82,6 +84,7 @@ export function OrderPlacementAccountInfoDisplay({
             {formatNumber(amount, {
               formatSpecifier: getMarketSizeFormatSpecifier({
                 sizeIncrement: currentMarket?.sizeIncrement,
+                exchangeRate: getExchangeRate(currentMarket?.productId),
               }),
             })}{' '}
             {isPerp

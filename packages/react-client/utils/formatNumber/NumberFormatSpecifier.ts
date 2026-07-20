@@ -1,3 +1,5 @@
+import { mapValues } from 'lodash';
+
 export enum CustomNumberFormatSpecifier {
   // For areas of the app where we want to show as much precision as possible
   NUMBER_PRECISE = 'number_precise',
@@ -38,6 +40,188 @@ export enum PresetNumberFormatSpecifier {
   SIGNED_CURRENCY_SI_3SF = '+$,.3s',
 }
 
+/**
+ * Accepted by `formatNumber`'s `formatSpecifier`: a preset/custom id, or a
+ * ready-made `Intl.NumberFormat` (e.g. the prebuilt, tick-derived formatters
+ * from `getMarketPriceFormatSpecifier`).
+ */
 export type NumberFormatSpecifier =
   | PresetNumberFormatSpecifier
-  | CustomNumberFormatSpecifier;
+  | CustomNumberFormatSpecifier
+  | Intl.NumberFormat;
+
+const SIGNED_DISPLAY: Pick<Intl.NumberFormatOptions, 'signDisplay'> = {
+  signDisplay: 'exceptZero',
+};
+
+const LOCALE = 'en-US';
+
+/**
+ * Builds an `Intl.NumberFormat` for our fixed locale. Centralizes locale +
+ * construction so callers never reach for `new Intl.NumberFormat` directly.
+ */
+export function createNumberFormat(
+  options: Intl.NumberFormatOptions,
+): Intl.NumberFormat {
+  return new Intl.NumberFormat(LOCALE, options);
+}
+
+const NUMBER_PRESET_TO_INTL_OPTIONS: Record<
+  PresetNumberFormatSpecifier,
+  Intl.NumberFormatOptions
+> = {
+  [PresetNumberFormatSpecifier.CURRENCY_INT]: {
+    style: 'currency',
+    currency: 'USD',
+    useGrouping: true,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  },
+  [PresetNumberFormatSpecifier.CURRENCY_2DP]: {
+    style: 'currency',
+    currency: 'USD',
+    useGrouping: true,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  },
+  [PresetNumberFormatSpecifier.CURRENCY_UPTO_3DP]: {
+    style: 'currency',
+    currency: 'USD',
+    useGrouping: true,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 3,
+  },
+  [PresetNumberFormatSpecifier.CURRENCY_SI_3SF]: {
+    style: 'currency',
+    currency: 'USD',
+    notation: 'compact',
+    minimumSignificantDigits: 3,
+    maximumSignificantDigits: 3,
+  },
+  [PresetNumberFormatSpecifier.NUMBER_1DP]: {
+    useGrouping: false,
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  },
+  [PresetNumberFormatSpecifier.NUMBER_2DP]: {
+    useGrouping: true,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  },
+  [PresetNumberFormatSpecifier.NUMBER_4DP]: {
+    useGrouping: true,
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+  },
+  [PresetNumberFormatSpecifier.NUMBER_UPTO_6DP]: {
+    useGrouping: true,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 6,
+  },
+  [PresetNumberFormatSpecifier.NUMBER_INT]: {
+    useGrouping: true,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  },
+  [PresetNumberFormatSpecifier.NUMBER_SI_3SF]: {
+    useGrouping: true,
+    notation: 'compact',
+    minimumSignificantDigits: 3,
+    maximumSignificantDigits: 3,
+  },
+  [PresetNumberFormatSpecifier.NUMBER_SI_5SF]: {
+    useGrouping: true,
+    notation: 'compact',
+    minimumSignificantDigits: 5,
+    maximumSignificantDigits: 5,
+  },
+  [PresetNumberFormatSpecifier.PERCENTAGE_2DP]: {
+    style: 'percent',
+    useGrouping: true,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  },
+  [PresetNumberFormatSpecifier.PERCENTAGE_UPTO_4DP]: {
+    style: 'percent',
+    useGrouping: true,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 4,
+  },
+  [PresetNumberFormatSpecifier.PERCENTAGE_INT]: {
+    style: 'percent',
+    useGrouping: true,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  },
+  [PresetNumberFormatSpecifier.SIGNED_CURRENCY_INT]: {
+    style: 'currency',
+    currency: 'USD',
+    useGrouping: true,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+    ...SIGNED_DISPLAY,
+  },
+  [PresetNumberFormatSpecifier.SIGNED_CURRENCY_2DP]: {
+    style: 'currency',
+    currency: 'USD',
+    useGrouping: true,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    ...SIGNED_DISPLAY,
+  },
+  [PresetNumberFormatSpecifier.SIGNED_CURRENCY_SI_3SF]: {
+    style: 'currency',
+    currency: 'USD',
+    notation: 'compact',
+    minimumSignificantDigits: 3,
+    maximumSignificantDigits: 3,
+    ...SIGNED_DISPLAY,
+  },
+  [PresetNumberFormatSpecifier.SIGNED_NUMBER_INT]: {
+    useGrouping: true,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+    ...SIGNED_DISPLAY,
+  },
+  [PresetNumberFormatSpecifier.SIGNED_NUMBER_2DP]: {
+    useGrouping: true,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    ...SIGNED_DISPLAY,
+  },
+  [PresetNumberFormatSpecifier.SIGNED_NUMBER_4DP]: {
+    useGrouping: true,
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+    ...SIGNED_DISPLAY,
+  },
+  [PresetNumberFormatSpecifier.SIGNED_PERCENTAGE_2DP]: {
+    style: 'percent',
+    useGrouping: true,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    ...SIGNED_DISPLAY,
+  },
+  [PresetNumberFormatSpecifier.SIGNED_PERCENTAGE_4DP]: {
+    style: 'percent',
+    useGrouping: true,
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+    ...SIGNED_DISPLAY,
+  },
+};
+
+/**
+ * Presets are a fixed set, so their formatters are built once at module load
+ * and reused - no per-call construction or runtime cache needed.
+ */
+export const NUMBER_PRESET_TO_INTL_FORMAT: Record<
+  PresetNumberFormatSpecifier,
+  Intl.NumberFormat
+> = mapValues(NUMBER_PRESET_TO_INTL_OPTIONS, createNumberFormat);
+
+export function isLegacyNumberFormatSpecifier(
+  specifierId: PresetNumberFormatSpecifier | CustomNumberFormatSpecifier,
+): specifierId is PresetNumberFormatSpecifier {
+  return Object.hasOwn(NUMBER_PRESET_TO_INTL_FORMAT, specifierId);
+}

@@ -4,6 +4,7 @@ import { ValueWithLabel } from 'client/components/ValueWithLabel/ValueWithLabel'
 import { OrderSlippageMetricValue } from 'client/modules/trading/components/OrderSlippageMetricValue';
 import { useTwapOrderSummaryMetrics } from 'client/modules/trading/components/twap/hooks/useTwapOrderSummaryMetrics';
 import { useSpotLeverageEnabled } from 'client/modules/trading/hooks/useSpotLeverageEnabled';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { useSpotOrderFormContext } from 'client/pages/SpotTrading/context/SpotOrderFormContext';
 import { SpotTradingFormTradingAccountMetrics } from 'client/pages/SpotTrading/hooks/useSpotTradingFormAccountMetrics';
 import { useWatch } from 'react-hook-form';
@@ -23,6 +24,8 @@ export function SpotOrderSummary({ derivedMetrics }: Props) {
     roundAssetAmount,
     estimatedTradeEntry,
   } = useSpotOrderFormContext();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
+  const exchangeRate = getExchangeRate(currentMarket?.productId);
 
   const orderType = useWatch({
     control: form.control,
@@ -35,6 +38,7 @@ export function SpotOrderSummary({ derivedMetrics }: Props) {
     roundAssetAmount,
     baseSymbol: currentMarket?.metadata.token.symbol,
     sizeIncrement: currentMarket?.sizeIncrement,
+    exchangeRate,
   });
 
   const { spotLeverageEnabled } = useSpotLeverageEnabled();
@@ -64,6 +68,7 @@ export function SpotOrderSummary({ derivedMetrics }: Props) {
     valueEndElement: derivedMetrics.borrowAssetSymbol,
     numberFormatSpecifier: getMarketSizeFormatSpecifier({
       sizeIncrement: currentMarket?.sizeIncrement,
+      exchangeRate,
     }),
     value: derivedMetrics.amountToBorrow,
   };

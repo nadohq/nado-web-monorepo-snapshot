@@ -1,4 +1,4 @@
-import { formatNumber } from '@nadohq/react-client';
+import { formatNumber, NumberFormatSpecifier } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import {
   TableCell,
@@ -9,7 +9,7 @@ import { EditOrderField } from 'client/modules/tables/components/EditOrderFieldP
 
 interface Props extends TableCellProps {
   currentValue: BigNumber;
-  formatSpecifier: string;
+  formatSpecifier: NumberFormatSpecifier;
   productId: number;
   digest: string;
   /** Whether this is a trigger order (stop market, stop limit, TP/SL) */

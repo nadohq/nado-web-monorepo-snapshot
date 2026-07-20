@@ -55,13 +55,15 @@ export function TotalAmountDenomSelect({
       <Select.TextTrigger className="text-2xs" open={open} withChevron>
         {selectedOption?.label}
       </Select.TextTrigger>
-      <Select.Options className="min-w-20">
-        {selectOptions.map(({ label, value }) => (
-          <Select.Option key={value} value={value}>
-            {label}
-          </Select.Option>
-        ))}
-      </Select.Options>
+      <Select.Portal>
+        <Select.Options className="min-w-20">
+          {selectOptions.map(({ label, value }) => (
+            <Select.Option key={value} value={value}>
+              {label}
+            </Select.Option>
+          ))}
+        </Select.Options>
+      </Select.Portal>
     </Select.Root>
   );
 }

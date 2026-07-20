@@ -8,7 +8,8 @@ import { TriggerReferencePriceType } from 'client/modules/trading/types/TriggerR
 type NumberAsString = string;
 
 export type HistoryExportType =
-  | 'trades'
+  | 'individual_trades'
+  | 'aggregated_trades'
   | 'historical_engine_orders'
   | 'historical_stop_orders'
   | 'historical_tp_sl'
@@ -53,6 +54,7 @@ export interface ExportHistoryWithdrawalItem extends CsvDataItem {
   /** Symbol */
   asset: string;
   balanceChange: NumberAsString;
+  recipientAddress: string;
 }
 
 export interface ExportHistoryTradeItem extends CsvDataItem {
@@ -65,6 +67,22 @@ export interface ExportHistoryTradeItem extends CsvDataItem {
   total: NumberAsString;
   fee: NumberAsString;
   /** undefined if trade did not realize any pnl */
+  realizedPnl: NumberAsString | undefined;
+  closedSize: NumberAsString | undefined;
+  orderId: string;
+}
+
+export interface ExportHistoryAggregatedTradeItem extends CsvDataItem {
+  /** Timestamp of the last fill on the aggregated order */
+  time: Date;
+  marketName: string;
+  direction: string;
+  marginModeType: string;
+  price: NumberAsString;
+  size: NumberAsString;
+  tradeValue: NumberAsString;
+  fee: NumberAsString;
+  /** undefined if order did not realize any pnl */
   realizedPnl: NumberAsString | undefined;
   closedSize: NumberAsString | undefined;
   orderId: string;

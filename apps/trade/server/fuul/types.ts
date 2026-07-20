@@ -1,14 +1,13 @@
 /**
- * Updates the number of total referrals available for a user.
- * Will generate a new referral code if the user does not have one.
+ * Gets the user's referral code, generating one if they don't have one.
  */
-export interface UpdateFuulReferralCodeParams {
+export interface GetOrCreateFuulReferralCodeParams {
   address: string;
 }
 
-export interface UpdateFuulReferralCodeResponse {
+export interface GetOrCreateFuulReferralCodeResponse {
   /**
-   * Number of new referrals added
+   * True if a new referral code was generated, false if one already existed.
    */
-  numReferralsAdded: number;
+  created: boolean;
 }

@@ -1,12 +1,13 @@
 import { MobileOpenEngineOrdersTab } from 'client/modules/tables/openOrders/openEngineOrders/MobileOpenEngineOrdersTab';
 import { OpenEngineOrdersTable } from 'client/modules/tables/openOrders/openEngineOrders/OpenEngineOrdersTable';
+import { OpenOrdersTotalsContent } from 'client/modules/tables/openOrders/OpenOrdersTotalsContent';
 import { MobileOpenPriceTriggerOrdersTab } from 'client/modules/tables/openOrders/openPriceTriggerOrders/MobileOpenPriceTriggerOrdersTab';
 import { OpenPriceTriggerOrdersTable } from 'client/modules/tables/openOrders/openPriceTriggerOrders/OpenPriceTriggerOrdersTable';
 import { MobileOpenTimeTriggerOrdersTab } from 'client/modules/tables/openOrders/openTimeTriggerOrders/MobileOpenTimeTriggerOrdersTab';
 import { OpenTimeTriggerOrdersTable } from 'client/modules/tables/openOrders/openTimeTriggerOrders/OpenTimeTriggerOrdersTable';
 import { TableTabWithSubTabs } from 'client/modules/tables/tabs/TableTabWithSubTabs';
 import { TableTabProps } from 'client/modules/tables/tabs/types';
-import { ORDER_DISPLAY_TYPES } from 'client/modules/trading/consts/orderDisplayTypes';
+import { ORDER_DISPLAY_TYPES_BY_CATEGORY } from 'client/modules/trading/consts/orderDisplayTypesByCategory';
 import { TradingSubTab } from 'client/modules/trading/layout/types';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -30,24 +31,24 @@ export function OpenOrdersTableTabContent({
     const stopOrdersContent = isMobile ? (
       <MobileOpenPriceTriggerOrdersTab
         productIds={productIds}
-        triggerOrderDisplayTypes={ORDER_DISPLAY_TYPES.stop}
+        triggerOrderDisplayTypes={ORDER_DISPLAY_TYPES_BY_CATEGORY.stop}
       />
     ) : (
       <OpenPriceTriggerOrdersTable
         productIds={productIds}
-        triggerOrderDisplayTypes={ORDER_DISPLAY_TYPES.stop}
+        triggerOrderDisplayTypes={ORDER_DISPLAY_TYPES_BY_CATEGORY.stop}
       />
     );
 
     const tpSlContent = isMobile ? (
       <MobileOpenPriceTriggerOrdersTab
         productIds={productIds}
-        triggerOrderDisplayTypes={ORDER_DISPLAY_TYPES.tpSl}
+        triggerOrderDisplayTypes={ORDER_DISPLAY_TYPES_BY_CATEGORY.tpSl}
       />
     ) : (
       <OpenPriceTriggerOrdersTable
         productIds={productIds}
-        triggerOrderDisplayTypes={ORDER_DISPLAY_TYPES.tpSl}
+        triggerOrderDisplayTypes={ORDER_DISPLAY_TYPES_BY_CATEGORY.tpSl}
       />
     );
 
@@ -63,12 +64,24 @@ export function OpenOrdersTableTabContent({
         label: t(($) => $.limitOrders),
         content: engineOrdersContent,
         countIndicatorKey: 'numOpenEngineOrders',
+        headerEndElement: (
+          <OpenOrdersTotalsContent
+            activeSubTabId="engine_orders"
+            productIds={productIds}
+          />
+        ),
       },
       {
         id: 'stop_orders',
         label: t(($) => $.stopOrders),
         content: stopOrdersContent,
         countIndicatorKey: 'numStopOrders',
+        headerEndElement: (
+          <OpenOrdersTotalsContent
+            activeSubTabId="stop_orders"
+            productIds={productIds}
+          />
+        ),
       },
       {
         id: 'tp_sl',
@@ -81,6 +94,12 @@ export function OpenOrdersTableTabContent({
         label: t(($) => $.twap),
         content: twapContent,
         countIndicatorKey: 'numOpenTimeTriggerOrders',
+        headerEndElement: (
+          <OpenOrdersTotalsContent
+            activeSubTabId="twap"
+            productIds={productIds}
+          />
+        ),
       },
     ];
   }, [isMobile, productIds, t]);

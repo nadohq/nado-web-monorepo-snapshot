@@ -2,22 +2,22 @@ import {
   ConnectionStatus,
   EVMContextProvider,
   NadoClientContextProvider,
-  WebNadoMetadataContextProvider,
   useEVMContext,
-  useWagmiConfig,
+  WebNadoMetadataContextProvider,
 } from '@nadohq/react-client';
 import { WithChildren } from '@nadohq/web-common';
 import { useTimeout } from 'ahooks';
 import { BrandLoadingWrapper } from 'client/components/BrandIconLoadingWrapper/BrandLoadingWrapper';
 import { WebSubaccountContextProvider } from 'client/context/subaccount/WebSubaccountContextProvider';
-import { getWagmiConfigParams } from 'client/modules/app/appData/getWagmiConfigParams';
+import { MultiWagmiProvider } from 'client/context/wagmi/MultiWagmiProvider';
 import { useChainEnvQueryParam } from 'client/modules/app/appData/hooks/useChainEnvQueryParam';
 import { useSavedPrimaryChainEnv } from 'client/modules/app/appData/hooks/useSavedPrimaryChainEnv';
+import {
+  SUPPORTED_CHAIN_ENVS,
+  SUPPORTED_CHAINS,
+} from 'client/modules/app/appData/supportedChains';
 import { AppVersion } from 'client/modules/app/components/AppVersion';
 import { useEffect, useState } from 'react';
-import { WagmiProvider } from 'wagmi';
-
-const wagmiConfigParams = getWagmiConfigParams();
 
 /**
  * Component for aggregating all the nado data related context providers required for the app.
@@ -35,7 +35,7 @@ export function AppDataProviders({ children }: WithChildren) {
   } = useSavedPrimaryChainEnv();
 
   const chainEnvQueryParam = useChainEnvQueryParam({
-    supportedChainEnvs: wagmiConfigParams.supportedChainEnvs,
+    supportedChainEnvs: SUPPORTED_CHAIN_ENVS,
   });
   const [didDetermineChainEnv, setDidDetermineChainEnv] = useState(false);
 
@@ -64,15 +64,13 @@ export function AppDataProviders({ children }: WithChildren) {
     setDidDetermineChainEnv,
   ]);
 
-  const wagmiConfig = useWagmiConfig(wagmiConfigParams);
-
   return (
-    <WagmiProvider config={wagmiConfig}>
+    <MultiWagmiProvider primaryChainEnv={savedPrimaryChainEnv}>
       <EVMContextProvider
         primaryChainEnv={savedPrimaryChainEnv}
         setPrimaryChainEnv={setSavedPrimaryChainEnv}
-        supportedChainEnvs={wagmiConfigParams.supportedChainEnvs}
-        supportedChains={wagmiConfigParams.supportedChains}
+        supportedChainEnvs={SUPPORTED_CHAIN_ENVS}
+        supportedChains={SUPPORTED_CHAINS}
       >
         <WebNadoMetadataContextProvider>
           <InitialLoadOverlay didDetermineChainEnv={didDetermineChainEnv}>
@@ -84,7 +82,7 @@ export function AppDataProviders({ children }: WithChildren) {
           </InitialLoadOverlay>
         </WebNadoMetadataContextProvider>
       </EVMContextProvider>
-    </WagmiProvider>
+    </MultiWagmiProvider>
   );
 }
 

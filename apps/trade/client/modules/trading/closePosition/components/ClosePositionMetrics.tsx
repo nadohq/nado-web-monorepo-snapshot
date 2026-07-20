@@ -46,13 +46,19 @@ export function ClosePositionMetrics({
         sizeVariant="xs"
         label={t(($) => $.entryPrice)}
         value={perpPositionItem?.price.averageEntryPrice}
-        numberFormatSpecifier={getMarketPriceFormatSpecifier(priceIncrement)}
+        numberFormatSpecifier={getMarketPriceFormatSpecifier({
+          priceIncrement,
+          exchangeRate: undefined,
+        })}
       />
       <ValueWithLabel.Horizontal
         sizeVariant="xs"
         label={t(($) => $.lastPrice)}
         value={latestOrderFillPrice?.price}
-        numberFormatSpecifier={getMarketPriceFormatSpecifier(priceIncrement)}
+        numberFormatSpecifier={getMarketPriceFormatSpecifier({
+          priceIncrement,
+          exchangeRate: undefined,
+        })}
       />
     </div>
   );

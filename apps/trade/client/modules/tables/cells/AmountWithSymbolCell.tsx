@@ -12,7 +12,7 @@ interface Props extends TableCellProps, BaseTestProps {
   amount: BigNumber | undefined;
   // The asset symbol to display
   symbol: string | undefined;
-  formatSpecifier: NumberFormatSpecifier | string;
+  formatSpecifier: NumberFormatSpecifier;
 }
 
 export function AmountWithSymbolCell({

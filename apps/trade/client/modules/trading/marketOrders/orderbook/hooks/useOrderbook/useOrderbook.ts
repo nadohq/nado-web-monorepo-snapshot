@@ -1,7 +1,11 @@
-import { toBigNumber } from '@nadohq/client';
+import { BigNumbers, toBigNumber } from '@nadohq/client';
 import {
+  getMarketPriceFormatSpecifier,
   getMarketSizeFormatSpecifier,
+  getPrecisionFixedFormatSpecifier,
+  getRoundedIncrement,
   PresetNumberFormatSpecifier,
+  toXStocksDisplayPrice,
 } from '@nadohq/react-client';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { useLatestOrderFill } from 'client/hooks/markets/useLatestOrderFill';
@@ -18,8 +22,8 @@ import { getTickPriceLevel } from 'client/modules/trading/marketOrders/orderbook
 import { mapOrderbookDataFromQueries } from 'client/modules/trading/marketOrders/orderbook/hooks/useOrderbook/mapOrderbookDataFromQueries';
 import { useSelectedTickSpacingMultiplier } from 'client/modules/trading/marketOrders/orderbook/hooks/useSelectedTickSpacingMultiplier';
 import { useShowOrderbookTotalInQuote } from 'client/modules/trading/marketOrders/orderbook/hooks/useShowOrderbookTotalInQuote';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { priceInputAtom } from 'client/store/trading/commonTradingStore';
-import { precisionFixed } from 'd3-format';
 import { useSetAtom } from 'jotai';
 import { useMemo } from 'react';
 
@@ -34,6 +38,8 @@ export function useOrderbook({
 
   const { data: openEngineOrdersData } = useQuerySubaccountOpenEngineOrders();
   const { data: openTriggerOrdersData } = useQuerySubaccountOpenTriggerOrders();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
+  const exchangeRate = getExchangeRate(productId);
 
   // Market data
   const { data: marketData } = useMarket({
@@ -51,11 +57,20 @@ export function useOrderbook({
 
   const { data: latestOrderFillPrice } = useLatestOrderFill({ productId });
 
-  const lastPrice = latestOrderFillPrice?.price;
+  const lastPrice =
+    productId !== undefined
+      ? toXStocksDisplayPrice(latestOrderFillPrice?.price, exchangeRate)
+      : latestOrderFillPrice?.price;
 
-  const tickSpacing =
-    marketData?.priceIncrement.multipliedBy(tickSpacingMultiplier).toNumber() ??
-    1;
+  // Convert tick spacing to display space for format specifiers and UI display.
+  // this needs to be done to build orderbook data so that the tick buckets are in display space
+  const roundedPriceIncrement =
+    getRoundedIncrement(
+      toXStocksDisplayPrice(marketData?.priceIncrement, exchangeRate),
+    ) ?? BigNumbers.ONE;
+  const displayTickSpacing = roundedPriceIncrement
+    .multipliedBy(tickSpacingMultiplier)
+    .toNumber();
 
   // Compute data
   const orderbookData = useMemo((): OrderbookData | undefined => {
@@ -66,9 +81,10 @@ export function useOrderbook({
       depth,
       showOrderbookTotalInQuote,
       quoteSymbol: quoteData.symbol,
-      tickSpacing,
+      tickSpacing: displayTickSpacing,
       marketData,
       liquidityQueryData,
+      exchangeRate,
     });
   }, [
     depth,
@@ -76,7 +92,8 @@ export function useOrderbook({
     marketData,
     quoteData,
     showOrderbookTotalInQuote,
-    tickSpacing,
+    displayTickSpacing,
+    exchangeRate,
   ]);
 
   const openOrderPrices = useMemo(() => {
@@ -87,13 +104,15 @@ export function useOrderbook({
       return;
     }
 
-    // Add open engine order prices to the set
+    // Add open engine order prices to the set.
+    // Convert to display space first, then bucket — must match how processTicks buckets in mapOrderbookDataFromQueries.
     openEngineOrdersData?.[marketData.productId]?.forEach((order) => {
       const { price, totalAmount } = order;
+      const displayPrice = toXStocksDisplayPrice(price, exchangeRate);
       const tickPriceLevel = getTickPriceLevel({
         isAsk: totalAmount.isNegative(),
-        price,
-        tickSpacing,
+        price: displayPrice,
+        tickSpacing: displayTickSpacing,
       });
       orderPrices.add(tickPriceLevel.toString());
     });
@@ -104,25 +123,33 @@ export function useOrderbook({
         return;
       }
 
-      const price = toBigNumber(
+      const rawPrice = toBigNumber(
         order.order.triggerCriteria.criteria.triggerPrice,
       );
       const { amount } = order.order;
+      const displayPrice = toXStocksDisplayPrice(rawPrice, exchangeRate);
       const tickPriceLevel = getTickPriceLevel({
         isAsk: amount.isNegative(),
-        price,
-        tickSpacing,
+        price: displayPrice,
+        tickSpacing: displayTickSpacing,
       });
       orderPrices.add(tickPriceLevel.toString());
     });
 
     return orderPrices;
-  }, [marketData, openEngineOrdersData, openTriggerOrdersData, tickSpacing]);
+  }, [
+    marketData,
+    openEngineOrdersData,
+    openTriggerOrdersData,
+    displayTickSpacing,
+    exchangeRate,
+  ]);
 
   const setNewPriceInput = useSetAtom(priceInputAtom);
 
   const amountFormatSpecifier = getMarketSizeFormatSpecifier({
     sizeIncrement: orderbookData?.sizeIncrement,
+    exchangeRate,
   });
 
   const cumulativeAmountSpecifier = showOrderbookTotalInQuote
@@ -133,19 +160,29 @@ export function useOrderbook({
     ? orderbookData?.quoteSymbol
     : orderbookData?.productMetadata?.symbol;
 
+  // We don't use `getMarketPriceFormatSpecifier` because we want to format depending on the selected tick spacing
+  const rowPriceFormatSpecifier = getPrecisionFixedFormatSpecifier({
+    step: displayTickSpacing,
+    isSigned: false,
+  });
+
   return {
     orderbookData,
     tickSpacingMultiplier,
     setTickSpacingMultiplier,
-    currentTickSpacing: tickSpacing,
+    roundedPriceIncrement,
+    currentTickSpacing: displayTickSpacing,
     setShowOrderbookTotalInQuote,
     showOrderbookTotalInQuote,
     setNewPriceInput,
     lastPrice,
     amountSymbol,
     openOrderPrices,
-    // We don't use `getMarketPriceFormatSpecifier` because we want to format depending on the selected tick spacing
-    priceFormatSpecifier: `.${precisionFixed(tickSpacing).toFixed()}f`,
+    priceFormatSpecifier: getMarketPriceFormatSpecifier({
+      priceIncrement: marketData?.priceIncrement,
+      exchangeRate,
+    }),
+    rowPriceFormatSpecifier,
     amountFormatSpecifier,
     cumulativeAmountSpecifier,
   };

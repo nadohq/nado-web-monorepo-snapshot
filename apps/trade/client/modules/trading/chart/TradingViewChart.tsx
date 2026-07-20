@@ -1,6 +1,6 @@
 import { joinClassNames, WithClassnames } from '@nadohq/web-common';
 import { BrandLoadingWrapper } from 'client/components/BrandIconLoadingWrapper/BrandLoadingWrapper';
-import { WIDGET_CONTAINER_ID } from 'client/modules/trading/chart/config/webWidgetConfig';
+import { WIDGET_CONTAINER_ID } from 'client/modules/trading/chart/config/widgetConfig';
 import { useTradingViewChart } from 'client/modules/trading/chart/hooks/useTradingViewChart';
 
 interface Props extends WithClassnames {

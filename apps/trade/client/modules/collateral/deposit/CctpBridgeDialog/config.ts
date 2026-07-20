@@ -1,6 +1,18 @@
 import { BridgeChain } from '@circle-fin/bridge-kit';
 import { TOKEN_ICONS } from '@nadohq/react-client';
 import { NextImageSrc } from '@nadohq/web-common';
+
+import arbIcon from 'client/modules/collateral/deposit/assets/chains/arb.svg';
+import avaxIcon from 'client/modules/collateral/deposit/assets/chains/avax.svg';
+import baseIcon from 'client/modules/collateral/deposit/assets/chains/base.svg';
+import ethIcon from 'client/modules/collateral/deposit/assets/chains/eth.svg';
+import lineaIcon from 'client/modules/collateral/deposit/assets/chains/linea.svg';
+import optimismIcon from 'client/modules/collateral/deposit/assets/chains/optimism.svg';
+import polygonIcon from 'client/modules/collateral/deposit/assets/chains/polygon.svg';
+import seiIcon from 'client/modules/collateral/deposit/assets/chains/sei.svg';
+import sonicIcon from 'client/modules/collateral/deposit/assets/chains/sonic.svg';
+import unichainIcon from 'client/modules/collateral/deposit/assets/chains/unichain.svg';
+import worldchainIcon from 'client/modules/collateral/deposit/assets/chains/worldchain.svg';
 import { DataEnv } from 'common/environment/baseClientEnv';
 import { clientEnv } from 'common/environment/clientEnv';
 import { get } from 'lodash';
@@ -30,17 +42,7 @@ import {
   worldchainSepolia,
 } from 'viem/chains';
 
-import arbIcon from 'client/modules/collateral/deposit/assets/chains/arb.svg';
-import avaxIcon from 'client/modules/collateral/deposit/assets/chains/avax.svg';
-import baseIcon from 'client/modules/collateral/deposit/assets/chains/base.svg';
-import ethIcon from 'client/modules/collateral/deposit/assets/chains/eth.svg';
-import lineaIcon from 'client/modules/collateral/deposit/assets/chains/linea.svg';
-import optimismIcon from 'client/modules/collateral/deposit/assets/chains/optimism.svg';
-import polygonIcon from 'client/modules/collateral/deposit/assets/chains/polygon.svg';
-import seiIcon from 'client/modules/collateral/deposit/assets/chains/sei.svg';
-import sonicIcon from 'client/modules/collateral/deposit/assets/chains/sonic.svg';
-import unichainIcon from 'client/modules/collateral/deposit/assets/chains/unichain.svg';
-import worldchainIcon from 'client/modules/collateral/deposit/assets/chains/worldchain.svg';
+export const USDC_BRIDGE_EXPLORER_BASE_URL = 'https://usdc.range.org';
 
 /** USDC token info for display purposes. */
 export const USDC_TOKEN_INFO = {

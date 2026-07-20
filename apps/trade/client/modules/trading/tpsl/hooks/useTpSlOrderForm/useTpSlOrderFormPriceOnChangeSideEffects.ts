@@ -3,10 +3,10 @@ import { calcPnl, calcPnlFrac } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import { getTpSlFormPriceValuesKey } from 'client/modules/trading/tpsl/hooks/useTpSlOrderForm/getTpSlFormPriceValuesKey';
 import {
-  GainOrLossInputType,
   TpSlOrderFormValues,
   TriggerPriceSource,
 } from 'client/modules/trading/tpsl/hooks/useTpSlOrderForm/types';
+import { GainOrLossInputType } from 'client/modules/trading/types/GainOrLossInputType';
 import { roundToIncrement, roundToString } from 'client/utils/rounding';
 import { useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';

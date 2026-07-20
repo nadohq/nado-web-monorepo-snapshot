@@ -344,6 +344,7 @@ export function SpotOrderFormContextProvider({ children }: WithChildren) {
     topOfBookPrice,
     priceIncrement,
     decimalAdjustedSizeIncrement,
+    isXStocksMarket,
     roundPrice,
     roundAssetAmount,
     minAssetOrderSize,
@@ -381,9 +382,12 @@ export function SpotOrderFormContextProvider({ children }: WithChildren) {
    * Max order size query
    */
   const maxOrderSizes = useOrderFormMaxOrderSizes({
+    orderType,
     spotLeverageEnabled: spotLeverageEnabled,
     inputConversionPrice,
     executionConversionPrice,
+    validatedScaledOrderStartPriceInput,
+    validatedScaledOrderEndPriceInput,
     orderSide,
     productId,
     roundAssetAmount,
@@ -432,6 +436,7 @@ export function SpotOrderFormContextProvider({ children }: WithChildren) {
     enableMaxSizeLogic,
     sizeDenom,
     roundAssetAmount,
+    isXStocksMarket,
   });
 
   /**

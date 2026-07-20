@@ -1,5 +1,7 @@
-import { format } from 'date-fns';
-import { TimeFormatSpecifier } from './TimeFormatSpecifier';
+import {
+  TIME_SPECIFIER_TO_INTL_FORMAT,
+  TimeFormatSpecifier,
+} from './TimeFormatSpecifier';
 import { FormatOptions, TimeFormatValue } from './types';
 
 /**
@@ -13,10 +15,13 @@ import { FormatOptions, TimeFormatValue } from './types';
 export function formatTimestamp(
   val: TimeFormatValue | undefined,
   options?: FormatOptions,
-) {
+): string {
   if (val == null) {
     return options?.defaultFallback ?? '--';
   }
 
-  return format(val, options?.formatSpecifier ?? TimeFormatSpecifier.HH_MM_SS);
+  const specifier = options?.formatSpecifier ?? TimeFormatSpecifier.HH_MM_SS;
+  const date = typeof val === 'number' ? new Date(val) : val;
+
+  return TIME_SPECIFIER_TO_INTL_FORMAT[specifier].format(date);
 }

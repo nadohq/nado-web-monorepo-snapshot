@@ -33,6 +33,8 @@ interface UsePortfolioHistoryTabs {
   tabs: PortfolioHistoryTab[];
 }
 
+type HistoricalTradesSubTabID = 'aggregated_trades' | 'individual_trades';
+
 type HistoricalOrdersSubTabID =
   | 'historical_engine_orders'
   | 'historical_stop_orders'
@@ -41,6 +43,9 @@ type HistoricalOrdersSubTabID =
 
 export function usePortfolioHistoryTabs(): UsePortfolioHistoryTabs {
   const { t } = useTranslation();
+
+  const [historicalTradesSubTabId, setHistoricalTradesSubTabId] =
+    useState<HistoricalTradesSubTabID>('aggregated_trades');
 
   const [historicalOrdersSubTabId, setHistoricalOrdersSubTabId] =
     useState<HistoricalOrdersSubTabID>('historical_engine_orders');
@@ -54,6 +59,9 @@ export function usePortfolioHistoryTabs(): UsePortfolioHistoryTabs {
           <HistoricalTradesTableTabContent
             showPagination
             pageSize={PAGE_SIZE}
+            onSelectedSubTabIdChange={(id) =>
+              setHistoricalTradesSubTabId(id as HistoricalTradesSubTabID)
+            }
           />
         ),
       },
@@ -131,6 +139,8 @@ export function usePortfolioHistoryTabs(): UsePortfolioHistoryTabs {
     switch (selectedTabId) {
       case 'order_history':
         return historicalOrdersSubTabId;
+      case 'trades':
+        return historicalTradesSubTabId;
       default:
         return selectedTabId;
     }

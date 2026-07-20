@@ -1,0 +1,67 @@
+/**
+ * CSS overrides for Privy dialog.
+ * This is so that Privy dialog's color theme better matches Nado's.
+ *
+ * See https://docs.privy.io/basics/get-started/dashboard/configuring-appearance#css-overrides
+ */
+body {
+  --privy-color-background: var(--color-background);
+  --privy-color-background-2: var(--color-surface-1);
+  --privy-color-background-3: var(--color-surface-2);
+  --privy-color-foreground: var(--color-text-primary);
+  --privy-color-foreground-2: var(--color-text-secondary);
+  --privy-color-foreground-3: var(--color-text-tertiary);
+  --privy-color-foreground-4: var(--color-stroke);
+  --privy-color-accent: var(--color-accent);
+  --privy-color-accent-dark: var(--color-text-primary);
+  --privy-link-navigation-color: var(--color-text-primary);
+  --privy-border-radius-sm: var(--radius-sm);
+  --privy-border-radius-md: var(--radius-md);
+  --privy-border-radius-mdlg: var(--radius-md);
+  --privy-border-radius-lg: var(--radius-lg);
+  --privy-border-radius-full: var(--radius-xl);
+}
+
+/**
+ * "OR" separator between the email login form and the wallet options.
+ *
+ * Privy has no native config option for this separator, so it is injected via
+ * CSS pseudo-elements on the email form section. The email form section is the
+ * div whose direct child is a <label> wrapping #email-input.
+ *
+ * ::after draws a full-width 1px line below the email form; ::before places an
+ * "OR" label centered on the line, with the modal background masking the line
+ * behind the text. Both pseudo-elements are unused by Privy on this element.
+ *
+ * Selectors rely on stable hooks (#privy-modal-content, #email-input) rather
+ * than Privy's hashed styled-components class names.
+ */
+#privy-modal-content div:has(> label > #email-input) {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+#privy-modal-content div:has(> label > #email-input)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -16px;
+  height: 1px;
+  background: var(--privy-color-foreground-4);
+}
+
+#privy-modal-content div:has(> label > #email-input)::before {
+  content: 'OR';
+  position: absolute;
+  left: 50%;
+  bottom: -16px;
+  transform: translate(-50%, 50%);
+  padding: 0 12px;
+  background: var(--privy-color-background);
+  color: var(--privy-color-foreground-2);
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+  z-index: 1;
+}

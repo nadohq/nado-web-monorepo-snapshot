@@ -71,7 +71,9 @@ export function useReversePositionDialog({
 
   // Calculate execution price with slippage for the actual order
   const marketOrderExecutionPrice = getMarketOrderExecutionPrice({
-    isSell: isCurrentlyLong,
+    // Reversal is the opposite side of the existing position: long flips
+    // to sell, short flips to buy.
+    isBuy: !isCurrentlyLong,
     latestMarketPrices: latestMarketPricesForProduct,
     marketSlippageFraction: maxSlippageFraction,
   });

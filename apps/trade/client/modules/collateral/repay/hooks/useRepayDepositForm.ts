@@ -41,12 +41,12 @@ export function useRepayDepositForm({
   // Remap products to reflect amount borrowed, and filter out non-borrows
   const availableProducts = useMemo(() => {
     return depositAvailableProducts
-      .filter((product) => product.decimalAdjustedNadoBalance.isNegative())
+      .filter((product) => product.decimalAdjustedRawNadoBalance.isNegative())
       .map((product) => {
         return {
           ...product,
-          displayedAssetAmount: product.decimalAdjustedNadoBalance.abs(),
-          displayedAssetValueUsd: product.decimalAdjustedNadoBalance
+          displayedAssetAmount: product.decimalAdjustedRawNadoBalance.abs(),
+          displayedAssetValueUsd: product.decimalAdjustedRawNadoBalance
             .abs()
             .multipliedBy(product.oraclePrice),
         };
@@ -59,8 +59,8 @@ export function useRepayDepositForm({
   }, [availableProducts, depositSelectedProduct?.productId]);
 
   const selectedProductCurrentBorrows = useMemo(() => {
-    return selectedProduct?.decimalAdjustedNadoBalance.abs();
-  }, [selectedProduct?.decimalAdjustedNadoBalance]);
+    return selectedProduct?.decimalAdjustedRawNadoBalance.abs();
+  }, [selectedProduct?.decimalAdjustedRawNadoBalance]);
 
   // Estimate balances
   const balances = useMemo((): UseRepayDepositForm['balances'] => {

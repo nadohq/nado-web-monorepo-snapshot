@@ -7,7 +7,6 @@ export * from './LinkButton';
 export * from './PrimaryButton';
 export * from './SecondaryButton';
 export * from './SegmentedControl';
-export * from './TabButton';
 export * from './TabTextButton';
 export * from './TextButton';
 export * from './types';

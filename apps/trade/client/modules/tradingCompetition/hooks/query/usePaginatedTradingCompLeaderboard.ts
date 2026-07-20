@@ -6,28 +6,31 @@ import {
   usePrimaryChainNadoClient,
 } from '@nadohq/react-client';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { LEADERBOARD_PAGE_SIZE } from 'client/modules/tradingCompetition/consts';
 
 export function paginatedTradingCompLeaderboardQueryKey(
   chainEnv?: ChainEnv,
   contestId?: number,
   rankType?: IndexerLeaderboardRankType,
+  pageSize?: number,
 ) {
   return createQueryKey(
     'paginatedTradingCompLeaderboard',
     chainEnv,
     contestId,
     rankType,
+    pageSize,
   );
 }
 
 interface Params {
+  pageSize: number;
   contestId: number | undefined;
   /** Optional for single-track contests; required for multi-track contests. */
   rankType?: IndexerLeaderboardRankType;
 }
 
 export function usePaginatedTradingCompLeaderboard({
+  pageSize,
   contestId,
   rankType,
 }: Params) {
@@ -41,6 +44,7 @@ export function usePaginatedTradingCompLeaderboard({
       primaryChainEnv,
       contestId,
       rankType,
+      pageSize,
     ),
     initialPageParam: <string | undefined>undefined,
     queryFn: async ({ pageParam }) => {
@@ -48,15 +52,12 @@ export function usePaginatedTradingCompLeaderboard({
         throw new QueryDisabledError();
       }
 
-      const response =
-        await nadoClient.context.indexerClient.getPaginatedLeaderboard({
-          contestId,
-          rankType,
-          limit: LEADERBOARD_PAGE_SIZE,
-          startCursor: pageParam,
-        });
-
-      return response;
+      return nadoClient.context.indexerClient.getPaginatedLeaderboard({
+        contestId,
+        rankType,
+        limit: pageSize,
+        startCursor: pageParam,
+      });
     },
     getNextPageParam: (lastPage) => {
       if (!lastPage?.meta.nextCursor) {

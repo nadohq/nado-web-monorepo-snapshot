@@ -14,6 +14,7 @@ import { useCallback } from 'react';
 
 interface Params {
   priceIncrement: BigNumber | undefined;
+  isXStocksMarket: boolean;
 }
 
 /**
@@ -22,7 +23,10 @@ interface Params {
  * @param params - Parameters for the function.
  * @returns Validation functions for scaled order fields
  */
-export function useScaledOrderFormValidators({ priceIncrement }: Params) {
+export function useScaledOrderFormValidators({
+  priceIncrement,
+  isXStocksMarket,
+}: Params) {
   const validateScaledOrderStartPrice = useCallback<
     InputValidatorFn<string, OrderFormError>
   >(
@@ -37,11 +41,15 @@ export function useScaledOrderFormValidators({ priceIncrement }: Params) {
         return 'scaled_order_start_price_invalid_input';
       }
 
-      if (priceIncrement && !isValidIncrementAmount(val, priceIncrement)) {
+      if (
+        !isXStocksMarket &&
+        priceIncrement &&
+        !isValidIncrementAmount(val, priceIncrement)
+      ) {
         return 'scaled_order_start_price_invalid_price_increment';
       }
     },
-    [priceIncrement],
+    [priceIncrement, isXStocksMarket],
   );
 
   const validateScaledOrderEndPrice = useCallback<
@@ -58,11 +66,15 @@ export function useScaledOrderFormValidators({ priceIncrement }: Params) {
         return 'scaled_order_end_price_invalid_input';
       }
 
-      if (priceIncrement && !isValidIncrementAmount(val, priceIncrement)) {
+      if (
+        !isXStocksMarket &&
+        priceIncrement &&
+        !isValidIncrementAmount(val, priceIncrement)
+      ) {
         return 'scaled_order_end_price_invalid_price_increment';
       }
     },
-    [priceIncrement],
+    [priceIncrement, isXStocksMarket],
   );
 
   const validateScaledOrderNumberOfOrders = useCallback<

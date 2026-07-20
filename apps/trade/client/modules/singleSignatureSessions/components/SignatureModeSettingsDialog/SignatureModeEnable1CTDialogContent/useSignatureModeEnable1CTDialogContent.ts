@@ -6,10 +6,6 @@ import {
 import { useExecuteCreateLinkedSignerKey } from 'client/hooks/execute/useExecuteCreateLinkedSignerKey';
 import { useExecuteUpdateLinkedSigner } from 'client/hooks/execute/useExecuteUpdateLinkedSigner';
 import { useSubaccountOverview } from 'client/hooks/subaccount/useSubaccountOverview/useSubaccountOverview';
-import {
-  RUN_WITH_DELAY_DURATIONS,
-  useRunWithDelayOnCondition,
-} from 'client/hooks/util/useRunWithDelayOnCondition';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { useNotificationManagerContext } from 'client/modules/notifications/NotificationManagerContext';
 import { useRequiresSingleSignatureSetup } from 'client/modules/singleSignatureSessions/hooks/useRequiresSingleSignatureSetup';
@@ -23,13 +19,7 @@ export type SignatureModeSettingsUserStateError =
   // 5 USDT of account value required to enable single signature
   | 'below_minimum_value';
 
-interface Params {
-  onEnableSuccess(): void;
-}
-
-export function useSignatureModeEnable1CTDialogContent({
-  onEnableSuccess,
-}: Params) {
+export function useSignatureModeEnable1CTDialogContent() {
   const { t } = useTranslation();
   const { hide } = useDialog();
   const { dispatchNotification } = useNotificationManagerContext();
@@ -37,16 +27,6 @@ export function useSignatureModeEnable1CTDialogContent({
   const executeCreateLinkedSignerKey = useExecuteCreateLinkedSignerKey();
   const executeUpdateLinkedSigner = useExecuteUpdateLinkedSigner();
   const requiresSingleSignatureSetup = useRequiresSingleSignatureSetup();
-
-  useRunWithDelayOnCondition({
-    condition: executeUpdateLinkedSigner.isSuccess,
-    fn: () => {
-      executeCreateLinkedSignerKey.reset();
-      executeUpdateLinkedSigner.reset();
-      onEnableSuccess();
-    },
-    delay: RUN_WITH_DELAY_DURATIONS.SHORT,
-  });
 
   const { data: currentServerLinkedSigner } = useQuerySubaccountLinkedSigner();
   const { data: subaccountOverview } = useSubaccountOverview();

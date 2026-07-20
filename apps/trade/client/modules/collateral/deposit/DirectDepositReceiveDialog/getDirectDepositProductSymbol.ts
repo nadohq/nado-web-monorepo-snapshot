@@ -9,5 +9,12 @@ export function getDirectDepositProductSymbol(
   if (product.productId === KNOWN_PRODUCT_IDS.weth) {
     return t(($) => $.symbolOrEth, { symbol: product.symbol });
   }
+  if (product.isXStocksProduct) {
+    // A bit of a hack here - `symbol` already includes the `w` prefix, so we strip it here
+    return t(($) => $.symbolOrWrappedSymbol, {
+      symbol: product.symbol.slice(1),
+      wrappedSymbol: product.symbol,
+    });
+  }
   return product.symbol;
 }

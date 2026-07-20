@@ -1,7 +1,6 @@
 import { NadoTransferQuoteTx, subaccountFromHex } from '@nadohq/client';
 import { isIsoSubaccountHex, SubaccountProfile } from '@nadohq/react-client';
 import { AllMarketsStaticDataForChainEnv } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
-import { assertEventType } from 'client/modules/events/collateral/assertEventType';
 import {
   getBaseCollateralEvent,
   GetBaseCollateralEventParams,
@@ -22,8 +21,6 @@ export function getTransferCollateralEvent({
   getSubaccountProfile,
   t,
 }: GetTransferCollateralEventParams): TransferCollateralEvent {
-  assertEventType(event, 'transfer_quote');
-
   const {
     transfer_quote: { sender, recipient },
   } = event.tx as NadoTransferQuoteTx;
@@ -48,7 +45,6 @@ export function getTransferCollateralEvent({
 
   return {
     ...baseEvent,
-    eventType: 'transfer_quote',
     fromSubaccount,
     toSubaccount,
     rowId: createRowId(

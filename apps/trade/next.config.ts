@@ -17,10 +17,12 @@ const nextConfig: NextConfig = {
   images: {
     qualities: [100, 75],
   },
-  webpack: (config) => {
+  webpack: (config, { dev }) => {
     // disabling cache as we're hitting issues and do not benefit from it
     // see https://github.com/nadohq/nado-web-monorepo/pull/3246
     config.cache = false;
+    // only enable symlinks on dev builds (disable on regular builds so SDK local linking works)
+    config.resolve.symlinks = !!dev;
     config.externals.push(
       // This is currently needed to load the *.wasm files needed for Notifi
       '@xmtp/user-preferences-bindings-wasm',
@@ -73,6 +75,14 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_BUILD_ID: buildId,
   },
+  // webpack resolve.symlinks=false disables auto-detection of workspace packages
+  // so we need to list them explicitly here
+  transpilePackages: [
+    '@nadohq/i18n',
+    '@nadohq/react-client',
+    '@nadohq/web-common',
+    '@nadohq/web-ui',
+  ],
   devIndicators: false,
   experimental: {
     optimizePackageImports: [

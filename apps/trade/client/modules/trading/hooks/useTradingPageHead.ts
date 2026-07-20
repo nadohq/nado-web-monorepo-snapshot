@@ -1,10 +1,12 @@
 import {
   formatNumber,
   getMarketPriceFormatSpecifier,
+  toXStocksDisplayPrice,
 } from '@nadohq/react-client';
 import { useDebounce } from 'ahooks';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { useLatestOrderFill } from 'client/hooks/markets/useLatestOrderFill';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -23,6 +25,7 @@ export function useTradingPageHead({ productId }: Props) {
   });
   const { data: allMarketsStaticData } = useAllMarketsStaticData();
   const debouncedFill = useDebounce(latestPrice, { wait: 1000 });
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const marketData = productId
     ? allMarketsStaticData?.allMarkets[productId]
@@ -35,17 +38,21 @@ export function useTradingPageHead({ productId }: Props) {
     }
 
     const marketName = marketData.metadata.marketName;
-    const priceFormatSpecifier = getMarketPriceFormatSpecifier(
-      marketData.priceIncrement,
-    );
+    const exchangeRate = getExchangeRate(marketData.productId);
+
+    const priceFormatSpecifier = getMarketPriceFormatSpecifier({
+      priceIncrement: marketData.priceIncrement,
+      exchangeRate,
+    });
+    const fillPrice = toXStocksDisplayPrice(debouncedFill?.price, exchangeRate);
 
     // Formatting to be consistent with the title template applied in the root layout
-    // ex "60,577 BTCUSDT | Nado"
+    // ex "60,577 BTC | Nado"
     document.title = t(($) => $.tradingPageTitle, {
-      price: formatNumber(debouncedFill?.price, {
+      price: formatNumber(fillPrice, {
         formatSpecifier: priceFormatSpecifier,
       }),
       marketName,
     });
-  }, [debouncedFill, marketData, t]);
+  }, [debouncedFill, getExchangeRate, marketData, t]);
 }

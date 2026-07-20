@@ -40,7 +40,7 @@ interface WithValueContent {
 
 interface WithFormatValue {
   value: NumberFormatValue | undefined | null;
-  numberFormatSpecifier: NumberFormatSpecifier | string;
+  numberFormatSpecifier: NumberFormatSpecifier;
   defaultValue?: string | number;
   valueClassName?: string;
   valueEndElement?: ReactNode;

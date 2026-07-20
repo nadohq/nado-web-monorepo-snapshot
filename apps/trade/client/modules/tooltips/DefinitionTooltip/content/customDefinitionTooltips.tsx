@@ -16,14 +16,10 @@ interface CustomDefinitionTooltipVariables {
 }
 
 export function customDefinitionTooltips(
-  tFunction: TFunction,
+  t: TFunction,
   vars: CustomDefinitionTooltipVariables,
 ): Record<CustomDefinitionTooltipID, () => DefinitionTooltipContent> {
-  // override t function to repeatedly passing variables
-  const t = (
-    selector: Parameters<typeof tFunction>[0],
-    args: any = undefined,
-  ) => tFunction(selector, { ...vars, ...args });
+  const { primaryQuoteTokenSymbol } = vars;
 
   return {
     realizedPnl: () => {
@@ -209,6 +205,7 @@ export function customDefinitionTooltips(
                 ($) =>
                   $.definitions.custom.marginManagerPerpPositionsUnsettled
                     .description,
+                { primaryQuoteTokenSymbol },
               )}
             </p>
             <DiscList.Container>
@@ -247,7 +244,11 @@ export function customDefinitionTooltips(
         title: t(($) => $.definitions.custom.settlement.title),
         content: (
           <>
-            <p>{t(($) => $.definitions.custom.settlement.description)}</p>
+            <p>
+              {t(($) => $.definitions.custom.settlement.description, {
+                primaryQuoteTokenSymbol,
+              })}
+            </p>
             <DiscList.Container>
               <DiscList.Item>
                 <Trans
@@ -475,7 +476,7 @@ export function customDefinitionTooltips(
                 }
                 values={vars}
                 components={{
-                  link: (
+                  action: (
                     <LinkButton
                       href={LINKS.spreadDocs}
                       external

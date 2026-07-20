@@ -28,7 +28,6 @@ export function useShouldFlash({
 
     lastFlashKey.current = flashKey;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Animation effect with setTimeout requires synchronous setState to trigger flash
     setShouldFlash(true);
 
     setTimeout(() => {
@@ -42,8 +41,6 @@ export function useShouldFlash({
     }
 
     isFirstRender.current = false;
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Animation effect with setTimeout requires synchronous setState to trigger flash
     setShouldFlash(true);
 
     setTimeout(() => {

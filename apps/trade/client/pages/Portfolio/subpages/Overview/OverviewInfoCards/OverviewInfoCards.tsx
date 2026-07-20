@@ -5,6 +5,7 @@ import {
 import { joinClassNames, WithClassnames } from '@nadohq/web-common';
 import { Card, ScrollShadowsContainer } from '@nadohq/web-ui';
 import { ValueWithLabel } from 'client/components/ValueWithLabel/ValueWithLabel';
+import { usePrivacyMode } from 'client/modules/privacy/hooks/usePrivacyMode';
 import { useOverviewInfoCards } from 'client/pages/Portfolio/subpages/Overview/OverviewInfoCards/useOverviewInfoCards';
 import { getSignDependentColorClassName } from 'client/utils/ui/getSignDependentColorClassName';
 import { ReactNode } from 'react';
@@ -12,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 export function OverviewInfoCards() {
   const { t } = useTranslation();
+  const { isPrivacyModeEnabled } = usePrivacyMode();
   const {
     totalEquityUsd,
     selectedTimespanAccountPnlUsd,
@@ -34,6 +36,7 @@ export function OverviewInfoCards() {
             <ValueWithLabel.Vertical
               tooltip={{ id: 'overviewTotalEquity' }}
               sizeVariant="xl"
+              isValuePrivate={isPrivacyModeEnabled}
               label={t(($) => $.totalEquity)}
               value={totalEquityUsd}
               numberFormatSpecifier={PresetNumberFormatSpecifier.CURRENCY_2DP}
@@ -44,6 +47,7 @@ export function OverviewInfoCards() {
               tooltip={{ id: 'overviewTimespanAccountPnl' }}
               fitWidth
               sizeVariant="xs"
+              isValuePrivate={isPrivacyModeEnabled}
               label={t(($) => $.timespanPnl, {
                 timespan: timespanMetadata.label,
               })}
@@ -62,6 +66,7 @@ export function OverviewInfoCards() {
             <ValueWithLabel.Vertical
               tooltip={{ id: 'overview30dVolume' }}
               sizeVariant="xl"
+              isValuePrivate={isPrivacyModeEnabled}
               label={t(($) => $.volume30d)}
               value={volume30DUsd}
               numberFormatSpecifier={PresetNumberFormatSpecifier.CURRENCY_2DP}
@@ -75,6 +80,7 @@ export function OverviewInfoCards() {
               }}
               fitWidth
               sizeVariant="xs"
+              isValuePrivate={isPrivacyModeEnabled}
               label={t(($) => $.feeTier)}
               labelClassName="label-separator"
               valueContent={
@@ -100,6 +106,7 @@ export function OverviewInfoCards() {
             <ValueWithLabel.Vertical
               tooltip={{ id: 'overviewNlpBalance' }}
               sizeVariant="xl"
+              isValuePrivate={isPrivacyModeEnabled}
               label={t(($) => $.nlpBalance)}
               value={nlpBalanceUsd}
               numberFormatSpecifier={PresetNumberFormatSpecifier.CURRENCY_2DP}

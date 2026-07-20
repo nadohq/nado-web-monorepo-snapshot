@@ -1,6 +1,9 @@
 'use client';
 
-import { PresetNumberFormatSpecifier } from '@nadohq/react-client';
+import {
+  CustomNumberFormatSpecifier,
+  PresetNumberFormatSpecifier,
+} from '@nadohq/react-client';
 import { joinClassNames } from '@nadohq/web-common';
 import { LinkButton, SectionedCard } from '@nadohq/web-ui';
 import { TextCountdown } from 'client/components/Countdown/TextCountdown';
@@ -10,7 +13,7 @@ import desktopBanner from 'client/pages/Points/assets/season-banner-desktop.png'
 import mobileBanner from 'client/pages/Points/assets/season-banner-mobile.png';
 import { PointsTable } from 'client/pages/Points/components/PointsTable/PointsTable';
 import { PointsTierCardContent } from 'client/pages/Points/components/PointsTierCardContent';
-import { usePointsPageData } from 'client/pages/Points/usePointsPageData';
+import { usePointsPageData } from 'client/pages/Points/hooks/usePointsPageData';
 import { LINKS } from 'common/brandMetadata/links';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -18,8 +21,8 @@ import { useTranslation } from 'react-i18next';
 
 export function PointsPage() {
   const { t } = useTranslation();
-
   const { data } = usePointsPageData();
+
   return (
     <div className="flex flex-col">
       <Image
@@ -27,12 +30,14 @@ export function PointsPage() {
         alt=""
         className="hidden h-auto sm:block"
         quality={100}
+        loading="eager"
       />
       <Image
         src={mobileBanner}
         alt=""
         className="h-auto w-full sm:hidden"
         quality={100}
+        loading="eager"
       />
       <div
         className={joinClassNames(
@@ -55,9 +60,16 @@ export function PointsPage() {
           />
           <ValueWithLabel.Vertical
             sizeVariant="xl"
+            label={t(($) => $.avgDailyVol7d)}
+            value={data?.avgDailyVolumeUsd}
+            numberFormatSpecifier={
+              CustomNumberFormatSpecifier.CURRENCY_LARGE_ABBREVIATED
+            }
+          />
+          <ValueWithLabel.Vertical
+            sizeVariant="xl"
             label={t(($) => $.weeklyPoints)}
-            // Hardcoded amount for weekly total points
-            value={950_000}
+            value={data?.weeklyPointsPool}
             numberFormatSpecifier={PresetNumberFormatSpecifier.NUMBER_INT}
           />
         </div>

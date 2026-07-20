@@ -15,6 +15,7 @@ import { EVMContext } from './EVMContext';
 import { useDidInitializeWalletConnection } from './hooks';
 import { ChainStatus, ConnectionStatus, EVMContextData } from './types';
 import { getIsConnectorEnabledForChainEnv } from './utils';
+import { getPrimaryChainEnvOrDefault } from './utils/getPrimaryChainEnvOrDefault';
 
 interface Props {
   children: ReactNode;
@@ -34,16 +35,10 @@ export function EVMContextProvider({
   supportedChains,
   children,
 }: Props) {
-  const primaryChainEnv = useMemo((): ChainEnv => {
-    // Failsafe check - if localstorage has an invalid value, just default to the first supported env
-    if (
-      basePrimaryChainEnv &&
-      supportedChainEnvs.includes(basePrimaryChainEnv)
-    ) {
-      return basePrimaryChainEnv;
-    }
-    return supportedChainEnvs[0];
-  }, [basePrimaryChainEnv, supportedChainEnvs]);
+  const primaryChainEnv = getPrimaryChainEnvOrDefault({
+    primaryChainEnv: basePrimaryChainEnv,
+    supportedChainEnvs,
+  });
 
   const primaryChain = useMemo(() => {
     return getPrimaryChain(primaryChainEnv);

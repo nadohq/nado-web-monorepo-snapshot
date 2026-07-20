@@ -1,6 +1,5 @@
 import { joinClassNames, WithClassnames } from '@nadohq/web-common';
 import { ScrollShadowsContainer, SearchBox } from '@nadohq/web-ui';
-import { MarketCategoryFilter } from 'client/components/MarketCategoryFilter/MarketCategoryFilter';
 import { Footer } from 'client/modules/commandCenter/components/Footer';
 import { BalancesGroup } from 'client/modules/commandCenter/components/groups/BalancesGroup';
 import { MarketsGroup } from 'client/modules/commandCenter/components/groups/MarketsGroup';
@@ -16,8 +15,6 @@ export function CommandCenter({ className }: WithClassnames) {
   const {
     query,
     setQuery,
-    marketCategory,
-    setMarketCategory,
     markets,
     positions,
     balances,
@@ -37,12 +34,7 @@ export function CommandCenter({ className }: WithClassnames) {
     >
       {/* cmdk also adds a visually hidden label element to its children, so we wrap */}
       {/* our own here to isolate them for styling. */}
-      <div
-        className={joinClassNames(
-          'flex h-[80vh] flex-col lg:h-150',
-          'divide-overlay-divider divide-y',
-        )}
-      >
+      <div className={joinClassNames('flex h-[80vh] flex-col lg:h-150')}>
         <div className="flex flex-col gap-y-3 p-2 lg:p-4">
           <SearchBox
             hideSearchIcon
@@ -50,17 +42,8 @@ export function CommandCenter({ className }: WithClassnames) {
             setQuery={setQuery}
             placeholder={t(($) => $.inputPlaceholders.search)}
           />
-          <MarketCategoryFilter
-            marketCategory={marketCategory}
-            setMarketCategory={setMarketCategory}
-          />
         </div>
-        <ScrollShadowsContainer
-          asChild
-          // Remount the table on category change so we reset the scroll shadow
-          // class rather than keeping the one used for the previous category.
-          key={marketCategory}
-        >
+        <ScrollShadowsContainer asChild>
           <Command.List
             className={joinClassNames(
               'flex-1',
@@ -72,7 +55,6 @@ export function CommandCenter({ className }: WithClassnames) {
               // Force the inner wrapping element to always take up full height so we can
               // vertically center other elements (e.g. no results msg).
               '*:h-full',
-              '*:divide-overlay-divider *:divide-y',
             )}
           >
             <PositionsGroup

@@ -6,6 +6,7 @@ import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { SubaccountSwitcherContent } from 'client/modules/app/navBar/accountInfo/SubaccountSwitcherContent';
 import { AccountDropdownCurrentProfileCard } from 'client/modules/app/navBar/accountInfo/components/AccountDropdownCurrentProfileCard';
 import { AccountDropdownHeader } from 'client/modules/app/navBar/accountInfo/components/AccountDropdownHeader';
+import { AccountDropdownSocialLinkingButton } from 'client/modules/app/navBar/accountInfo/components/AccountDropdownSocialLinkingButton';
 import { AccountDropdownUserCTA } from 'client/modules/app/navBar/accountInfo/components/AccountDropdownUserCTA';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
@@ -16,8 +17,9 @@ export function AccountDropdownContent() {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-y-2">
       <AccountDropdownHeader />
+      <AccountDropdownSocialLinkingButton />
       <AccountDropdownUserCTA />
       <AccountDropdownCurrentProfileCard />
       <DropdownMenu.Group asChild>
@@ -27,7 +29,7 @@ export function AccountDropdownContent() {
             label={t(($) => $.buttons.deposit)}
             onClick={() =>
               show({
-                type: 'deposit_options',
+                type: 'deposit_entrypoint',
                 params: {},
               })
             }

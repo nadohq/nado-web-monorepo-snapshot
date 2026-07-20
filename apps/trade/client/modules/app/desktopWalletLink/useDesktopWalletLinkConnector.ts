@@ -112,6 +112,11 @@ export function useDesktopWalletLinkConnector() {
     [connectors, setSavedUserStateByAddress, connect],
   );
 
+  const validateDesktopWalletLink = useCallback((scannedValue: string) => {
+    const parsedUri = uriValidator.safeParse(scannedValue);
+    return parsedUri.success;
+  }, []);
+
   const isDesktopWalletLinkConnected = useMemo(
     () =>
       connectionStatus.connector?.id === KNOWN_CONNECTOR_IDS.desktopWalletLink,
@@ -120,6 +125,7 @@ export function useDesktopWalletLinkConnector() {
 
   return {
     connectWithDesktopWalletLink,
+    validateDesktopWalletLink,
     isDesktopWalletLinkConnected,
   };
 }

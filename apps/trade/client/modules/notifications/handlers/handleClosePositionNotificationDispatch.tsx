@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 
 export async function handleClosePositionNotificationDispatch(
   closePositionNotificationData: ClosePositionNotificationData,
-  { t, enableTradingNotifications }: NotificationDispatchContext,
+  { t, enableTradingNotifications, sendGTMEvent }: NotificationDispatchContext,
 ) {
   const { closePositionParams } = closePositionNotificationData;
 
@@ -39,13 +39,20 @@ export async function handleClosePositionNotificationDispatch(
         { duration: DEFAULT_TOAST_TTL },
       );
     }
+    sendGTMEvent({
+      event: 'close_position',
+      market: closePositionParams.metadata.marketName,
+      fraction: closePositionParams.fraction,
+    });
   } else if (!isUserDeniedError(orderActionError)) {
+    const parsedError = parseExecuteError(t, orderActionError);
+
     toast.custom(
       (toastId) => {
         return (
           <ActionErrorNotification
             title={t(($) => $.errors.closePositionFailed)}
-            error={parseExecuteError(t, orderActionError)}
+            error={parsedError}
             ttl={DEFAULT_TOAST_TTL}
             onDismiss={() => {
               toast.dismiss(toastId);
@@ -55,5 +62,11 @@ export async function handleClosePositionNotificationDispatch(
       },
       { duration: DEFAULT_TOAST_TTL },
     );
+    sendGTMEvent({
+      event: 'close_position_error',
+      market: closePositionParams.metadata.marketName,
+      fraction: closePositionParams.fraction,
+      errorMessage: parsedError.errorMessage,
+    });
   }
 }

@@ -1,10 +1,15 @@
-import { KNOWN_PRODUCT_IDS } from '@nadohq/react-client';
+import {
+  getMarketPriceFormatSpecifier,
+  KNOWN_PRODUCT_IDS,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
 import { useAllMarkets } from 'client/hooks/markets/useAllMarkets';
 import { useAllMarketsStats } from 'client/hooks/markets/useAllMarketsStats';
 import { useFavoritedMarkets } from 'client/hooks/markets/useFavoritedMarkets';
 import { useQueryAllMarketsLatestPrices } from 'client/hooks/query/markets/useQueryAllMarketsLatestPrices';
 import { useProductIdLinks } from 'client/hooks/ui/navigation/useProductIdLinks';
 import { FavoriteTicker } from 'client/modules/trading/components/FavoriteTickersBar/types';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { get } from 'lodash';
 import { useCallback, useMemo } from 'react';
 
@@ -31,6 +36,7 @@ export function useFavoriteTickers({
   const { data: marketStatsData } = useAllMarketsStats();
   const { favoritedMarketIds, toggleIsFavoritedMarket } = useFavoritedMarkets();
   const productIdLinks = useProductIdLinks();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const favoriteTickers = useMemo(() => {
     if (!allMarketsData) {
@@ -46,15 +52,19 @@ export function useFavoriteTickers({
         const priceChangeFrac =
           marketStatsData?.statsByMarket[market.productId]
             ?.pastDayPriceChangeFrac;
-
-        const currentPrice =
+        const safeMidPrice =
           latestMarketPricesData?.[market.productId]?.safeMidPrice;
+        const exchangeRate = getExchangeRate(market.productId);
+
         return {
           productId: market.productId,
           marketName: market.metadata.marketName,
           priceChangeFrac: priceChangeFrac,
-          currentPrice: currentPrice,
-          priceIncrement: market.priceIncrement,
+          currentPrice: toXStocksDisplayPrice(safeMidPrice, exchangeRate),
+          priceFormatSpecifier: getMarketPriceFormatSpecifier({
+            priceIncrement: market.priceIncrement,
+            exchangeRate: exchangeRate,
+          }),
           href: get(productIdLinks, market.productId, ''),
           isActive: activeProductId === market.productId,
         };
@@ -64,6 +74,7 @@ export function useFavoriteTickers({
     favoritedMarketIds,
     marketStatsData?.statsByMarket,
     latestMarketPricesData,
+    getExchangeRate,
     productIdLinks,
     activeProductId,
   ]);

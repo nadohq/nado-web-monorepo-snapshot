@@ -6,9 +6,9 @@ export type MarketCategory =
   | 'all'
   | 'perps'
   | 'spot'
-  | 'memes'
-  | 'defi'
-  | 'chains'
+  | 'crypto'
+  | 'stocks'
+  | 'forex'
   | 'commodities';
 
 /** Parsed data for a single row in the market switcher table. */

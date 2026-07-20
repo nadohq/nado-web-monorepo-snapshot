@@ -1,5 +1,6 @@
 import { MutationStatus } from '@tanstack/react-query';
 import { useQueryOnChainTransactionState } from 'client/hooks/query/useQueryOnChainTransactionState';
+import { useEffect } from 'react';
 
 interface Params {
   mutationStatus: MutationStatus;
@@ -14,6 +15,14 @@ export function useOnChainMutationStatus({ mutationStatus, txHash }: Params) {
   const onChainState = useQueryOnChainTransactionState({
     txHash,
   });
+
+  const onChainError = onChainState.error;
+
+  useEffect(() => {
+    if (onChainError) {
+      console.error('[useOnChainMutationStatus] on-chain error', onChainError);
+    }
+  }, [onChainError]);
 
   return {
     isLoading: mutationStatus === 'pending' || onChainState.type === 'pending',

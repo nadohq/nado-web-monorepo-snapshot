@@ -1,6 +1,5 @@
 import {
   BigNumberish,
-  EngineServerExecuteSuccessResult,
   getOrderNonce,
   millisToSeconds,
   NADO_PRODUCT_DECIMALS,
@@ -10,18 +9,23 @@ import {
   packOrderAppendix,
   PlaceOrderParams,
   PlaceTriggerOrderParams,
+  sumBigNumberBy,
   toBigNumber,
   toPrintableObject,
-  TriggerServerExecuteSuccessResult,
 } from '@nadohq/client';
+import { toXStocksRawAmount, toXStocksRawPrice } from '@nadohq/react-client';
 import { nonNullFilter } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
-import { ExecutePlaceOrderParams } from 'client/hooks/execute/placeOrder/types';
+import {
+  ExecutePlaceOrderParams,
+  ExecutePlaceOrderResult,
+} from 'client/hooks/execute/placeOrder/types';
 import { ValidExecuteContext } from 'client/hooks/execute/util/useExecuteInValidContext';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { useGetRecvTime } from 'client/hooks/util/useGetRecvTime';
 import { calculateTwapRuntimeInMillis } from 'client/modules/trading/components/twap/utils';
 import { MARKET_ORDER_EXECUTION_TYPE } from 'client/modules/trading/consts/marketOrderExecutionType';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { PlaceOrderExecuteResultError } from 'client/utils/errors/placeOrderExecuteResultError';
 import { roundToIncrement, roundToString } from 'client/utils/rounding';
 import { addDays, getTime } from 'date-fns';
@@ -30,17 +34,41 @@ import { useCallback } from 'react';
 export function usePlaceOrderMutationFn() {
   const { data: marketDataByProductId } = useAllMarketsStaticData();
   const getRecvTime = useGetRecvTime();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   return useCallback(
     async (params: ExecutePlaceOrderParams, context: ValidExecuteContext) => {
+      // Convert display (QQQx) amounts/prices to raw (wQQQx) for backend execution.
+      // For non-xStocks markets the exchange rate is 1, making these no-ops.
+      // Note that the conversions must be done BEFORE rounding to increments, as backend increments are in terms of the raw values
+      const exchangeRate = getExchangeRate(params.productId);
+      const toRawAmount = (
+        displayAmount: BigNumberish,
+        // This is used for multi_limit orders
+        exchangeRateOverride?: BigNumber,
+      ) =>
+        toXStocksRawAmount(
+          toBigNumber(displayAmount),
+          exchangeRateOverride ?? exchangeRate,
+        );
+      const toRawPrice = (
+        displayPrice: BigNumberish,
+        // This is used for multi_limit orders
+        exchangeRateOverride?: BigNumber,
+      ) =>
+        toXStocksRawPrice(
+          toBigNumber(displayPrice),
+          exchangeRateOverride ?? exchangeRate,
+        );
+
       // Round amount & price
       const increments = marketDataByProductId?.allMarkets[params.productId];
       const roundedAmount = toMutationAmountInput(
-        params.amount,
+        toRawAmount(params.amount),
         increments?.sizeIncrement,
       );
       const roundedPrice = toMutationPriceInput(
-        params.price,
+        toRawPrice(params.price),
         increments?.priceIncrement,
       );
 
@@ -68,9 +96,7 @@ export function usePlaceOrderMutationFn() {
         borrowMargin: params.iso?.borrowMargin,
       };
 
-      let result:
-        | EngineServerExecuteSuccessResult<'place_orders'>
-        | TriggerServerExecuteSuccessResult<'place_orders'>;
+      let result: ExecutePlaceOrderResult;
 
       switch (params.orderType) {
         case 'market':
@@ -93,6 +119,7 @@ export function usePlaceOrderMutationFn() {
               // Fallback to parent productId if not provided, which is the case for scaled orders.
               const multiLimitProductId =
                 multiLimitOrder.productId ?? sharedParams.productId;
+              const exchangeRateOverride = getExchangeRate(multiLimitProductId);
 
               const multiLimitIncrements =
                 marketDataByProductId?.allMarkets[multiLimitProductId];
@@ -109,11 +136,11 @@ export function usePlaceOrderMutationFn() {
                 order: {
                   ...sharedParams.order,
                   price: toMutationPriceInput(
-                    multiLimitOrder.price,
+                    toRawPrice(multiLimitOrder.price, exchangeRateOverride),
                     multiLimitIncrements?.priceIncrement,
                   ),
                   amount: toMutationAmountInput(
-                    multiLimitOrder.amount,
+                    toRawAmount(multiLimitOrder.amount, exchangeRateOverride),
                     multiLimitIncrements?.sizeIncrement,
                   ),
                   appendix: packOrderAppendix(multiLimitOrderAppendix),
@@ -137,7 +164,7 @@ export function usePlaceOrderMutationFn() {
         case 'stop_market':
         case 'stop_limit': {
           const roundedTriggerPrice = toMutationPriceInput(
-            params.priceTriggerCriteria.triggerPrice,
+            toRawPrice(params.priceTriggerCriteria.triggerPrice),
             increments?.priceIncrement,
           );
 
@@ -153,7 +180,7 @@ export function usePlaceOrderMutationFn() {
           };
 
           console.log(
-            'Placing time trigger order',
+            'Placing price trigger order',
             toPrintableObject(triggerOrderParams),
             'Order appendix',
             toPrintableObject(orderAppendix),
@@ -165,19 +192,41 @@ export function usePlaceOrderMutationFn() {
           break;
         }
         case 'twap': {
-          result = await context.nadoClient.market.placeTriggerOrders({
-            orders: [
-              {
-                ...sharedParams,
-                triggerCriteria: {
-                  type: 'time',
-                  criteria: {
-                    interval: params.triggerCriteria.interval,
-                    amounts: params.triggerCriteria.amounts,
-                  },
-                },
+          const twapAmounts = params.triggerCriteria.amounts.map((amt) =>
+            toMutationAmountInput(toRawAmount(amt), increments?.sizeIncrement),
+          );
+
+          // Derive the order total from the sum of individually-rounded sub-order amounts.
+          // Computing the total independently from params.amount risks a different rounded
+          // value due to per-amount rounding, which causes backend rejections.
+          const twapTotalAmount = toMutationAmountInput(
+            sumBigNumberBy(twapAmounts, (a) => toBigNumber(a)),
+            increments?.sizeIncrement,
+          );
+
+          const twapOrderParams: PlaceTriggerOrderParams = {
+            ...sharedParams,
+            order: {
+              ...sharedParams.order,
+              amount: twapTotalAmount,
+            },
+            triggerCriteria: {
+              type: 'time',
+              criteria: {
+                interval: params.triggerCriteria.interval,
+                amounts: twapAmounts,
               },
-            ],
+            },
+          };
+          console.log(
+            'Placing time trigger order',
+            toPrintableObject(twapOrderParams),
+            'Order appendix',
+            toPrintableObject(orderAppendix),
+          );
+
+          result = await context.nadoClient.market.placeTriggerOrders({
+            orders: [twapOrderParams],
           });
           break;
         }
@@ -194,7 +243,7 @@ export function usePlaceOrderMutationFn() {
 
       return result;
     },
-    [getRecvTime, marketDataByProductId?.allMarkets],
+    [getRecvTime, marketDataByProductId?.allMarkets, getExchangeRate],
   );
 }
 

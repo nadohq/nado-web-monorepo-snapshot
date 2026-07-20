@@ -71,20 +71,20 @@ export const useCommandCenterBalanceItems = ({ marketCategory }: Params) => {
         const balanceDataToReturn: BalanceTableItem[] = [];
 
         const dialogTypes: CollateralDialogType[] = signDependentValue(amount, {
-          positive: ['deposit_options', 'borrow', 'withdraw'],
-          negative: ['deposit_options', 'borrow', 'repay'],
-          zero: ['deposit_options', 'borrow'],
+          positive: ['deposit_entrypoint', 'borrow', 'withdraw'],
+          negative: ['deposit_entrypoint', 'borrow', 'repay'],
+          zero: ['deposit_entrypoint', 'borrow'],
         });
 
         dialogTypes.forEach((dialogType) => {
           const actionText = {
-            deposit_options: t(($) => $.buttons.deposit),
+            deposit_entrypoint: t(($) => $.buttons.deposit),
             borrow: t(($) => $.buttons.borrow),
             repay: t(($) => $.buttons.repay),
             withdraw: t(($) => $.buttons.withdraw),
           }[dialogType];
 
-          const isDepositOrRepay = ['deposit_options', 'repay'].includes(
+          const isDepositOrRepay = ['deposit_entrypoint', 'repay'].includes(
             dialogType,
           );
           const isWithdrawOrBorrow = ['withdraw', 'borrow'].includes(

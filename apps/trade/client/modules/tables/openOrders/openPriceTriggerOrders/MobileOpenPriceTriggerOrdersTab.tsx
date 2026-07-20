@@ -142,6 +142,7 @@ export function MobileOpenPriceTriggerOrdersTab({
                       className="gap-1"
                       priceTriggerCriteria={order.priceTriggerCriteria}
                       formatSpecifier={order.formatSpecifier.price}
+                      displayTriggerPrice={order.displayTriggerPrice}
                     />
                   }
                 />

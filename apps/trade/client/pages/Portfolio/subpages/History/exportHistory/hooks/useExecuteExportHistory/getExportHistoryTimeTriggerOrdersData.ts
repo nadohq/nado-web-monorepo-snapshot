@@ -21,7 +21,8 @@ export async function getExportHistoryTimeTriggerOrdersData(
   params: GetExportHistoryDataParams,
   context: GetExportHistoryDataContext,
 ): Promise<ExportHistoryTimeTriggerOrderItem[]> {
-  const { subaccount, nadoClient, allMarketsStaticData, t } = context;
+  const { subaccount, nadoClient, allMarketsStaticData, getExchangeRate, t } =
+    context;
   const items: ExportHistoryTimeTriggerOrderItem[] = [];
 
   let startCursor: number | undefined = undefined;
@@ -63,6 +64,7 @@ export async function getExportHistoryTimeTriggerOrdersData(
         t,
         triggerOrderInfo,
         allMarketsStaticData,
+        exchangeRate: getExchangeRate(triggerOrderInfo.order.productId),
       });
       if (!tableItem) {
         continue;

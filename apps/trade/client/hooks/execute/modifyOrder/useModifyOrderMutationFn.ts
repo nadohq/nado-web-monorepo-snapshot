@@ -3,9 +3,9 @@ import {
   getOrderDigest,
   getOrderNonce,
   packOrderAppendix,
-  removeDecimals,
   toBigNumber,
 } from '@nadohq/client';
+import { toXStocksRawAmount, toXStocksRawPrice } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import {
   ModifyOrderParams,
@@ -21,6 +21,7 @@ import { useOrderSlippageSettings } from 'client/modules/trading/hooks/useOrderS
 import { getOrderSlippageMultiplier } from 'client/modules/trading/utils/getOrderSlippageMultiplier';
 import { getPriceTriggerCriteria } from 'client/modules/trading/utils/trigger/getPriceTriggerCriteria';
 import { getTriggerOrderDisplayType } from 'client/modules/trading/utils/trigger/getTriggerOrderDisplayType';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { roundToIncrement } from 'client/utils/rounding';
 import { useCallback } from 'react';
 
@@ -29,6 +30,7 @@ export function useModifyOrderMutationFn() {
   const hasLinkedSigner = useNadoClientHasLinkedSigner();
   const { savedSettings: slippageSettings } = useOrderSlippageSettings();
   const { data: marketDataByProductId } = useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   return useCallback(
     async (
@@ -38,9 +40,8 @@ export function useModifyOrderMutationFn() {
       const marketStaticData =
         marketDataByProductId?.allMarkets[params.productId];
       const priceIncrement = marketStaticData?.priceIncrement;
-      const decimalAdjustedSizeIncrement = removeDecimals(
-        marketStaticData?.sizeIncrement,
-      );
+      const sizeIncrement = marketStaticData?.sizeIncrement;
+      const exchangeRate = getExchangeRate(params.productId);
 
       if (params.isPriceTrigger) {
         // Trigger order
@@ -56,7 +57,8 @@ export function useModifyOrderMutationFn() {
           getRecvTime,
           slippageSettings,
           priceIncrement,
-          sizeIncrement: decimalAdjustedSizeIncrement,
+          sizeIncrement,
+          exchangeRate,
         });
       }
 
@@ -65,10 +67,17 @@ export function useModifyOrderMutationFn() {
         getRecvTime,
         context,
         priceIncrement,
-        sizeIncrement: decimalAdjustedSizeIncrement,
+        sizeIncrement,
+        exchangeRate,
       });
     },
-    [getRecvTime, hasLinkedSigner, slippageSettings, marketDataByProductId],
+    [
+      getRecvTime,
+      hasLinkedSigner,
+      slippageSettings,
+      marketDataByProductId,
+      getExchangeRate,
+    ],
   );
 }
 
@@ -78,6 +87,7 @@ interface CancelAndPlaceOrderParams {
   context: ValidExecuteContext;
   priceIncrement: BigNumber | undefined;
   sizeIncrement: BigNumber | undefined;
+  exchangeRate: BigNumber;
 }
 
 async function cancelAndPlaceOrder({
@@ -86,6 +96,7 @@ async function cancelAndPlaceOrder({
   context,
   priceIncrement,
   sizeIncrement,
+  exchangeRate,
 }: CancelAndPlaceOrderParams) {
   const [currentOrder, recvTime] = await Promise.all([
     context.nadoClient.context.engineClient.getOrder({
@@ -101,9 +112,14 @@ async function cancelAndPlaceOrder({
     );
   }
 
-  // Use new values if provided, otherwise keep existing values
-  const newPrice = modifyOrderParams.newPrice ?? currentOrder.price;
-  const newAmount = modifyOrderParams.newAmount ?? currentOrder.unfilledAmount;
+  // Use new values if provided (caller values are in display space — convert to raw)
+  // Fallback to existing engine values which are already in raw space
+  const newPrice = modifyOrderParams.newPrice
+    ? toXStocksRawPrice(modifyOrderParams.newPrice, exchangeRate)
+    : currentOrder.price;
+  const newAmount = modifyOrderParams.newAmount
+    ? toXStocksRawAmount(modifyOrderParams.newAmount, exchangeRate)
+    : currentOrder.unfilledAmount;
 
   const nonce = getOrderNonce(recvTime);
   const result = await context.nadoClient.market.cancelAndPlace({
@@ -128,6 +144,13 @@ async function cancelAndPlaceOrder({
       },
       nonce,
     },
+    // Atomically fail the cancel-and-place if the order's unfilled amount on the
+    // engine no longer matches the value we just fetched. Without this, a fill
+    // landing between `getOrder` and `cancelAndPlace` would cause us to place a
+    // new order using a stale `newAmount` (which falls back to
+    // `currentOrder.unfilledAmount`), potentially placing an order larger than
+    // the user intended.
+    requiredUnfilledAmount: currentOrder.unfilledAmount,
   });
 
   return { digest: result.data.digest };
@@ -140,6 +163,7 @@ interface CancelAndPlaceTriggerOrderParams {
   slippageSettings: OrderSlippageSettings;
   priceIncrement: BigNumber | undefined;
   sizeIncrement: BigNumber | undefined;
+  exchangeRate: BigNumber;
 }
 
 async function cancelThenPlacePriceTriggerOrder({
@@ -149,6 +173,7 @@ async function cancelThenPlacePriceTriggerOrder({
   slippageSettings,
   priceIncrement,
   sizeIncrement,
+  exchangeRate,
 }: CancelAndPlaceTriggerOrderParams) {
   const getTriggerOrder = async () => {
     // there is currently no 1:1 getTriggerOrder(digest) lookup API so we get pending
@@ -222,15 +247,19 @@ async function cancelThenPlacePriceTriggerOrder({
   const serverOrderValues = currentOrder.serverOrder.order;
   const existingTriggerPrice = toBigNumber(priceTriggerCriteria.triggerPrice);
 
-  // Use new values if provided, otherwise keep existing values
-  const newTriggerPrice =
-    modifyOrderParams.newTriggerPrice ?? existingTriggerPrice;
-  const newAmount = modifyOrderParams.newAmount ?? serverOrderValues.amount;
+  // Use new values if provided (caller values are in display space — convert to raw)
+  // Fallback to existing engine values which are already in raw space
+  const newTriggerPrice = modifyOrderParams.newTriggerPrice
+    ? toXStocksRawPrice(modifyOrderParams.newTriggerPrice, exchangeRate)
+    : existingTriggerPrice;
+  const newAmount = modifyOrderParams.newAmount
+    ? toXStocksRawAmount(modifyOrderParams.newAmount, exchangeRate)
+    : serverOrderValues.amount;
 
   // Derive the new ENGINE order price
-  // - If newPrice is explicitly provided, use it
-  // - For market orders: default to trigger price × slippage
-  // - For limit orders: default to existing limit price
+  // - If newPrice is explicitly provided, use it (caller value in display space — convert to raw)
+  // - For market orders: default to trigger price × slippage (trigger price is already raw)
+  // - For limit orders: default to existing limit price (raw from engine)
   const orderSlippageMultiplier = getOrderSlippageMultiplier(
     isBuy,
     slippageFraction,
@@ -238,7 +267,7 @@ async function cancelThenPlacePriceTriggerOrder({
 
   const newOrderPrice = (() => {
     if (modifyOrderParams.newPrice) {
-      return modifyOrderParams.newPrice;
+      return toXStocksRawPrice(modifyOrderParams.newPrice, exchangeRate);
     }
     if (isMarket) {
       return newTriggerPrice.times(orderSlippageMultiplier);

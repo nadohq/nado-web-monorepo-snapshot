@@ -1,4 +1,4 @@
-import { formatNumber } from '@nadohq/react-client';
+import { formatNumber, NumberFormatSpecifier } from '@nadohq/react-client';
 import { joinClassNames } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
 import {
@@ -46,7 +46,7 @@ function PriceInfo({
   formatSpecifier,
 }: {
   price: BigNumber;
-  formatSpecifier: string;
+  formatSpecifier: NumberFormatSpecifier;
 }) {
   return (
     <span>

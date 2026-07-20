@@ -142,7 +142,7 @@ export function MarginManagerSpotBalancesTable({ className }: WithClassnames) {
               {
                 positive: [
                   {
-                    type: 'deposit_options',
+                    type: 'deposit_entrypoint',
                     label: t(($) => $.buttons.deposit),
                     productId,
                   },
@@ -164,7 +164,7 @@ export function MarginManagerSpotBalancesTable({ className }: WithClassnames) {
                     productId,
                   },
                   {
-                    type: 'deposit_options',
+                    type: 'deposit_entrypoint',
                     label: t(($) => $.buttons.deposit),
                     productId,
                   },
@@ -176,7 +176,7 @@ export function MarginManagerSpotBalancesTable({ className }: WithClassnames) {
                 ],
                 zero: [
                   {
-                    type: 'deposit_options',
+                    type: 'deposit_entrypoint',
                     label: t(($) => $.buttons.deposit),
                     productId,
                   },

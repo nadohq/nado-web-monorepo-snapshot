@@ -6,6 +6,7 @@ import { useEnableTradingOrderbookAnimations } from 'client/modules/trading/hook
 import { MarketOrderRow } from 'client/modules/trading/marketOrders/components/MarketOrderRow';
 import { MarketOrderRows } from 'client/modules/trading/marketOrders/components/MarketOrderRows';
 import { MarketOrdersHeaderRow } from 'client/modules/trading/marketOrders/components/MarketOrdersHeaderRow';
+import { OrderbookHoverTooltip } from 'client/modules/trading/marketOrders/orderbook/components/OrderbookHoverTooltip';
 import { OrderbookPriceBox } from 'client/modules/trading/marketOrders/orderbook/components/OrderbookPriceBox';
 import { OrderbookSettings } from 'client/modules/trading/marketOrders/orderbook/components/OrderbookSettings';
 import { OrderbookRowItem } from 'client/modules/trading/marketOrders/orderbook/hooks/types';
@@ -16,11 +17,12 @@ import { useTranslation } from 'react-i18next';
 
 interface Props extends WithClassnames {
   productId: number | undefined;
+  enableHoverDetails?: boolean;
 }
 
 const SKELETON_ROW = <MarketOrderRow.Skeleton numCols={3} />;
 
-export function Orderbook({ className, productId }: Props) {
+export function Orderbook({ className, productId, enableHoverDetails }: Props) {
   const { t } = useTranslation();
 
   const [viewType, setViewType] = useState<OrderbookViewType>('bids_and_asks');
@@ -39,6 +41,7 @@ export function Orderbook({ className, productId }: Props) {
   const {
     orderbookData,
     setNewPriceInput,
+    rowPriceFormatSpecifier,
     priceFormatSpecifier,
     amountFormatSpecifier,
     cumulativeAmountSpecifier,
@@ -50,6 +53,7 @@ export function Orderbook({ className, productId }: Props) {
     setShowOrderbookTotalInQuote,
     openOrderPrices,
     lastPrice,
+    roundedPriceIncrement,
   } = useOrderbook({
     productId,
     depth,
@@ -58,8 +62,17 @@ export function Orderbook({ className, productId }: Props) {
   const { enableTradingOrderbookAnimations } =
     useEnableTradingOrderbookAnimations();
 
+  // Keep hover state index-based so tooltip values read from current row data.
+  const [hoveredRow, setHoveredRow] = useState<{
+    isAsk: boolean;
+    index: number;
+  } | null>(null);
+
+  const baseSymbol = orderbookData?.productMetadata.symbol;
+  const quoteSymbol = orderbookData?.quoteSymbol;
+
   const renderRow = useCallback(
-    (row: OrderbookRowItem) => {
+    (row: OrderbookRowItem, index: number) => {
       const highlightWidthFraction = safeDiv(
         row.cumulativeAmount,
         orderbookData?.maxCumulativeTotalAmount ?? BigNumbers.ZERO,
@@ -67,44 +80,69 @@ export function Orderbook({ className, productId }: Props) {
 
       const hasOpenOrder = openOrderPrices?.has(row.price.toString());
 
+      const isSameSideHover =
+        hoveredRow != null && hoveredRow.isAsk === row.isAsk;
+      const isInHoveredRange = isSameSideHover && index <= hoveredRow.index;
+      const isHovered = isSameSideHover && index === hoveredRow.index;
+
       return (
-        <MarketOrderRow.Container
-          isSell={row.isAsk}
-          highlightWidthFraction={highlightWidthFraction}
-          onClick={() => setNewPriceInput(row.price)}
-          flashKey={row.assetAmount?.toString()}
-          definitionId={hasOpenOrder ? 'tradingOrderbookOpenOrder' : undefined}
-          enableAnimations={enableTradingOrderbookAnimations}
+        <OrderbookHoverTooltip
+          cumulativeBaseAmount={row.cumulativeBaseAmount}
+          cumulativeQuoteAmount={row.cumulativeQuoteAmount}
+          baseSymbol={baseSymbol}
+          quoteSymbol={quoteSymbol}
+          priceFormatSpecifier={priceFormatSpecifier}
+          amountFormatSpecifier={amountFormatSpecifier}
+          hasOpenOrder={hasOpenOrder}
+          enableHoverDetails={enableHoverDetails}
+          onHoverStart={() => setHoveredRow({ isAsk: row.isAsk, index })}
+          onHoverEnd={() => setHoveredRow(null)}
         >
-          <MarketOrderRow.Item isSell={row.isAsk} className="font-medium">
-            {hasOpenOrder && (
-              <Icons.CaretRightFill className="absolute top-1/2 -left-1 -translate-y-1/2 text-xs" />
-            )}
-            {formatNumber(row.price, {
-              formatSpecifier: priceFormatSpecifier,
-            })}
-          </MarketOrderRow.Item>
-          <MarketOrderRow.Item>
-            {formatNumber(row.assetAmount, {
-              formatSpecifier: amountFormatSpecifier,
-            })}
-          </MarketOrderRow.Item>
-          <MarketOrderRow.Item>
-            {formatNumber(row.cumulativeAmount, {
-              formatSpecifier: cumulativeAmountSpecifier,
-            })}
-          </MarketOrderRow.Item>
-        </MarketOrderRow.Container>
+          <MarketOrderRow.Container
+            className="w-full"
+            isSell={row.isAsk}
+            highlightWidthFraction={highlightWidthFraction}
+            onClick={() => setNewPriceInput(row.price)}
+            flashKey={row.assetAmount?.toString()}
+            enableAnimations={enableTradingOrderbookAnimations}
+            isInHoveredRange={isInHoveredRange}
+            showHoverBoundary={isHovered}
+          >
+            <MarketOrderRow.Item isSell={row.isAsk} className="font-medium">
+              {hasOpenOrder && (
+                <Icons.CaretRightFill className="absolute top-1/2 -left-1 -translate-y-1/2 text-xs" />
+              )}
+              {formatNumber(row.price, {
+                formatSpecifier: rowPriceFormatSpecifier,
+              })}
+            </MarketOrderRow.Item>
+            <MarketOrderRow.Item>
+              {formatNumber(row.assetAmount, {
+                formatSpecifier: amountFormatSpecifier,
+              })}
+            </MarketOrderRow.Item>
+            <MarketOrderRow.Item>
+              {formatNumber(row.cumulativeAmount, {
+                formatSpecifier: cumulativeAmountSpecifier,
+              })}
+            </MarketOrderRow.Item>
+          </MarketOrderRow.Container>
+        </OrderbookHoverTooltip>
       );
     },
     [
       orderbookData?.maxCumulativeTotalAmount,
       openOrderPrices,
+      hoveredRow,
+      baseSymbol,
+      quoteSymbol,
       priceFormatSpecifier,
+      rowPriceFormatSpecifier,
       amountFormatSpecifier,
       cumulativeAmountSpecifier,
       setNewPriceInput,
       enableTradingOrderbookAnimations,
+      enableHoverDetails,
     ],
   );
 
@@ -113,7 +151,7 @@ export function Orderbook({ className, productId }: Props) {
       <OrderbookSettings
         viewType={viewType}
         setViewType={setViewType}
-        priceIncrement={orderbookData?.priceIncrement}
+        roundedPriceIncrement={roundedPriceIncrement}
         symbol={orderbookData?.productMetadata.symbol}
         quoteSymbol={orderbookData?.quoteSymbol}
         currentTickSpacing={currentTickSpacing}
@@ -147,7 +185,7 @@ export function Orderbook({ className, productId }: Props) {
             />
           )}
           <OrderbookPriceBox
-            priceIncrement={orderbookData?.priceIncrement}
+            priceFormatSpecifier={priceFormatSpecifier}
             setPriceInput={setNewPriceInput}
             lastPrice={lastPrice}
             spread={orderbookData?.spread}

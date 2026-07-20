@@ -13,8 +13,6 @@ export function UserReferralStatsBar() {
   const { data: referredUsers } = useQueryAddressFuulReferralEarningsPerUser();
   const { data: referralCode } = useQueryAddressFuulReferralCode();
 
-  const invitesLeft = referralCode?.remaining_uses;
-
   const totalReferredVolume = useMemo(() => {
     return sumBigNumberBy(
       Object.values(referredUsers ?? {}),
@@ -24,12 +22,6 @@ export function UserReferralStatsBar() {
 
   return (
     <div className="flex flex-wrap gap-4 sm:gap-x-8">
-      <ValueWithLabel.Vertical
-        sizeVariant="xl"
-        label={t(($) => $.referrals.invitesLeft)}
-        value={invitesLeft}
-        numberFormatSpecifier={PresetNumberFormatSpecifier.NUMBER_INT}
-      />
       <ValueWithLabel.Vertical
         sizeVariant="xl"
         label={t(($) => $.referrals.referredUsers)}

@@ -8,8 +8,11 @@ import {
   CustomNumberFormatSpecifier,
   getMarketPriceFormatSpecifier,
   getMarketSizeFormatSpecifier,
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
 } from '@nadohq/react-client';
 import { nonNullFilter } from '@nadohq/web-common';
+import { BigNumber } from 'bignumber.js';
 import { useDataTablePaginatedQuery } from 'client/components/DataTable/hooks/useDataTablePaginatedQuery';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { AllMarketsStaticDataForChainEnv } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
@@ -18,6 +21,7 @@ import type {
   LiquidatedBalanceType,
   LiquidationEventsTableItem,
 } from 'client/modules/tables/liquidations/types';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { createRowId } from 'client/utils/createRowId';
 import { secondsToMilliseconds } from 'date-fns';
 import { useMemo } from 'react';
@@ -34,6 +38,7 @@ interface Params {
 export function useLiquidationEventsTable({ pageSize, productIds }: Params) {
   const { data: allMarketsStaticData, isLoading: marketsDataLoading } =
     useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const { isLoading, isFetchingCurrPage, currentPageData, pagination } =
     useDataTablePaginatedQuery({
@@ -60,10 +65,11 @@ export function useLiquidationEventsTable({ pageSize, productIds }: Params) {
         return getHistoricalLiquidationsTableItem({
           event,
           allMarketsStaticData,
+          getExchangeRate,
         });
       })
       .filter(nonNullFilter);
-  }, [currentPageData, allMarketsStaticData]);
+  }, [currentPageData, allMarketsStaticData, getExchangeRate]);
 
   return {
     isLoading: isLoading || marketsDataLoading || isFetchingCurrPage,
@@ -75,6 +81,7 @@ export function useLiquidationEventsTable({ pageSize, productIds }: Params) {
 interface GetHistoricalLiquidationsTableItemParams {
   event: IndexerLiquidationEvent;
   allMarketsStaticData: AllMarketsStaticDataForChainEnv;
+  getExchangeRate: (productId: number) => BigNumber;
 }
 
 /**
@@ -87,6 +94,7 @@ interface GetHistoricalLiquidationsTableItemParams {
 export function getHistoricalLiquidationsTableItem({
   event,
   allMarketsStaticData,
+  getExchangeRate,
 }: GetHistoricalLiquidationsTableItemParams): LiquidationEventsTableItem | null {
   const { spot, quote, perp, timestamp } = event;
   const liquidatedBalanceTypes: Set<LiquidatedBalanceType> = new Set();
@@ -105,8 +113,16 @@ export function getHistoricalLiquidationsTableItem({
       return null;
     }
 
-    const oraclePrice = spot.indexerEvent.state.market.product.oraclePrice;
-    const amountLiquidated = removeDecimals(spot.amountLiquidated);
+    const spotProductId = spot.indexerEvent.productId;
+    const exchangeRate = getExchangeRate(spotProductId);
+    const rawOraclePrice = spot.indexerEvent.state.market.product.oraclePrice;
+    const rawAmountLiquidated = removeDecimals(spot.amountLiquidated);
+
+    const oraclePrice = toXStocksDisplayPrice(rawOraclePrice, exchangeRate);
+    const amountLiquidated = toXStocksDisplayAmount(
+      rawAmountLiquidated,
+      exchangeRate,
+    );
 
     const indexerEventMarket = spot.indexerEvent.state.market;
 
@@ -116,13 +132,14 @@ export function getHistoricalLiquidationsTableItem({
       isIsolated: undefined,
       symbol: productMetadata.token.symbol,
       oraclePrice,
-      priceFormatSpecifier: getMarketPriceFormatSpecifier(
-        indexerEventMarket.priceIncrement,
-      ),
+      priceFormatSpecifier: getMarketPriceFormatSpecifier({
+        priceIncrement: indexerEventMarket.priceIncrement,
+        exchangeRate,
+      }),
       sizeFormatSpecifier: CustomNumberFormatSpecifier.NUMBER_AUTO,
       signedSizeFormatSpecifier: CustomNumberFormatSpecifier.SIGNED_NUMBER_AUTO,
       amountLiquidated,
-      liquidatedValueUsd: amountLiquidated.multipliedBy(oraclePrice),
+      liquidatedValueUsd: rawAmountLiquidated.multipliedBy(rawOraclePrice),
       liquidatedBalanceType: 'spot',
     };
 
@@ -148,6 +165,7 @@ export function getHistoricalLiquidationsTableItem({
 
     const marketSizeFormatSpecifier = getMarketSizeFormatSpecifier({
       sizeIncrement: indexerEventMarket.sizeIncrement,
+      exchangeRate: undefined,
     });
 
     perpLiquidation = {
@@ -156,11 +174,16 @@ export function getHistoricalLiquidationsTableItem({
       isIsolated: perp.indexerEvent.isolated,
       symbol: marketMetadata.symbol,
       oraclePrice,
-      priceFormatSpecifier: getMarketPriceFormatSpecifier(
-        indexerEventMarket.priceIncrement,
-      ),
+      priceFormatSpecifier: getMarketPriceFormatSpecifier({
+        priceIncrement: indexerEventMarket.priceIncrement,
+        exchangeRate: undefined,
+      }),
       sizeFormatSpecifier: marketSizeFormatSpecifier,
-      signedSizeFormatSpecifier: `+${marketSizeFormatSpecifier}`,
+      signedSizeFormatSpecifier: getMarketSizeFormatSpecifier({
+        sizeIncrement: indexerEventMarket.sizeIncrement,
+        exchangeRate: undefined,
+        isSigned: true,
+      }),
       amountLiquidated,
       liquidatedValueUsd: amountLiquidated.multipliedBy(oraclePrice),
       liquidatedBalanceType: 'perp',

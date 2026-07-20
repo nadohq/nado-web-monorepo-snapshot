@@ -21,7 +21,7 @@ export function useQueryEngineStatus() {
       if (disabled) {
         throw new QueryDisabledError();
       }
-      return nadoClient.context.engineClient.getStatus();
+      return nadoClient.context.engineClient.getCachedStatus();
     },
     enabled: !disabled,
     refetchInterval: 5000,

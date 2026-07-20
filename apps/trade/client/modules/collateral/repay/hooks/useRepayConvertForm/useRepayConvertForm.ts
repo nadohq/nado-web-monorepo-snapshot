@@ -1,4 +1,8 @@
 import { addDecimals, BigNumbers, SubaccountTx } from '@nadohq/client';
+import {
+  toXStocksDisplayPrice,
+  toXStocksRawAmount,
+} from '@nadohq/react-client';
 import { safeParseForData } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
 import { useExecutePlaceOrder } from 'client/hooks/execute/placeOrder/useExecutePlaceOrder';
@@ -20,12 +24,14 @@ import { useRepayConvertProducts } from 'client/modules/collateral/repay/hooks/u
 import { useRepayConvertSubmitHandler } from 'client/modules/collateral/repay/hooks/useRepayConvertForm/useRepayConvertSubmitHandler';
 import { useOrderSlippageSettings } from 'client/modules/trading/hooks/useOrderSlippageSettings';
 import { isValidIncrementAmount } from 'client/modules/trading/utils/isValidIncrementAmount';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { BaseActionButtonState } from 'client/types/BaseActionButtonState';
 import { watchFormError } from 'client/utils/form/watchFormError';
 import { positiveBigNumberValidator } from 'client/utils/inputValidators';
 import { roundToDecimalPlaces, roundToString } from 'client/utils/rounding';
 import { useCallback, useMemo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
+
 /**
  * Contains form logic for repay convert feature.
  * Currently, only spot products with the quote as the primary quote (ex. USDT) are supported.
@@ -38,6 +44,8 @@ export function useRepayConvertForm({
   const {
     savedSettings: { market: marketSlippageFraction },
   } = useOrderSlippageSettings();
+
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   // Mutation
   const executePlaceOrder = useExecutePlaceOrder();
@@ -96,12 +104,17 @@ export function useRepayConvertForm({
       return;
     }
 
-    return getMarketOrderExecutionPrice({
-      isSell: isSellOrder,
+    const rawExecutionPrice = getMarketOrderExecutionPrice({
+      isBuy: !isSellOrder,
       marketSlippageFraction,
       latestMarketPrices: marketProduct.marketPrices,
     });
-  }, [isSellOrder, marketProduct, marketSlippageFraction]);
+
+    return toXStocksDisplayPrice(
+      rawExecutionPrice,
+      getExchangeRate(marketProduct.productId),
+    );
+  }, [isSellOrder, marketProduct, marketSlippageFraction, getExchangeRate]);
 
   const { maxRepaySize, maxRepaySizeIgnoringAmountBorrowed } =
     useRepayConvertMaxRepaySizes({
@@ -205,12 +218,18 @@ export function useRepayConvertForm({
     ) {
       return [];
     }
+
     return [
       {
         type: 'apply_delta',
         tx: {
           productId: selectedRepayProduct.productId,
-          amountDelta: addDecimals(validRepayAmount),
+          amountDelta: addDecimals(
+            toXStocksRawAmount(
+              validRepayAmount,
+              getExchangeRate(selectedRepayProduct.productId),
+            ),
+          ),
           vQuoteDelta: BigNumbers.ZERO,
         },
       },
@@ -219,7 +238,12 @@ export function useRepayConvertForm({
         tx: {
           productId: selectedSourceProduct.productId,
           // We always lose source in exchange to the repay amount
-          amountDelta: addDecimals(sourceAmount.negated()),
+          amountDelta: addDecimals(
+            toXStocksRawAmount(
+              sourceAmount,
+              getExchangeRate(selectedSourceProduct.productId),
+            ).negated(),
+          ),
           vQuoteDelta: BigNumbers.ZERO,
         },
       },
@@ -229,6 +253,7 @@ export function useRepayConvertForm({
     selectedRepayProduct,
     selectedSourceProduct,
     validRepayAmount,
+    getExchangeRate,
   ]);
 
   const disableMaxRepayButton = !maxRepaySize || !selectedSourceProduct;
@@ -287,7 +312,13 @@ export function useRepayConvertForm({
     disableMaxRepayButton,
     maxRepaySize,
     sizeIncrement,
-    oracleConversionPrice: market?.product.oraclePrice,
+    oracleConversionPrice: market
+      ? toXStocksDisplayPrice(
+          // This oracle price is in the raw space
+          market.product.oraclePrice,
+          getExchangeRate(market.productId),
+        )
+      : undefined,
     isMaxRepayDismissibleOpen:
       !!validRepayAmount && maxRepaySize?.eq(validRepayAmount),
     buttonState,

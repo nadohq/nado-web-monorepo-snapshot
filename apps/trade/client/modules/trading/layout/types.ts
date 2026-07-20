@@ -1,4 +1,3 @@
-import { MarketCategory } from '@nadohq/react-client';
 import { WithClassnames } from '@nadohq/web-common';
 import { IconComponent } from '@nadohq/web-ui';
 import { SubaccountCountIndicatorKey } from 'client/hooks/subaccount/useSubaccountCountIndicators';
@@ -17,6 +16,7 @@ export interface TradingTab<
   content: ReactNode;
   countIndicatorKey?: SubaccountCountIndicatorKey;
   displayFilter?: TradingTableTabFilterId;
+  headerEndElement?: ReactNode;
 }
 
 export type TradingSubTab<TTabID extends string = string> = Omit<
@@ -37,8 +37,6 @@ export interface MarketSwitcherProps {
 export interface TradingLayoutProps {
   /** This is the productId of the current market. */
   productId: number | undefined;
-  /** This is the default market category to display in the switcher. */
-  marketSwitcherDefaultCategory: MarketCategory;
   /** This is the component that will display in the info cards section. */
   InfoCards: ComponentType<WithClassnames>;
   /** This is the component that will display in the order placement section. */

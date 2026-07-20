@@ -77,12 +77,18 @@ export const CHART_GRID_DEFAULTS: ComponentPropsWithoutRef<
     range(props.offset?.left ?? 0, props.width, 10),
 };
 
-const CHART_DOT_DEFAULTS: AreaProps['activeDot'] = {
+const CHART_DOT_DEFAULTS: AreaProps<
+  StatsChartDataItem,
+  ValueType
+>['activeDot'] = {
   strokeWidth: 0.5,
   stroke: getEdgeStatsColorVar('text-tertiary'),
 };
 
-export const AREA_CHART_DEFAULTS: Omit<AreaProps, 'dataKey' | 'ref'> = {
+export const AREA_CHART_DEFAULTS: Omit<
+  AreaProps<StatsChartDataItem, ValueType>,
+  'dataKey' | 'ref'
+> = {
   strokeWidth: 1,
   type: 'linear',
   fillOpacity: 0.2,
@@ -90,7 +96,10 @@ export const AREA_CHART_DEFAULTS: Omit<AreaProps, 'dataKey' | 'ref'> = {
   activeDot: CHART_DOT_DEFAULTS,
 };
 
-export const LINE_CHART_DEFAULTS: Omit<LineProps, 'dataKey' | 'ref'> = {
+export const LINE_CHART_DEFAULTS: Omit<
+  LineProps<StatsChartDataItem, ValueType>,
+  'dataKey' | 'ref'
+> = {
   strokeWidth: 2,
   type: 'linear',
   dot: false,

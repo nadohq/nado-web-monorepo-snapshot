@@ -1,8 +1,14 @@
 import { toBigNumber } from '@nadohq/client';
-import { format as d3Format } from 'd3-format';
 import { mapCustomFormatSpecifier } from './mapCustomFormatSpecifier';
-import { postProcessFormattedNumber } from './postProcessFormattedNumber';
+import {
+  CustomNumberFormatSpecifier,
+  isLegacyNumberFormatSpecifier,
+  NUMBER_PRESET_TO_INTL_FORMAT,
+  NumberFormatSpecifier,
+} from './NumberFormatSpecifier';
 import { NumberFormatOptions, NumberFormatValue } from './types';
+
+const DEFAULT_FORMAT_SPECIFIER = CustomNumberFormatSpecifier.NUMBER_AUTO;
 
 export function formatNumber(
   val: NumberFormatValue | undefined | null,
@@ -14,16 +20,31 @@ export function formatNumber(
     return defaultFallback ?? '--';
   }
 
-  const givenFormatSpecifier = formatSpecifier ?? ',~g';
-
+  const givenFormatSpecifier = formatSpecifier ?? DEFAULT_FORMAT_SPECIFIER;
   const valueToFormat = toBigNumber(val ?? defaultValue ?? 0);
-  const mappedCustomSpecifier = mapCustomFormatSpecifier(
-    valueToFormat,
-    givenFormatSpecifier,
-  );
-  const resolvedFormatSpecifier = mappedCustomSpecifier ?? givenFormatSpecifier;
+  const formatter = resolveFormatter(valueToFormat, givenFormatSpecifier);
 
-  const formatted = d3Format(resolvedFormatSpecifier)(valueToFormat.toNumber());
+  return formatter.format(valueToFormat.toNumber());
+}
 
-  return postProcessFormattedNumber(formatted, givenFormatSpecifier);
+function resolveFormatter(
+  value: ReturnType<typeof toBigNumber>,
+  formatSpecifier: NumberFormatSpecifier,
+): Intl.NumberFormat {
+  // A ready-made formatter (e.g. prebuilt tick-derived precision) - use as-is.
+  if (formatSpecifier instanceof Intl.NumberFormat) {
+    return formatSpecifier;
+  }
+
+  if (isLegacyNumberFormatSpecifier(formatSpecifier)) {
+    return NUMBER_PRESET_TO_INTL_FORMAT[formatSpecifier];
+  }
+
+  const mappedPreset = mapCustomFormatSpecifier(value, formatSpecifier);
+  if (!mappedPreset) {
+    // Unreachable for valid specifiers - indicates a developer error.
+    throw new Error(`Unrecognized number format specifier: ${formatSpecifier}`);
+  }
+
+  return NUMBER_PRESET_TO_INTL_FORMAT[mappedPreset];
 }

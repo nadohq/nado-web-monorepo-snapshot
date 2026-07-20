@@ -219,7 +219,10 @@ function MobileSpotActionButtons({
           className="flex-1"
           size="sm"
           onClick={() =>
-            showDialogForProduct({ dialogType: 'deposit_options', productId })
+            showDialogForProduct({
+              dialogType: 'deposit_entrypoint',
+              productId,
+            })
           }
           disabled={!isConnected}
         >

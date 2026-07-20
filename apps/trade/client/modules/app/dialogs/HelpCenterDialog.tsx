@@ -39,6 +39,13 @@ export function HelpCenterDialog() {
         description: t(($) => $.helpCenter.zenDesk.description),
         icon: Icons.Question,
       },
+      depositHelp: {
+        href: LINKS.depositHelp,
+        external: true,
+        title: t(($) => $.helpCenter.depositHelp.title),
+        description: t(($) => $.helpCenter.depositHelp.description),
+        icon: Icons.Wallet,
+      },
     };
   }, [t]);
 

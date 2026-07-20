@@ -11,6 +11,7 @@ minimumReleaseAgeExcludes = [
   "@nadohq/engine-client",
   "@nadohq/indexer-client",
   "@nadohq/trigger-client",
+  "@funkit/connect"
 ]
 
 [run]

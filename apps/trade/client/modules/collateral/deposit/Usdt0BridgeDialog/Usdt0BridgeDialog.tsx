@@ -9,9 +9,11 @@ import { ValueWithLabel } from 'client/components/ValueWithLabel/ValueWithLabel'
 import { useNumericInputPlaceholder } from 'client/hooks/ui/useNumericInputPlaceholder';
 import { BaseAppDialog } from 'client/modules/app/dialogs/BaseAppDialog';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
+import { BridgeDisclosureCard } from 'client/modules/collateral/components/BridgeDisclosureCard';
 import { MinimumDepositAmount } from 'client/modules/collateral/components/MinimumDepositAmount';
 import { Usdt0BridgeSubmitButton } from 'client/modules/collateral/deposit/Usdt0BridgeDialog/components/Usdt0BridgeSubmitButton';
 import { Usdt0BridgeSummaryDisclosure } from 'client/modules/collateral/deposit/Usdt0BridgeDialog/components/Usdt0BridgeSummaryDisclosure';
+import { LAYER_ZERO_SCAN_BASE_URL } from 'client/modules/collateral/deposit/Usdt0BridgeDialog/config';
 import { useUsdt0BridgeAmountErrorTooltipContent } from 'client/modules/collateral/deposit/Usdt0BridgeDialog/hooks/useUsdt0BridgeAmountErrorTooltipContent';
 import { useUsdt0BridgeForm } from 'client/modules/collateral/deposit/Usdt0BridgeDialog/hooks/useUsdt0BridgeForm';
 import { Usdt0BridgeDialogParams } from 'client/modules/collateral/deposit/Usdt0BridgeDialog/types';
@@ -64,6 +66,7 @@ export function Usdt0BridgeDialog({
         <Form onSubmit={onSubmit}>
           {/* Amount Input */}
           <div className="flex flex-col gap-y-3">
+            <BridgeDisclosureCard explorerUrl={LAYER_ZERO_SCAN_BASE_URL} />
             <CompactInput
               startElement={
                 <InputProductSymbolWithIcon

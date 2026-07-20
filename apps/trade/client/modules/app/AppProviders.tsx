@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AnalyticsContextProvider } from 'client/modules/analytics/AnalyticsContextProvider';
 import { AppDataProviders } from 'client/modules/app/appData/AppDataProviders';
+import { FunkitAppProvider } from 'client/modules/collateral/funkit/FunkitAppProvider';
 import { NotificationManagerContextProvider } from 'client/modules/notifications/NotificationManagerContextProvider';
 import { FuulReferralsProvider } from 'client/modules/referrals/FuulReferralsContext';
 import i18nInstance from 'common/i18n/i18n';
@@ -35,13 +36,15 @@ export function AppProviders({ children }: WithChildren) {
         <Suspense>
           <I18nextProvider i18n={i18nInstance}>
             <AppDataProviders>
-              <FuulReferralsProvider>
-                <NotificationManagerContextProvider>
+              <FunkitAppProvider>
+                <FuulReferralsProvider>
                   <AnalyticsContextProvider>
-                    {children}
+                    <NotificationManagerContextProvider>
+                      {children}
+                    </NotificationManagerContextProvider>
                   </AnalyticsContextProvider>
-                </NotificationManagerContextProvider>
-              </FuulReferralsProvider>
+                </FuulReferralsProvider>
+              </FunkitAppProvider>
             </AppDataProviders>
           </I18nextProvider>
         </Suspense>

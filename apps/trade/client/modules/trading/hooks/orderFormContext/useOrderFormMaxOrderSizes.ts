@@ -4,11 +4,16 @@ import { UseQueryMaxOrderSizeParams } from 'client/hooks/query/subaccount/useQue
 import { useMaxOrderSizeEstimation } from 'client/hooks/subaccount/useMaxOrderSizeEstimation';
 import { useDebounceFalsy } from 'client/hooks/util/useDebounceFalsy';
 import { RoundAmountFn } from 'client/modules/trading/types/orderFormTypes';
+import { PlaceOrderType } from 'client/modules/trading/types/placeOrderTypes';
+import { getScaledOrderAveragePrice } from 'client/modules/trading/utils/scaledOrderUtils';
 import { useMemo } from 'react';
 
 export interface UseOrderFormMaxOrderSizesParams {
-  executionConversionPrice: BigNumber | undefined;
+  orderType: PlaceOrderType;
   inputConversionPrice: BigNumber | undefined;
+  executionConversionPrice: BigNumber | undefined;
+  validatedScaledOrderStartPriceInput: BigNumber | undefined;
+  validatedScaledOrderEndPriceInput: BigNumber | undefined;
   orderSide: BalanceSide;
   productId: number | undefined;
   reduceOnly: boolean | undefined;
@@ -24,8 +29,11 @@ export interface OrderFormMaxOrderSizes {
 }
 
 export function useOrderFormMaxOrderSizes({
-  executionConversionPrice,
+  orderType,
   inputConversionPrice,
+  executionConversionPrice,
+  validatedScaledOrderStartPriceInput,
+  validatedScaledOrderEndPriceInput,
   orderSide,
   productId,
   spotLeverageEnabled,
@@ -33,6 +41,20 @@ export function useOrderFormMaxOrderSizes({
   reduceOnly,
   isoBorrowMargin,
 }: UseOrderFormMaxOrderSizesParams) {
+  const maxOrderSizeAvgPrice = useMemo(() => {
+    if (orderType !== 'multi_limit') {
+      return;
+    }
+    return getScaledOrderAveragePrice(
+      validatedScaledOrderStartPriceInput,
+      validatedScaledOrderEndPriceInput,
+    );
+  }, [
+    orderType,
+    validatedScaledOrderStartPriceInput,
+    validatedScaledOrderEndPriceInput,
+  ]);
+
   const maxOrderSizeParams = useMemo(():
     | UseQueryMaxOrderSizeParams
     | undefined => {
@@ -42,6 +64,7 @@ export function useOrderFormMaxOrderSizes({
 
     return {
       price: executionConversionPrice,
+      avgPrice: maxOrderSizeAvgPrice,
       side: orderSide,
       productId: productId,
       spotLeverage: spotLeverageEnabled,
@@ -52,6 +75,7 @@ export function useOrderFormMaxOrderSizes({
   }, [
     executionConversionPrice,
     isoBorrowMargin,
+    maxOrderSizeAvgPrice,
     orderSide,
     productId,
     reduceOnly,

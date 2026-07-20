@@ -9,6 +9,18 @@ export const HIDDEN_PRODUCT_IDS_BY_CHAIN_ENV: Record<ChainEnv, Set<number>> = {
     42,
     // SKR
     44,
+    // AMZNx
+    145,
+    // MSFTx
+    151,
+    // XAUT0
+    159,
+    // BBX
+    164,
+    // MSTR
+    166,
+    // ZHIPU
+    168,
   ]),
   inkTestnet: new Set([
     ...DELISTED_PRODUCT_IDS,

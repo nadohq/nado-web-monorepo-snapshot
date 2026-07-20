@@ -1,6 +1,7 @@
 import { BigNumbers, sumBigNumberBy } from '@nadohq/client';
 import {
   getMarketSizeFormatSpecifier,
+  NumberFormatSpecifier,
   safeDiv,
   SharedProductMetadata,
   SpotProductMetadata,
@@ -21,7 +22,7 @@ export interface TradingSpreadTableItem extends WithDataTableRowId {
   // Spot-side metadata, used to show the correct symbol in the spot position column
   spotMetadata: SpotProductMetadata;
   // Size format specifier derived from the perp market's sizeIncrement, used for both position columns
-  sizeFormatSpecifier: string;
+  sizeFormatSpecifier: NumberFormatSpecifier;
   // Signed position amounts scaled to the basis amount
   spotAmount: BigNumber;
   perpAmount: BigNumber;
@@ -126,6 +127,8 @@ export function useTradingSpreadsTable({ productIds }: Params) {
           spotMetadata: spotMarketStaticData.metadata,
           sizeFormatSpecifier: getMarketSizeFormatSpecifier({
             sizeIncrement: marketStaticData.sizeIncrement,
+            // Formatting is to perp units, no need for exchange rate here
+            exchangeRate: undefined,
           }),
           spotAmount: spread.basisAmount,
           perpAmount: spread.basisAmount.multipliedBy(-1),

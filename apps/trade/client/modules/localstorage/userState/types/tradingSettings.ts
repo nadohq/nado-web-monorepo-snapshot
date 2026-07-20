@@ -1,5 +1,12 @@
 import { BalanceSide } from '@nadohq/client';
+
+import type {
+  DesktopTradingGridItemId,
+  TabletTradingGridItemId,
+  TradingGridItemPositionAndSize,
+} from 'client/modules/trading/layout/consts';
 import { OrderbookPriceTickSpacingMultiplier } from 'client/modules/trading/marketOrders/orderbook/types';
+import { GainOrLossInputType } from 'client/modules/trading/types/GainOrLossInputType';
 import { OrderFormSizeDenom } from 'client/modules/trading/types/orderFormTypes';
 import { EnginePlaceOrderType } from 'client/modules/trading/types/placeOrderTypes';
 import { TriggerReferencePriceType } from 'client/modules/trading/types/TriggerReferencePriceType';
@@ -8,10 +15,6 @@ import { TriggerReferencePriceType } from 'client/modules/trading/types/TriggerR
  * Shared constant for left/right positioning options
  */
 const LEFT_RIGHT_POSITIONS = ['left', 'right'] as const;
-
-export const TRADING_CONSOLE_POSITIONS = LEFT_RIGHT_POSITIONS;
-
-export type TradingConsolePosition = (typeof TRADING_CONSOLE_POSITIONS)[number];
 
 export const NOTIFICATION_POSITIONS = LEFT_RIGHT_POSITIONS;
 
@@ -89,8 +92,19 @@ export interface TpSlTriggerPriceTypeSettings {
   stopLoss: TriggerReferencePriceType;
 }
 
+/**
+ * User preference for the gain/loss input display type when creating TP/SL
+ * orders. These settings persist in localStorage and auto-apply to new orders.
+ */
+export interface TpSlGainOrLossInputTypeSettings {
+  takeProfit: GainOrLossInputType;
+  stopLoss: GainOrLossInputType;
+}
+
+/** Persisted user-owned trading grid position and size. */
+export type SavedGridLayoutItem = TradingGridItemPositionAndSize;
+
 export interface SavedTradingUserSettings {
-  consolePosition: TradingConsolePosition;
   favoriteMarketIds: number[];
   leverageByProductId: LeverageByProductId;
   marginMode: MarginModeSettings;
@@ -99,16 +113,28 @@ export interface SavedTradingUserSettings {
   spotLeverageEnabled: boolean;
   slippage: OrderSlippageSettings;
   tpSlTriggerPriceType: TpSlTriggerPriceTypeSettings;
+  tpSlGainOrLossInputType: TpSlGainOrLossInputTypeSettings;
   enableTradingNotifications: boolean;
   enableTradingOrderLines: boolean;
   enableTradingPositionLines: boolean;
   enableTradingOrderbookAnimations: boolean;
   enableChartMarks: boolean;
   enableQuickMarketClose: boolean;
+  enableClassicDepositUi: boolean;
+  /**
+   * Admin-tools override that allows market makers to trade isolated-only
+   * markets (e.g. RWAs) in cross margin mode by ignoring the `isolatedOnly`
+   * market restriction in the UI.
+   */
+  enableCrossMarginForIsoOnlyMarkets: boolean;
   tradingTableTabFilters: TradingTableTabFilters;
   lastSelectedSpotMarketId: number | undefined;
   lastSelectedPerpMarketId: number | undefined;
   lastSelectedEngineOrderType: LastSelectedEngineOrderType;
   lastSelectedSizeDenom: OrderFormSizeDenom;
   lastSelectedSide: BalanceSide;
+  gridLayout: {
+    desktop: Record<DesktopTradingGridItemId, SavedGridLayoutItem>;
+    tablet: Record<TabletTradingGridItemId, SavedGridLayoutItem>;
+  };
 }

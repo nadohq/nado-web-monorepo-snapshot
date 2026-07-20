@@ -7,7 +7,10 @@ export const PORTFOLIO_SUBROUTES = {
   faucet: 'faucet',
 };
 
+export const ROUTE_APP_TRADING_COMP_PREFIX = '/trading-competition';
+
 export const ROUTES = {
+  markets: '/markets',
   perpTrading: '/perpetuals',
   points: '/points',
   portfolio: {
@@ -19,5 +22,8 @@ export const ROUTES = {
   },
   referrals: '/referrals',
   spotTrading: '/spot',
+  tradingCompetition: {
+    base: ROUTE_APP_TRADING_COMP_PREFIX,
+  },
   vault: '/vault',
 } as const;

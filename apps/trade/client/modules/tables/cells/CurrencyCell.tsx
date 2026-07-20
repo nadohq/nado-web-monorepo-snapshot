@@ -1,5 +1,6 @@
 import {
   formatNumber,
+  NumberFormatSpecifier,
   PresetNumberFormatSpecifier,
 } from '@nadohq/react-client';
 import { BaseTestProps } from '@nadohq/web-common';
@@ -12,7 +13,7 @@ import {
 interface Props extends TableCellProps, BaseTestProps {
   // The dollar value to display
   value: BigNumber | undefined;
-  formatSpecifier?: string;
+  formatSpecifier?: NumberFormatSpecifier;
 }
 
 export function CurrencyCell({

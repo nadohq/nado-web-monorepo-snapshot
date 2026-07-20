@@ -3,7 +3,7 @@ import { MobileHistoricalAggregatedTradesTab } from 'client/modules/tables/histo
 import { HistoricalIndividualTradesTable } from 'client/modules/tables/historicalTrades/historicalIndividualTrades/HistoricalIndividualTradesTable';
 import { MobileHistoricalIndividualTradesTab } from 'client/modules/tables/historicalTrades/historicalIndividualTrades/MobileHistoricalIndividualTradesTab';
 import { TableTabWithSubTabs } from 'client/modules/tables/tabs/TableTabWithSubTabs';
-import { HistoricalTableTabProps } from 'client/modules/tables/tabs/types';
+import { HistoricalTableTabWithSubTabsProps } from 'client/modules/tables/tabs/types';
 import { TradingSubTab } from 'client/modules/trading/layout/types';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +16,8 @@ export function HistoricalTradesTableTabContent<TTabID extends string>({
   showPagination,
   productIds,
   isMobile,
-}: HistoricalTableTabProps) {
+  onSelectedSubTabIdChange,
+}: HistoricalTableTabWithSubTabsProps<TTabID>) {
   const { t } = useTranslation();
 
   const tradeHistorySubTabs = useMemo(() => {
@@ -60,5 +61,10 @@ export function HistoricalTradesTableTabContent<TTabID extends string>({
     ] as TradingSubTab<TTabID>[];
   }, [isMobile, pageSize, productIds, showPagination, t]);
 
-  return <TableTabWithSubTabs subTabs={tradeHistorySubTabs} />;
+  return (
+    <TableTabWithSubTabs
+      subTabs={tradeHistorySubTabs}
+      onSelectedSubTabIdChange={onSelectedSubTabIdChange}
+    />
+  );
 }

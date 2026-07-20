@@ -1,7 +1,12 @@
 'use client';
 
 import { joinClassNames } from '@nadohq/web-common';
-import { LinkButton, SecondaryButton, Z_INDEX } from '@nadohq/web-ui';
+import {
+  LinkButton,
+  PrimaryButton,
+  SecondaryButton,
+  Z_INDEX,
+} from '@nadohq/web-ui';
 import { useCookiePreference } from 'client/modules/analytics/useCookiePreference';
 import { getIsIframe } from 'client/utils/getIsIframe';
 import { BRAND_METADATA } from 'common/brandMetadata/brandMetadata';
@@ -31,7 +36,7 @@ export function CookieNoticeBanner() {
     <div
       className={joinClassNames(
         'flex flex-col gap-x-8 gap-y-4 rounded-2xl px-6 py-3 sm:flex-row',
-        'border-stroke bg-background border',
+        'border-stroke bg-background border-4',
         'fixed bottom-4 mx-4 sm:bottom-10 sm:mx-10',
         Z_INDEX.popover,
       )}
@@ -73,13 +78,13 @@ function ActionButtons({ acceptCookies, declineCookies }: ActionButtonsProps) {
 
   return (
     <div className="flex items-center gap-x-2 text-sm">
-      <SecondaryButton
+      <PrimaryButton
         size="sm"
         onClick={acceptCookies}
         dataTestId="cookie-notice-banner-accept-all-button"
       >
         {t(($) => $.buttons.acceptAll)}
-      </SecondaryButton>
+      </PrimaryButton>
       <SecondaryButton size="sm" onClick={declineCookies}>
         {t(($) => $.buttons.rejectAll)}
       </SecondaryButton>

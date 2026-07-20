@@ -1,5 +1,5 @@
 import { StaticMarketData } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
-import { TpSlPriceInputs } from 'client/modules/trading/components/OrderSettings/components/TpSlSection/TpSlPriceInputs';
+import { OrderFormTpSlPriceInputs } from 'client/modules/trading/components/OrderSettings/components/TpSlSection/OrderFormTpSlPriceInputs';
 import { UseTpSlOrderForm } from 'client/modules/trading/tpsl/hooks/useTpSlOrderForm/types';
 
 interface Props {
@@ -7,6 +7,7 @@ interface Props {
   tpSlOrderForm: UseTpSlOrderForm | undefined;
   isTpSlCheckboxChecked: boolean;
 }
+
 export function TpSlSection({
   currentMarket,
   tpSlOrderForm,
@@ -18,12 +19,12 @@ export function TpSlSection({
 
   return (
     <div className="flex flex-col gap-y-3">
-      <TpSlPriceInputs
+      <OrderFormTpSlPriceInputs
         isTakeProfit
         priceIncrement={currentMarket?.priceIncrement}
         tpSlOrderForm={tpSlOrderForm}
       />
-      <TpSlPriceInputs
+      <OrderFormTpSlPriceInputs
         isTakeProfit={false}
         priceIncrement={currentMarket?.priceIncrement}
         tpSlOrderForm={tpSlOrderForm}

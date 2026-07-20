@@ -2,6 +2,7 @@ import { ProductEngineType } from '@nadohq/client';
 import {
   getMarketSizeFormatSpecifier,
   MarketCategory,
+  NumberFormatSpecifier,
   TokenIconMetadata,
 } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
@@ -35,7 +36,7 @@ export interface PositionsTableItem extends WithDataTableRowId {
   };
   marginModeType: MarginModeType;
   isoLeverage: number | null;
-  sizeFormatSpecifier: string;
+  sizeFormatSpecifier: NumberFormatSpecifier;
   searchKey: string;
   actionText: string;
   action: () => void;
@@ -110,6 +111,7 @@ export const useCommandCenterPositionsItems = ({ marketCategory }: Params) => {
           },
           sizeFormatSpecifier: getMarketSizeFormatSpecifier({
             sizeIncrement: staticMarketData?.sizeIncrement,
+            exchangeRate: undefined,
           }),
           marginModeType: position.iso ? 'isolated' : 'cross',
           isoLeverage: position.iso?.leverage ?? null,

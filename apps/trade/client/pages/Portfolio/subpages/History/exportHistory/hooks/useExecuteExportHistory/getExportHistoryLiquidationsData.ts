@@ -18,7 +18,8 @@ export async function getExportHistoryLiquidationsData(
   params: GetExportHistoryDataParams,
   context: GetExportHistoryDataContext,
 ) {
-  const { subaccount, nadoClient, allMarketsStaticData, t } = context;
+  const { subaccount, nadoClient, allMarketsStaticData, getExchangeRate, t } =
+    context;
   const items: ExportHistoryLiquidationItem[] = [];
 
   let startCursor: string | undefined = undefined;
@@ -41,6 +42,7 @@ export async function getExportHistoryLiquidationsData(
       const tableItem = getHistoricalLiquidationsTableItem({
         allMarketsStaticData,
         event,
+        getExchangeRate,
       });
 
       if (!tableItem) {

@@ -5,7 +5,10 @@ import { useOrderSlippageSettings } from 'client/modules/trading/hooks/useOrderS
 import { RoundPriceFn } from 'client/modules/trading/types/orderFormTypes';
 import { PlaceOrderType } from 'client/modules/trading/types/placeOrderTypes';
 import { getOrderSlippageMultiplier } from 'client/modules/trading/utils/getOrderSlippageMultiplier';
-import { getScaledOrderWorstCasePrice } from 'client/modules/trading/utils/scaledOrderUtils';
+import {
+  getScaledOrderHealthStressPrice,
+  getScaledOrderWorstFillPrice,
+} from 'client/modules/trading/utils/scaledOrderUtils';
 import { useMemo } from 'react';
 
 interface Params {
@@ -58,8 +61,8 @@ export function useOrderFormConversionPrices({
       case 'twap':
         return firstExecutionPrice;
       case 'multi_limit':
-        // Scaled orders - use the worst case price based on order side
-        return getScaledOrderWorstCasePrice(
+        // Scaled orders: use worst-fill price (not health-stress) so size estimates stay conservative.
+        return getScaledOrderWorstFillPrice(
           validatedScaledOrderStartPriceInput,
           validatedScaledOrderEndPriceInput,
           orderSide,
@@ -94,14 +97,13 @@ export function useOrderFormConversionPrices({
       // Stop limit orders use the limit price without slippage
       case 'stop_limit':
         return validatedLimitPriceInput;
-      // Market / TWAP / Multi Limit orders have slippage applied
       case 'multi_limit':
-        // Scaled orders - use the worst case price based on order side
-        return getScaledOrderWorstCasePrice(
-          validatedScaledOrderStartPriceInput,
-          validatedScaledOrderEndPriceInput,
+        // Scaled orders - use the health-stress price for max-size sizing.
+        return getScaledOrderHealthStressPrice({
+          startPrice: validatedScaledOrderStartPriceInput,
+          endPrice: validatedScaledOrderEndPriceInput,
           orderSide,
-        );
+        });
       case 'market':
       case 'twap': {
         if (topOfBookPrice == null) return;

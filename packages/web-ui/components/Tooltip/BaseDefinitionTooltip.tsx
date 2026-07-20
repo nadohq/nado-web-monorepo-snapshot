@@ -55,7 +55,7 @@ export function BaseDefinitionTooltip({
     }
 
     return mergeClassNames(
-      'underline underline-offset-[3px]',
+      'underline underline-offset-1',
       'decoration-dashed decoration-disabled',
       'transition-colors',
       contentWrapperClassName,

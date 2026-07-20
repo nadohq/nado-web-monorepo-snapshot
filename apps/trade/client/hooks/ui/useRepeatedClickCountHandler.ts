@@ -1,7 +1,7 @@
-import { MouseEvent, MouseEventHandler, useEffect, useState } from 'react';
+import { MouseEvent, MouseEventHandler, useEffect, useRef } from 'react';
 
 interface Params<T> {
-  handler: (count: number, event: MouseEvent<T>) => void;
+  handler: (count: number, event: MouseEvent<T> | null) => void;
   resetDelay?: number;
 }
 
@@ -9,22 +9,29 @@ export function useRepeatedClickCountHandler<T = Element>({
   resetDelay = 200,
   handler,
 }: Params<T>): MouseEventHandler<T> {
-  const [numClicks, setNumClicks] = useState(0);
+  const count = useRef(0);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Reset the counter after a delay
+  // Clean up the timer on unmount
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setNumClicks(0);
-    }, resetDelay);
-
     return () => {
-      clearTimeout(timeout);
+      if (timer.current) {
+        clearTimeout(timer.current);
+      }
     };
-  }, [numClicks, resetDelay]);
+  }, []);
 
   return (e) => {
-    const next = numClicks + 1;
-    setNumClicks(next);
-    handler(next, e);
+    count.current += 1;
+
+    if (timer.current) {
+      // If there's an existing timer, clear it as we start a new one
+      clearTimeout(timer.current);
+    }
+    timer.current = setTimeout(() => {
+      // If we didn't get another click within the reset delay, call the handler
+      handler(count.current, e);
+      count.current = 0;
+    }, resetDelay);
   };
 }

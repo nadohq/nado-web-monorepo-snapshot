@@ -4,8 +4,7 @@ import {
   PresetNumberFormatSpecifier,
   Token,
 } from '@nadohq/react-client';
-import { IconButton, Icons } from '@nadohq/web-ui';
-import { StatusIndicator } from 'client/components/StatusIndicator';
+import { IconButton, Icons, StatusIndicator } from '@nadohq/web-ui';
 import { ProfileAvatarIcon } from 'client/modules/subaccounts/components/ProfileAvatarIcon';
 import { QuoteTransferSubaccount } from 'client/modules/subaccounts/hooks/useSubaccountQuoteTransferForm/useSubaccountQuoteTransferFormData';
 import { useTranslation } from 'react-i18next';

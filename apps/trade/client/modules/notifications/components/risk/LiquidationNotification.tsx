@@ -42,10 +42,10 @@ export function LiquidationNotification({
   );
 
   return (
-    <Toast.Container className="border-negative">
+    <Toast.Container className="border-negative border">
       <Toast.Header onDismiss={onDismiss}>{heading}</Toast.Header>
-      <Toast.Separator ttl={ttl} className="bg-negative-muted" />
-      <Toast.Body className="flex flex-col gap-y-2">
+      <Toast.Separator ttl={ttl} className="bg-negative" />
+      <Toast.Body className="flex flex-col gap-y-3">
         <p>{liquidationMessage}</p>
         <Toast.FooterLink href={ROUTES.portfolio.history}>
           {t(($) => $.buttons.viewHistory)}

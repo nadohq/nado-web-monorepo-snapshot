@@ -13,7 +13,7 @@ import {
   NOTIFICATION_POSITIONS,
   OrderSlippageSettings,
   SavedTradingUserSettings,
-  TRADING_CONSOLE_POSITIONS,
+  TpSlGainOrLossInputTypeSettings,
   TpSlTriggerPriceTypeSettings,
 } from 'client/modules/localstorage/userState/types/tradingSettings';
 import { FUNDING_RATE_PERIODS } from 'client/modules/localstorage/userState/types/userFundingRatePeriodTypes';
@@ -23,9 +23,13 @@ import {
   zodNumericEnum,
   zodNumericObjectKey,
 } from 'client/modules/localstorage/utils/zodValidators';
-import { PrivacySettings } from 'client/modules/privacy/types';
 import { PERP_POSITIONS_DEFAULT_COLUMN_ORDER } from 'client/modules/tables/customizableTables/tableConfigs/perpPositions';
+import {
+  DESKTOP_TRADING_GRID_ITEM_IDS,
+  TABLET_TRADING_GRID_ITEM_IDS,
+} from 'client/modules/trading/layout/consts';
 import { ORDERBOOK_PRICE_TICK_SPACING_MULTIPLIERS } from 'client/modules/trading/marketOrders/orderbook/types';
+import { GAIN_OR_LOSS_INPUT_TYPES } from 'client/modules/trading/types/GainOrLossInputType';
 import { ORDER_FORM_SIZE_DENOMS } from 'client/modules/trading/types/orderFormTypes';
 import { TRIGGER_REFERENCE_PRICE_TYPES } from 'client/modules/trading/types/TriggerReferencePriceType';
 import { isObject, isString } from 'lodash';
@@ -89,6 +93,13 @@ const marginModeSchema = z.object({
   ),
 }) satisfies z.ZodType<MarginModeSettings>;
 
+const gridLayoutItemSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+  w: z.number(),
+  h: z.number(),
+});
+
 export const userStateSchema = z.object({
   onboardingComplete: z.boolean(),
   dismissedDisclosures: z.array(z.string()),
@@ -98,10 +109,7 @@ export const userStateSchema = z.object({
   }),
   fundingRatePeriod: z.enum(FUNDING_RATE_PERIODS),
   notificationPosition: z.enum(NOTIFICATION_POSITIONS),
-  privacy: z.object({
-    areAccountValuesPrivate: z.boolean(),
-    isAddressPrivate: z.boolean(),
-  }) satisfies z.ZodType<PrivacySettings>,
+  isPrivacyModeEnabled: z.boolean(),
   profileBySubaccountKey: z.record(z.string(), profileSchema),
   selectedSubaccountNameByChainEnv: z.partialRecord(
     z.enum(ALL_CHAIN_ENVS),
@@ -112,7 +120,6 @@ export const userStateSchema = z.object({
     subaccountSigningPreferenceSchema,
   ),
   trading: z.object({
-    consolePosition: z.enum(TRADING_CONSOLE_POSITIONS),
     favoriteMarketIds: z.array(z.number()),
     leverageByProductId: z.record(zodNumericObjectKey(), z.number()),
     marginMode: marginModeSchema,
@@ -127,12 +134,18 @@ export const userStateSchema = z.object({
       takeProfit: z.enum(TRIGGER_REFERENCE_PRICE_TYPES),
       stopLoss: z.enum(TRIGGER_REFERENCE_PRICE_TYPES),
     }) satisfies z.ZodType<TpSlTriggerPriceTypeSettings>,
+    tpSlGainOrLossInputType: z.object({
+      takeProfit: z.enum(GAIN_OR_LOSS_INPUT_TYPES),
+      stopLoss: z.enum(GAIN_OR_LOSS_INPUT_TYPES),
+    }) satisfies z.ZodType<TpSlGainOrLossInputTypeSettings>,
     enableTradingNotifications: z.boolean(),
     enableTradingOrderLines: z.boolean(),
     enableTradingPositionLines: z.boolean(),
     enableTradingOrderbookAnimations: z.boolean(),
     enableChartMarks: z.boolean(),
     enableQuickMarketClose: z.boolean(),
+    enableClassicDepositUi: z.boolean(),
+    enableCrossMarginForIsoOnlyMarkets: z.boolean(),
     tradingTableTabFilters: z.object({
       showAllMarkets: z.boolean(),
       hideSmallBalances: z.boolean(),
@@ -142,6 +155,16 @@ export const userStateSchema = z.object({
     lastSelectedEngineOrderType: z.enum(LAST_SELECTED_ENGINE_ORDER_TYPES),
     lastSelectedSizeDenom: z.enum(ORDER_FORM_SIZE_DENOMS),
     lastSelectedSide: z.enum(BALANCE_SIDES),
+    gridLayout: z.object({
+      desktop: z.record(
+        z.enum(DESKTOP_TRADING_GRID_ITEM_IDS),
+        gridLayoutItemSchema,
+      ),
+      tablet: z.record(
+        z.enum(TABLET_TRADING_GRID_ITEM_IDS),
+        gridLayoutItemSchema,
+      ),
+    }),
   }) satisfies z.ZodType<SavedTradingUserSettings>,
   tables: z.object({
     perpPositions: z.object({

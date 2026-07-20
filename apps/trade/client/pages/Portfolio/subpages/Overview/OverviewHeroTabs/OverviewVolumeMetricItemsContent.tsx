@@ -2,7 +2,7 @@ import { PresetNumberFormatSpecifier } from '@nadohq/react-client';
 import { ValueWithLabel } from 'client/components/ValueWithLabel/ValueWithLabel';
 import { useSubaccountTimespanMetrics } from 'client/hooks/subaccount/useSubaccountTimespanMetrics';
 import { getTimespanMetadata } from 'client/modules/charts/utils/timespan';
-import { usePrivacySetting } from 'client/modules/privacy/hooks/usePrivacySetting';
+import { usePrivacyMode } from 'client/modules/privacy/hooks/usePrivacyMode';
 import { PortfolioOverviewVolumeChart } from 'client/pages/Portfolio/subpages/Overview/charts/PortfolioOverviewVolumeChart';
 import { usePortfolioChartData } from 'client/pages/Portfolio/subpages/Overview/charts/usePortfolioChartData';
 import { OverviewTabContent } from 'client/pages/Portfolio/subpages/Overview/OverviewHeroTabs/components/OverviewTabContent';
@@ -14,9 +14,7 @@ import { useTranslation } from 'react-i18next';
 export function OverviewVolumeMetricItemsContent() {
   const { t } = useTranslation();
   const timespan = useAtomValue(portfolioTimespanAtom);
-  const [areAccountValuesPrivate] = usePrivacySetting(
-    'areAccountValuesPrivate',
-  );
+  const { isPrivacyModeEnabled } = usePrivacyMode();
   const { label: timespanLabel, timespanInSeconds } = getTimespanMetadata(
     t,
     timespan,
@@ -33,7 +31,7 @@ export function OverviewVolumeMetricItemsContent() {
         </span>
         <ValueWithLabel.Horizontal
           tooltip={{ id: 'overviewTimespanVolume' }}
-          isValuePrivate={areAccountValuesPrivate}
+          isValuePrivate={isPrivacyModeEnabled}
           sizeVariant="sm"
           label={t(($) => $.volume)}
           value={volumeMetricsData?.deltas.cumulativeTotalVolumeUsd}
@@ -41,7 +39,7 @@ export function OverviewVolumeMetricItemsContent() {
         />
         <ValueWithLabel.Horizontal
           tooltip={{ id: 'overviewTimespanPerpVolume' }}
-          isValuePrivate={areAccountValuesPrivate}
+          isValuePrivate={isPrivacyModeEnabled}
           sizeVariant="sm"
           label={t(($) => $.perpVolume)}
           value={volumeMetricsData?.deltas.cumulativePerpVolumeUsd}
@@ -49,7 +47,7 @@ export function OverviewVolumeMetricItemsContent() {
         />
         <ValueWithLabel.Horizontal
           tooltip={{ id: 'overviewTimespanSpotVolume' }}
-          isValuePrivate={areAccountValuesPrivate}
+          isValuePrivate={isPrivacyModeEnabled}
           sizeVariant="sm"
           label={t(($) => $.spotVolume)}
           value={volumeMetricsData?.deltas.cumulativeSpotVolumeUsd}
@@ -57,7 +55,7 @@ export function OverviewVolumeMetricItemsContent() {
         />
       </>
     ),
-    [areAccountValuesPrivate, t, timespanLabel, volumeMetricsData],
+    [isPrivacyModeEnabled, t, timespanLabel, volumeMetricsData],
   );
 
   return (
@@ -65,7 +63,7 @@ export function OverviewVolumeMetricItemsContent() {
       metricsContent={metricsContent}
       ChartComponent={PortfolioOverviewVolumeChart}
       chartData={chartData}
-      isPrivate={areAccountValuesPrivate}
+      isPrivate={isPrivacyModeEnabled}
     />
   );
 }

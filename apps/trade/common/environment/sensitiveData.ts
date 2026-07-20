@@ -3,11 +3,13 @@
  * in this file for open sourcing.
  */
 export const SENSITIVE_DATA = {
-  fuulApiKey: '',
-  googleAnalyticsId: '',
-  googleTagManagerId: '',
-  microsoftClarityId: '',
-  walletConnectProjectId: '',
+  fuulApiKey:
+    '',
+  funkitApiKey: '',
+  googleTagManagerId: {
+    prod: '',
+    testnet: '',
+  },
   notifi: {
     tenantId: '',
     cardId: {
@@ -15,6 +17,17 @@ export const SENSITIVE_DATA = {
       inkTestnet: '',
     },
   },
+  privy: {
+    prod: {
+      appId: '',
+      clientId: '',
+    },
+    testnet: {
+      appId: '',
+      clientId: '',
+    },
+  },
   lifiIntegrator: '',
-  sentryDsn: '',
+  sentryDsn:
+    '',
 } as const;

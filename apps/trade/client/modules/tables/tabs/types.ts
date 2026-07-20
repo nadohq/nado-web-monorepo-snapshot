@@ -9,3 +9,9 @@ export interface HistoricalTableTabProps extends TableTabProps {
   pageSize: number;
   showPagination: boolean;
 }
+
+export interface HistoricalTableTabWithSubTabsProps<
+  TTabID extends string,
+> extends HistoricalTableTabProps {
+  onSelectedSubTabIdChange?: (id: TTabID) => void;
+}

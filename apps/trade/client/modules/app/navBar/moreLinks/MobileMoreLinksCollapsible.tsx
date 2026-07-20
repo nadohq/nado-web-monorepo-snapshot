@@ -22,7 +22,7 @@ export function MobileMoreLinksCollapsible({ className }: WithClassnames) {
           {moreLinks.map(({ label, href, external }) => {
             return (
               <MobileNavCustomCollapsible.LinkButton
-                key={label}
+                key={href}
                 href={href}
                 external={external}
                 onClick={onCollapsibleLinkClick}

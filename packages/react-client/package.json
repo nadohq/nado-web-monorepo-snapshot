@@ -14,7 +14,6 @@
   "private": true,
   "dependencies": {
     "@nadohq/client": "catalog:",
-    "d3-format": "catalog:",
     "safe-stable-stringify": "catalog:"
   },
   "peerDependencies": {
@@ -27,7 +26,6 @@
     "wagmi": "catalog:"
   },
   "devDependencies": {
-    "@types/d3-format": "catalog:",
     "@types/lodash": "catalog:",
     "@types/react": "catalog:",
     "@nadohq/eslint-config-custom": "workspace:*",

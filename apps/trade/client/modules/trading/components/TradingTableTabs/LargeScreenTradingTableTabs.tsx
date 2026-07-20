@@ -12,12 +12,11 @@ import {
 import { useTradingTableTabs } from 'client/modules/trading/hooks/useTradingTableTabs';
 import { useMemo } from 'react';
 
-export function LargeScreenTradingTableTabs({
-  productId,
-  className,
-}: WithClassnames<{
+interface Props extends WithClassnames {
   productId: number | undefined;
-}>) {
+}
+
+export function LargeScreenTradingTableTabs({ productId, className }: Props) {
   const tradingTableTabs = useTradingTableTabs();
 
   const {
@@ -35,12 +34,9 @@ export function LargeScreenTradingTableTabs({
 
   return (
     <TradingTableTabsFiltersContext value={filtersContextData}>
-      <TabsRoot
-        className={className}
-        value={selectedTabId}
-        onValueChange={setSelectedTabId}
-      >
-        <SectionedCard>
+      <TabsRoot asChild value={selectedTabId} onValueChange={setSelectedTabId}>
+        {/* Parent layouts should provide a height constraint so SectionedCard.Content scrolls instead of expanding the card. */}
+        <SectionedCard className={className}>
           <SectionedCard.Header className="flex justify-between gap-x-4 py-0">
             <TableTabs.TabsList>
               {tabs.map(({ id, label, countIndicatorKey }) => {
@@ -62,14 +58,12 @@ export function LargeScreenTradingTableTabs({
             </TableTabs.TabsList>
             <TradingTableTabsFilterCheckbox />
           </SectionedCard.Header>
-          <SectionedCard.Content className="p-0">
+          <SectionedCard.Content className="overflow-y-auto p-0">
             {tabs.map(({ id, content }) => (
               <TabsContent
                 key={id}
                 value={id}
                 data-testid={`table-tabs-content-${id}`}
-                // Use a min-height here to prevent layout shift when switching tabs
-                className="min-h-[400px]"
               >
                 {content}
               </TabsContent>

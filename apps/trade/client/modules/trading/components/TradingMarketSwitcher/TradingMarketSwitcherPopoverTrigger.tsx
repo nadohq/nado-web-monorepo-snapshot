@@ -40,7 +40,10 @@ export function TradingMarketSwitcherPopoverTrigger({
           className="h-6 w-auto"
         />
         {selectedMarket.market.marketName}
-        <ProductTypePill productType={selectedMarket.market.productType} />
+        <ProductTypePill
+          sizeVariant="xs"
+          productType={selectedMarket.market.productType}
+        />
       </>
     );
   })();

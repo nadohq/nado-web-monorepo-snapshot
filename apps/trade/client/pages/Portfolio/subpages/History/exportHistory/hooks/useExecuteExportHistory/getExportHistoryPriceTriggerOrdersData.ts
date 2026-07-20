@@ -1,7 +1,6 @@
-import { GetTriggerOrdersParams, toBigNumber } from '@nadohq/client';
+import { GetTriggerOrdersParams } from '@nadohq/client';
 import { getTriggerOrdersWithEngineOrders } from 'client/hooks/query/subaccount/utils';
 import { getHistoricalPriceTriggerOrderTableItem } from 'client/modules/tables/historicalOrders/historicalPriceTriggerOrders/useHistoricalPriceTriggerOrdersTable';
-import { isTpSlMaxOrderSize } from 'client/modules/trading/tpsl/utils/isTpSlMaxOrderSize';
 import { getOrderDirectionLabel } from 'client/modules/trading/utils/getOrderDirectionLabel';
 import { getOrderTypeLabel } from 'client/modules/trading/utils/getOrderTypeLabel';
 import { getTriggerReferencePriceType } from 'client/modules/trading/utils/trigger/getTriggerReferencePriceType';
@@ -28,7 +27,8 @@ export async function getExportHistoryPriceTriggerOrdersData(
   context: GetExportHistoryDataContext,
   { reduceOnly }: GetExportHistoryPriceTriggerOrdersDataParams,
 ): Promise<ExportHistoryPriceTriggerOrderItem[]> {
-  const { subaccount, nadoClient, allMarketsStaticData, t } = context;
+  const { subaccount, nadoClient, allMarketsStaticData, getExchangeRate, t } =
+    context;
   const items: ExportHistoryPriceTriggerOrderItem[] = [];
 
   let startCursor: number | undefined = undefined;
@@ -71,6 +71,7 @@ export async function getExportHistoryPriceTriggerOrdersData(
         t,
         triggerOrderInfo,
         allMarketsStaticData,
+        exchangeRate: getExchangeRate(triggerOrderInfo.order.productId),
       });
 
       if (tableItem.timeUpdatedMillis < params.startTimeMillis) {
@@ -95,12 +96,10 @@ export async function getExportHistoryPriceTriggerOrdersData(
           : tableItem.orderPrice.toString(),
         filledAvgPrice: tableItem.filledAvgPrice?.toString(),
         filledSize: tableItem.filledBaseSize?.toString(),
-        totalSize: isTpSlMaxOrderSize(tableItem.totalBaseSize)
+        totalSize: tableItem.isCloseEntirePosition
           ? t(($) => $.entirePosition)
           : tableItem.totalBaseSize.toString(),
-        triggerPrice: toBigNumber(
-          tableItem.priceTriggerCriteria.triggerPrice,
-        ).toString(),
+        triggerPrice: tableItem.displayTriggerPrice.toString(),
         triggerReferencePriceType: getTriggerReferencePriceType(
           tableItem.priceTriggerCriteria,
         ),

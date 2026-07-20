@@ -87,6 +87,7 @@ export function MarginManagerCrossPositionsTable({
                 amount={context.getValue()}
                 formatSpecifier={getMarketSizeFormatSpecifier({
                   sizeIncrement,
+                  exchangeRate: undefined,
                 })}
                 symbol={symbol}
               />

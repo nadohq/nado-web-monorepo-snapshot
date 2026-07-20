@@ -1,11 +1,11 @@
 import { CustomNumberFormatSpecifier } from '@nadohq/react-client';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HeaderCell } from 'client/components/DataTable/cells/HeaderCell';
-import { MarketProductInfoCell } from 'client/components/DataTable/cells/MarketProductInfoCell';
 import { TableCell } from 'client/components/DataTable/cells/TableCell';
 import { DataTable } from 'client/components/DataTable/DataTable';
 import { bigNumberSortFn } from 'client/components/DataTable/utils/sortingFns';
 import { PnlValueWithPercentage } from 'client/components/PnlValueWithPercentage';
+import { ProductLabel } from 'client/components/ProductLabel';
 import { useNlpBalancesTable } from 'client/modules/nlp/hooks/useNlpBalancesTable';
 import { NlpBalancesTableItem } from 'client/modules/nlp/types/NlpBalancesTableItem';
 import { AmountWithSymbolCell } from 'client/modules/tables/cells/AmountWithSymbolCell';
@@ -31,10 +31,12 @@ export function NlpBalancesTable() {
         cell: ({ getValue }) => {
           const metadata = getValue<NlpBalancesTableItem['metadata']>();
           return (
-            <MarketProductInfoCell
-              symbol={metadata.symbol}
-              iconSrc={metadata.icon.asset}
-            />
+            <TableCell>
+              <ProductLabel
+                symbol={metadata.symbol}
+                iconSrc={metadata.icon.asset}
+              />
+            </TableCell>
           );
         },
         enableSorting: false,

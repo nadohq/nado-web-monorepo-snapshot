@@ -1,4 +1,3 @@
-import { getMarketSizeFormatSpecifier } from '@nadohq/react-client';
 import { joinClassNames, WithClassnames } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
 import { NumberInputWithLabel } from 'client/components/NumberInputWithLabel';
@@ -73,7 +72,9 @@ export function OrderFormInputs({
     setSizeDenom,
     sizeDenom,
     setValue,
+    exchangeRate,
   } = useOrderFormInputs({
+    productId,
     formError,
     validators,
     priceIncrement,
@@ -139,6 +140,7 @@ export function OrderFormInputs({
         onSizeInputFocus={onSizeInputFocus}
       />
       <OrderFormSlider
+        exchangeRate={exchangeRate}
         amountFraction={amountFraction}
         onFractionChange={onFractionChange}
         validatedSizeInput={validatedSizeInput}
@@ -146,7 +148,6 @@ export function OrderFormInputs({
         roundAssetAmount={roundAssetAmount}
         decimalAdjustedSizeIncrement={decimalAdjustedSizeIncrement}
         maxAssetOrderSize={maxAssetOrderSize}
-        getMarketSizeFormatSpecifier={getMarketSizeFormatSpecifier}
         sizeDenom={sizeDenom}
         baseSymbol={baseSymbol}
         quoteMetadata={quoteMetadata}

@@ -23,7 +23,8 @@ export async function getExportHistoryEngineOrdersData(
   params: GetExportHistoryDataParams,
   context: GetExportHistoryDataContext,
 ): Promise<ExportHistoryEngineOrderItem[]> {
-  const { subaccount, nadoClient, allMarketsStaticData, t } = context;
+  const { subaccount, nadoClient, allMarketsStaticData, getExchangeRate, t } =
+    context;
   const items: ExportHistoryEngineOrderItem[] = [];
 
   let startCursor: string | undefined = undefined;
@@ -52,6 +53,7 @@ export async function getExportHistoryEngineOrdersData(
         order,
         allMarketsStaticData,
         t,
+        exchangeRate: getExchangeRate(order.productId),
       });
 
       if (tableItem.timePlacedMillis < params.startTimeMillis) {

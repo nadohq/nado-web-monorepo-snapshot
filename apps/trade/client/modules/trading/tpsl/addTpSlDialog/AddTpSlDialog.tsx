@@ -5,9 +5,8 @@ import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { AddTpSlDialogSubmitButton } from 'client/modules/trading/tpsl/addTpSlDialog/components/AddTpSlDialogSubmitButton';
 import { useAddTpSlDialog } from 'client/modules/trading/tpsl/addTpSlDialog/hooks/useAddTpSlDialog';
 import { TpSlAmountSection } from 'client/modules/trading/tpsl/components/TpSlAmountSection';
-import { TpSlDialogEstimatedPnl } from 'client/modules/trading/tpsl/components/TpSlDialogEstimatedPnl';
+import { TpSlDialogPriceInputs } from 'client/modules/trading/tpsl/components/TpSlDialogPriceInputs';
 import { TpSlHeaderMetrics } from 'client/modules/trading/tpsl/components/TpSlHeaderMetrics';
-import { TpSlPriceInputs } from 'client/modules/trading/tpsl/components/TpSlPriceInputs';
 import { getSharedProductMetadata } from 'client/utils/getSharedProductMetadata';
 import { useTranslation } from 'react-i18next';
 
@@ -52,14 +51,14 @@ export function AddTpSlDialog({ productId, isIso }: AddTpSlDialogParams) {
             staticMarketData={staticMarketData}
             onPriceClick={handlePriceClick}
           />
-          <TpSlPriceInputs
+          <TpSlDialogPriceInputs
             form={form}
             priceState={tpState}
             isTakeProfit
             priceIncrement={staticMarketData?.priceIncrement}
             setActiveField={setActiveField}
           />
-          <TpSlPriceInputs
+          <TpSlDialogPriceInputs
             form={form}
             priceState={slState}
             isTakeProfit={false}
@@ -79,7 +78,6 @@ export function AddTpSlDialog({ productId, isIso }: AddTpSlDialogParams) {
                 : undefined
             }
           />
-          <TpSlDialogEstimatedPnl tpState={tpState} slState={slState} />
           <AddTpSlDialogSubmitButton state={buttonState} />
         </Form>
       </BaseAppDialog.Body>

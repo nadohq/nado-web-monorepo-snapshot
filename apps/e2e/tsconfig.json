@@ -1,14 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "outDir": "dist",
     "paths": {
-      "@/*": ["src/*"]
+      "*": ["./*"]
     },
-    "sourceMap": true,
-    "target": "ESNext"
+    "sourceMap": true
   },
   "exclude": ["node_modules"],
   "extends": "@nadohq/ts-config/base.json",

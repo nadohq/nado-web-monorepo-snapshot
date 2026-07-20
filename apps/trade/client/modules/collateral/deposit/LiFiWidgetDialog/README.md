@@ -1,9 +1,7 @@
 ## Key Dependencies
 
 - `@lifi/widget` - Li.Fi widget component
-- `@bigmi/react` - DeFi protocol integration  
-- `@mysten/dapp-kit` - Sui blockchain toolkit
-- `@solana/wallet-adapter-react` - Solana wallet integration
+- `@lifi/widget-provider-ethereum` - Ethereum provider
 
 ## Resources
 

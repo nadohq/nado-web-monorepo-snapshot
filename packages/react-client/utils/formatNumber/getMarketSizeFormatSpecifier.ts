@@ -1,11 +1,18 @@
-import { removeDecimals } from '@nadohq/client';
+import { BigNumbers, removeDecimals } from '@nadohq/client';
 import { BigNumber } from 'bignumber.js';
-import { precisionFixed } from 'd3-format';
-import { CustomNumberFormatSpecifier } from './NumberFormatSpecifier';
+import { getRoundedIncrement } from '../xStocks/getRoundedIncrement';
+import { toXStocksDisplayAmount } from '../xStocks/xStocksConversions';
+import {
+  CustomNumberFormatSpecifier,
+  NumberFormatSpecifier,
+} from './NumberFormatSpecifier';
+import { getPrecisionFixedFormatSpecifier } from './getPrecisionFixedFormatSpecifier';
 
 export interface GetMarketSizeFormatSpecifierParams {
   sizeIncrement: BigNumber | undefined;
   shouldRemoveDecimals?: boolean;
+  exchangeRate: BigNumber | undefined;
+  isSigned?: boolean;
 }
 
 /**
@@ -17,15 +24,25 @@ export interface GetMarketSizeFormatSpecifierParams {
 export function getMarketSizeFormatSpecifier({
   sizeIncrement,
   shouldRemoveDecimals = true,
-}: GetMarketSizeFormatSpecifierParams) {
-  // Size increments should never be zero, so this allows us to use an easy default (BigNumbers.ZERO) when we don't have data
-  if (!sizeIncrement || sizeIncrement.isZero()) {
-    return CustomNumberFormatSpecifier.NUMBER_AUTO;
-  }
-  const decimalAdjustedSizeIncrement = shouldRemoveDecimals
-    ? removeDecimals(sizeIncrement)
-    : sizeIncrement;
+  exchangeRate,
+  isSigned,
+}: GetMarketSizeFormatSpecifierParams): NumberFormatSpecifier {
+  const roundedDisplaySizeIncrement = getRoundedIncrement(
+    toXStocksDisplayAmount(sizeIncrement, exchangeRate ?? BigNumbers.ONE),
+  );
 
-  // precisionFixed has a minimum of 0, so precisionFixed(10) = 0
-  return `,.${precisionFixed(decimalAdjustedSizeIncrement.toNumber()).toFixed()}f`;
+  if (!roundedDisplaySizeIncrement || roundedDisplaySizeIncrement.isZero()) {
+    return isSigned
+      ? CustomNumberFormatSpecifier.SIGNED_NUMBER_AUTO
+      : CustomNumberFormatSpecifier.NUMBER_AUTO;
+  }
+
+  const decimalAdjustedSizeIncrement = shouldRemoveDecimals
+    ? removeDecimals(roundedDisplaySizeIncrement)
+    : roundedDisplaySizeIncrement;
+
+  return getPrecisionFixedFormatSpecifier({
+    step: decimalAdjustedSizeIncrement.toNumber(),
+    isSigned,
+  });
 }

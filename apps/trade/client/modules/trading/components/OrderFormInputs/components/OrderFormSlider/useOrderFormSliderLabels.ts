@@ -1,6 +1,6 @@
 import {
   getMarketQuoteSizeFormatSpecifier,
-  GetMarketSizeFormatSpecifierParams,
+  getMarketSizeFormatSpecifier,
 } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import { StaticMarketQuoteData } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
@@ -24,9 +24,7 @@ export interface UseOrderFormSliderLabelsParams {
   quoteMetadata: StaticMarketQuoteData | undefined;
   decimalAdjustedSizeIncrement: BigNumber | undefined;
   maxAssetOrderSize: BigNumber | undefined;
-  getMarketSizeFormatSpecifier: (
-    params: GetMarketSizeFormatSpecifierParams,
-  ) => string;
+  exchangeRate: BigNumber;
 }
 
 export function useOrderFormSliderLabels({
@@ -39,7 +37,7 @@ export function useOrderFormSliderLabels({
   quoteMetadata,
   decimalAdjustedSizeIncrement,
   maxAssetOrderSize,
-  getMarketSizeFormatSpecifier,
+  exchangeRate,
 }: UseOrderFormSliderLabelsParams) {
   const oppositeSizeDenom: OrderFormSizeDenom = useMemo(() => {
     return sizeDenom === 'asset' ? 'quote' : 'asset';
@@ -81,6 +79,7 @@ export function useOrderFormSliderLabels({
       ? getMarketSizeFormatSpecifier({
           sizeIncrement: decimalAdjustedSizeIncrement,
           shouldRemoveDecimals: false,
+          exchangeRate,
         })
       : getMarketQuoteSizeFormatSpecifier({
           isPrimaryQuote: quoteMetadata?.isPrimaryQuote,
@@ -88,8 +87,8 @@ export function useOrderFormSliderLabels({
         });
   }, [
     oppositeSizeDenom,
-    getMarketSizeFormatSpecifier,
     decimalAdjustedSizeIncrement,
+    exchangeRate,
     quoteMetadata?.isPrimaryQuote,
   ]);
 

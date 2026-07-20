@@ -19,7 +19,6 @@ test.describe('Authentication', () => {
     });
 
     await tradePage.onboardingDialog.agreeToTerms();
-    await tradePage.onboardingDialog.startTrading();
 
     await tradePage.marketingDialog.dismissIfVisible();
 

@@ -67,8 +67,8 @@ export const CHART_DOT_DEFAULTS: Partial<ActiveDotProps> = {
   stroke: getTradeAppColorVar('stroke'),
 };
 
-export const AREA_CHART_DEFAULTS: Omit<AreaProps, 'dataKey' | 'ref'> = {
+export const AREA_CHART_DEFAULTS = {
   strokeWidth: 2,
   type: 'linear',
   fillOpacity: 0.5,
-};
+} as const satisfies Omit<AreaProps<any, ValueType>, 'dataKey' | 'ref'>;

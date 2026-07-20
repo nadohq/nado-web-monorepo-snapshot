@@ -1,7 +1,7 @@
 import { PresetNumberFormatSpecifier } from '@nadohq/react-client';
 import { ValueWithLabel } from 'client/components/ValueWithLabel/ValueWithLabel';
 import { useSubaccountOverview } from 'client/hooks/subaccount/useSubaccountOverview/useSubaccountOverview';
-import { usePrivacySetting } from 'client/modules/privacy/hooks/usePrivacySetting';
+import { usePrivacyMode } from 'client/modules/privacy/hooks/usePrivacyMode';
 import { PortfolioOverviewAccountEquityChart } from 'client/pages/Portfolio/subpages/Overview/charts/PortfolioOverviewAccountEquityChart';
 import { usePortfolioChartData } from 'client/pages/Portfolio/subpages/Overview/charts/usePortfolioChartData';
 import { OverviewMaintMarginUsage } from 'client/pages/Portfolio/subpages/Overview/OverviewHeroTabs/components/OverviewMaintMarginUsage';
@@ -16,23 +16,21 @@ export function OverviewAccountMetricItemsContent() {
 
   const { data: subaccountOverview } = useSubaccountOverview();
   const timespan = useAtomValue(portfolioTimespanAtom);
-  const [areAccountValuesPrivate] = usePrivacySetting(
-    'areAccountValuesPrivate',
-  );
+  const { isPrivacyModeEnabled } = usePrivacyMode();
   const { data: chartData } = usePortfolioChartData(timespan);
 
   const metricsContent = (
     <>
       <ValueWithLabel.Horizontal
         tooltip={{ id: 'overviewAccountSpotBalance' }}
-        isValuePrivate={areAccountValuesPrivate}
+        isValuePrivate={isPrivacyModeEnabled}
         sizeVariant="sm"
         label={t(($) => $.balance)}
         value={subaccountOverview?.spot.netTotalBalanceUsd}
         numberFormatSpecifier={PresetNumberFormatSpecifier.CURRENCY_2DP}
       />
       <ValueWithLabel.Horizontal
-        isValuePrivate={areAccountValuesPrivate}
+        isValuePrivate={isPrivacyModeEnabled}
         sizeVariant="sm"
         label={t(($) => $.unrealizedPerpPnl)}
         value={subaccountOverview?.perp.totalUnrealizedPnlUsd}
@@ -42,7 +40,7 @@ export function OverviewAccountMetricItemsContent() {
         numberFormatSpecifier={PresetNumberFormatSpecifier.SIGNED_CURRENCY_2DP}
       />
       <ValueWithLabel.Horizontal
-        isValuePrivate={areAccountValuesPrivate}
+        isValuePrivate={isPrivacyModeEnabled}
         sizeVariant="sm"
         label={t(($) => $.unrealizedSpotPnl)}
         value={subaccountOverview?.spot.totalUnrealizedPnlUsd}
@@ -53,7 +51,7 @@ export function OverviewAccountMetricItemsContent() {
       />
       <ValueWithLabel.Horizontal
         tooltip={{ id: 'availableMarginUsd' }}
-        isValuePrivate={areAccountValuesPrivate}
+        isValuePrivate={isPrivacyModeEnabled}
         sizeVariant="sm"
         label={t(($) => $.availableMargin)}
         value={subaccountOverview?.initialMarginBoundedUsd}
@@ -61,7 +59,7 @@ export function OverviewAccountMetricItemsContent() {
       />
       <ValueWithLabel.Horizontal
         tooltip={{ id: 'maintMarginRatio' }}
-        isValuePrivate={areAccountValuesPrivate}
+        isValuePrivate={isPrivacyModeEnabled}
         sizeVariant="sm"
         label={t(($) => $.maintenanceMarginAndRatio)}
         valueContent={
@@ -81,7 +79,7 @@ export function OverviewAccountMetricItemsContent() {
       metricsContent={metricsContent}
       ChartComponent={PortfolioOverviewAccountEquityChart}
       chartData={chartData}
-      isPrivate={areAccountValuesPrivate}
+      isPrivate={isPrivacyModeEnabled}
     />
   );
 }

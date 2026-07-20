@@ -42,6 +42,7 @@ export function OrderFillNotification({
     orderAppendix,
     metadata,
     market,
+    exchangeRate,
   } = notificationData;
 
   const fillTypeLabel = (() => {
@@ -64,11 +65,15 @@ export function OrderFillNotification({
   const formattedAmount = formatNumber(decimalAdjustedFilledAmount.abs(), {
     formatSpecifier: getMarketSizeFormatSpecifier({
       sizeIncrement: metadata.sizeIncrement,
+      exchangeRate,
     }),
   });
 
   const formattedFillPrice = formatNumber(fillPrice, {
-    formatSpecifier: getMarketPriceFormatSpecifier(metadata.priceIncrement),
+    formatSpecifier: getMarketPriceFormatSpecifier({
+      priceIncrement: metadata.priceIncrement,
+      exchangeRate,
+    }),
   });
 
   return (

@@ -1,6 +1,7 @@
 import {
   getHealthWeights,
   getMarketSizeFormatSpecifier,
+  NumberFormatSpecifier,
   SharedProductMetadata,
 } from '@nadohq/react-client';
 import { nonNullFilter } from '@nadohq/web-common';
@@ -17,7 +18,7 @@ export interface MarginManagerSpreadTableItem extends WithDataTableRowId {
   // Uses the perp metadata. For something like the ETH-PERP & wETH spread, we want ETH as the symbol, not wETH
   metadata: SharedProductMetadata;
   // Size format specifier derived from the perp market's sizeIncrement
-  sizeFormatSpecifier: string;
+  sizeFormatSpecifier: NumberFormatSpecifier;
   spreadSize: BigNumber;
   spotSpreadAmount: BigNumber;
   perpSpreadAmount: BigNumber;
@@ -56,6 +57,8 @@ export function useMarginManagerSpreadsTable() {
           metadata: marketStaticData.metadata,
           sizeFormatSpecifier: getMarketSizeFormatSpecifier({
             sizeIncrement: marketStaticData.sizeIncrement,
+            // Perp increments are used so no exchange rate is needed here
+            exchangeRate: undefined,
           }),
           spreadSize,
           spotSpreadAmount: spread.basisAmount,

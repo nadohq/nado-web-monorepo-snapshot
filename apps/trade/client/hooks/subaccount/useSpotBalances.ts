@@ -16,6 +16,8 @@ import {
   QueryDisabledError,
   REACT_QUERY_CONFIG,
   SpotProductMetadata,
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
   useSubaccountContext,
 } from '@nadohq/react-client';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
@@ -23,6 +25,8 @@ import { BigNumber } from 'bignumber.js';
 import { useSpotInterestRates } from 'client/hooks/markets/useSpotInterestRates';
 import { useQuerySubaccountSummary } from 'client/hooks/query/subaccount/subaccountSummary/useQuerySubaccountSummary';
 import { useSubaccountIndexerSnapshot } from 'client/hooks/subaccount/useSubaccountIndexerSnapshot';
+import { useGetIsXStocksProduct } from 'client/modules/xStocks/hooks/useGetIsXStocksProduct';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { isRoughlyZero } from 'client/utils/isRoughlyZero';
 
 export interface SpotBalanceItem {
@@ -34,7 +38,11 @@ export interface SpotBalanceItem {
   amount: BigNumber;
   amountBorrowed: BigNumber;
   amountDeposited: BigNumber;
+  isXStocksProduct: boolean;
+  // Oracle price in the display space
   oraclePrice: BigNumber;
+  // Oracle price in the raw space (for xStocks, this is the price of the wrapped token)
+  rawOraclePrice: BigNumber;
   valueUsd: BigNumber;
   healthMetrics: InitialMaintMetrics;
   depositAPY: BigNumber | undefined;
@@ -68,6 +76,8 @@ function spotBalancesQueryKey(
 
 export function useSpotBalances(): UseSpotBalances {
   const { currentSubaccount } = useSubaccountContext();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
+  const getIsXStocksProduct = useGetIsXStocksProduct();
 
   const {
     data: summaryData,
@@ -143,13 +153,22 @@ export function useSpotBalances(): UseSpotBalances {
           };
         })();
 
+        // For non-xStocks markets the exchange rate is 1, making these no-ops.
+        const exchangeRate = getExchangeRate(balanceWithProduct.productId);
+        const displayAmount = toXStocksDisplayAmount(
+          roundedBalanceAmount,
+          exchangeRate,
+        );
+
         return {
           productId: balanceWithProduct.productId,
-          oraclePrice: balance.oraclePrice,
-          amount: roundedBalanceAmount,
+          isXStocksProduct: getIsXStocksProduct(balanceWithProduct.productId),
+          oraclePrice: toXStocksDisplayPrice(balance.oraclePrice, exchangeRate),
+          rawOraclePrice: balance.oraclePrice,
+          amount: displayAmount,
           valueUsd: balance.oraclePrice.multipliedBy(roundedBalanceAmount),
-          amountBorrowed: BigNumber.min(roundedBalanceAmount, 0),
-          amountDeposited: BigNumber.max(roundedBalanceAmount, 0),
+          amountBorrowed: BigNumber.min(displayAmount, 0),
+          amountDeposited: BigNumber.max(displayAmount, 0),
           metadata: balanceWithProduct.metadata,
           healthMetrics: {
             initial: removeDecimals(healthMetrics.initial),
@@ -160,8 +179,11 @@ export function useSpotBalances(): UseSpotBalances {
           utilizationRatioFrac,
           estimatedPnlUsd: unrealizedPnl?.pnlUsd,
           estimatedPnlFrac: unrealizedPnl?.pnlFrac,
-          netInterestUnrealized: removeDecimals(
-            indexerSnapshotBalance?.trackedVars.netInterestUnrealized,
+          netInterestUnrealized: toXStocksDisplayAmount(
+            removeDecimals(
+              indexerSnapshotBalance?.trackedVars.netInterestUnrealized,
+            ),
+            exchangeRate,
           ),
         };
       });

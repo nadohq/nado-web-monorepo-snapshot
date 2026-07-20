@@ -1,8 +1,9 @@
 import { CustomNumberFormatSpecifier } from '@nadohq/react-client';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HeaderCell } from 'client/components/DataTable/cells/HeaderCell';
-import { MarketProductInfoCell } from 'client/components/DataTable/cells/MarketProductInfoCell';
+import { TableCell } from 'client/components/DataTable/cells/TableCell';
 import { bigNumberSortFn } from 'client/components/DataTable/utils/sortingFns';
+import { ProductLabel } from 'client/components/ProductLabel';
 import { ActionName } from 'client/modules/commandCenter/components/cells/ActionName';
 import { BaseTable } from 'client/modules/commandCenter/components/tables/BaseTable/BaseTable';
 import { BalanceTableItem } from 'client/modules/commandCenter/hooks/useCommandCenterBalanceItems';
@@ -29,10 +30,12 @@ export function BalancesTable({ balances }: Props) {
         cell: ({ getValue }) => {
           const metadata = getValue<BalanceTableItem['metadata']>();
           return (
-            <MarketProductInfoCell
-              symbol={metadata.token.symbol}
-              iconSrc={metadata.token.icon.asset}
-            />
+            <TableCell>
+              <ProductLabel
+                symbol={metadata.token.symbol}
+                iconSrc={metadata.token.icon.asset}
+              />
+            </TableCell>
           );
         },
         enableSorting: false,

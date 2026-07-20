@@ -39,6 +39,7 @@ export function PerpOrderSummary({ derivedMetrics, estimatedState }: Props) {
     roundAssetAmount,
     sizeIncrement: currentMarket?.sizeIncrement,
     baseSymbol: currentMarket?.metadata.symbol,
+    exchangeRate: undefined,
   });
 
   const showSlippageMetric =
@@ -67,9 +68,10 @@ export function PerpOrderSummary({ derivedMetrics, estimatedState }: Props) {
       {
         label: t(($) => $.estimatedAbbrevLiquidationPrice),
         value: estimatedState?.estimatedLiquidationPrice,
-        numberFormatSpecifier: getMarketPriceFormatSpecifier(
-          currentMarket?.priceIncrement,
-        ),
+        numberFormatSpecifier: getMarketPriceFormatSpecifier({
+          priceIncrement: currentMarket?.priceIncrement,
+          exchangeRate: undefined,
+        }),
       },
       marginRequiredMetric,
       ...(showSlippageMetric

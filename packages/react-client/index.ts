@@ -1,4 +1,3 @@
-export * from './chains';
 export * from './consts';
 export * from './context';
 export * from './hooks';

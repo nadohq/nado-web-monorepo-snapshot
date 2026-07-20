@@ -1,6 +1,5 @@
 {
   "about": "关于",
-  "accessLimitedJoinWaitlistGetYourSpot": "访问仅限受邀用户。加入候补名单并在 X 上关注 Nado 以获取名额。",
   "account": "账户",
   "accountDetails": "账户详情",
   "accountEquity": "账户权益",
@@ -9,16 +8,16 @@
   "accountValue": "账户",
   "action": "操作",
   "actions": "操作",
-  "activateOneClickTradingDepositDescription": "要激活一键交易，您必须先向账户存入至少 <highlight>$5.00</highlight>。",
+  "activateOneClickTradingDepositDescription": "要激活一键交易，您必须先向账户存入至少 <highlight>$5.00</highlight> 。",
   "addAccountDialog": {
     "step1": {
-      "heading": "账户详情"
+      "heading": "帐户详细信息"
     },
     "step2": {
-      "description": "在您注入资金之前，账户不会被创建。",
+      "description": "你的账户只有在你为它充值之后才会被创建。",
       "heading": "为账户注资"
     },
-    "transferFromAnotherAccount": "从其他账户转入"
+    "transferFromAnotherAccount": "从其他账户转账"
   },
   "advanced": "高级",
   "advanced1CT": "高级一键交易",
@@ -29,17 +28,17 @@
   "allTimePoints": "总积分",
   "allTimeRank": "总排名",
   "amount": "数量",
-  "amountToBorrow": "借贷数量",
-  "annualAbbrevFunding": "年化资金费率",
+  "amountToBorrow": "借款金额",
+  "annualAbbrevFunding": "年华资金费率",
   "apiIdentifiers": "API 标识符",
   "appNavigation": "应用导航",
   "approvalForSymbolRequired": "需要批准 {{symbol}}。批准交易确认后，您需要进行存款。",
   "approveOneClickTrading": "批准一键交易",
-  "approveSuccessInfo": "您现在可以存入资产。弹窗将自动更新。",
+  "approveSuccessInfo": "您现在可以充值资产。弹窗将自动更新。",
   "approxFifteenMinutes": "约15分钟",
   "approxOneMinute": "约1分钟",
-  "apr": "年利率",
-  "apyValue": "年化收益率：{{apy}}",
+  "apr": "APR",
+  "apyValue": "APY: {{apy}}",
   "asset": "资产",
   "assetDetails": "资产详情",
   "assetToDeposit": "存入资产",
@@ -50,20 +49,25 @@
   "availableMaintMargin": "可用维持保证金",
   "availableMargin": "可用保证金",
   "avatar": "头像",
+  "avgDailyVol7d": "7日均日成交量",
   "avgEntryPrice": "平均入场价",
   "avgFilledPrice": "平均成交价",
   "avgOrderPrice": "平均/订单价格",
+  "avgPrice": "平均价",
   "balance": "余额",
   "balanceChange": "余额变动",
   "balances": "余额",
   "balanceValue": "余额/价值",
-  "beholderByKraken": "Beholder by Kraken",
   "borrow": "借贷",
   "borrowApy": "借贷年化利率",
   "borrowing": "借贷中",
   "borrowRate": "借贷利率",
   "borrowRiskWarningDescription": "您可以使用现有抵押品借贷资产。借贷会增加保证金使用率和账户风险。",
   "bought": "已买入",
+  "bridgeDepositDisclosure": {
+    "description": "您正在将资金跨链转入您的 Nado 账户。您可以<action>在此处</action>查看存款状态。",
+    "title": "跨链存款"
+  },
   "bridgeUsdcApprovalInfo": "在存款交易之前，您可能需要签署一笔批准交易。",
   "bridgeUsdcNative": "跨链转入 USDC",
   "bridgeUsdcNativeDescription": "通过 Circle CCTP 跨链转入 USDC",
@@ -111,7 +115,6 @@
     "confirm": "确认",
     "confirmDeposit": "确认存款",
     "confirmingReferral": "确认推荐中",
-    "confirmReferral": "确认推荐",
     "confirmTransaction": "确认交易",
     "confirmTransfer": "确认划转",
     "connect": "连接",
@@ -123,7 +126,7 @@
     "createKey": "创建密钥",
     "createWallet": "创建一个",
     "customize": "自定义",
-    "deleteReferee": "删除被推荐人",
+    "deleteReferee": "删除被邀请人",
     "deposit": "存款",
     "depositAndRepay": "存入并偿还",
     "depositFunds": "存入资金",
@@ -142,7 +145,7 @@
     "enableBorrowing": "启用借贷",
     "enableOneClickTrading": "启用一键交易",
     "enterAmount": "输入数量",
-    "enterReferralCode": "输入推荐码",
+    "enterReferralCode": "输入邀请码",
     "export": "导出",
     "fastWithdraw": "快速提取",
     "feeApproved": "费用已批准",
@@ -176,6 +179,7 @@
     "marketDetails": "市场详情",
     "maxRepay": "最大偿还",
     "mintTokens": "铸造代币",
+    "nextSlide": "下一张",
     "ok": "确定",
     "openDialog": "打开对话框",
     "orderSubmitted": "订单已提交",
@@ -183,8 +187,9 @@
     "placingOrder": "下单中",
     "post": "发布",
     "previewOrders": "预览订单",
+    "previousSlide": "上一张",
     "privateKeyCopied": "私钥已复制",
-    "referralConfirmed": "推荐已确认",
+    "referralConfirmed": "邀请已确认",
     "rejectAll": "全部拒绝",
     "rememberApproval": "记住批准",
     "remove": "移除",
@@ -235,7 +240,6 @@
     "viewHistory": "查看历史",
     "viewTutorial": "查看教程",
     "waitingForWallet": "等待钱包",
-    "waitlist": "候补名单",
     "withdraw": "提取",
     "withdrawalSuccessful": "提取成功",
     "withdrawingLiquidity": "提取流动性中",
@@ -260,7 +264,6 @@
   "changeInBalances": "余额变动",
   "changeOneClickTradingPreferencesInSettings": "您可以在设置中更改一键交易偏好。",
   "changesApplied": "更改已应用",
-  "chaosLabsAggregate": "Chaos Labs 聚合",
   "chart": "图表",
   "chartBuySellMarks": "图表买/卖标记",
   "chartOrderLines": "图表订单线",
@@ -297,7 +300,6 @@
   "convertRepay": "兑换偿还",
   "convertRepayDescription": "兑换功能可让您轻松卖出（兑换）正余额来偿还借贷资产。此功能仅支持以 {{primaryQuoteTokenSymbol}} 为报价货币的市场。",
   "cookiesNotice": "Nado 可能使用 Cookie 及其他数据收集技术（\"Cookie\"）向第三方合作伙伴（包括服务提供商）收集和披露数据。这些数据可能包括基本身份信息、设备信息以及与您在我们网站和应用上的活动相关的其他唯一标识符，例如您的位置、访问的页面、自定义事件、与交易功能的某些交互以及商业数据。您可以在出现提示时点击\"全部接受\"或\"全部拒绝\"按钮来接受或拒绝所有 Cookie。您也可以随时通过更改偏好来撤回对 Cookie 的同意。此外，您可以按照浏览器提供的说明直接通过浏览器设置阻止或删除 Cookie。访问我们的 <action>Cookie 政策</action>了解更多。",
-  "countDetails_one": "详情",
   "countDetails_other": "{{count}} 条详情",
   "countdown": "倒计时",
   "cross": "全仓",
@@ -317,7 +319,7 @@
   "definitions": {
     "24hVolume": {
       "content": "过去24小时内该市场所有交易的总价值，以报价货币 {{primaryQuoteTokenSymbol}} 计价。",
-      "title": "24小时成交量"
+      "title": "24小时交易量"
     },
     "accountLeverage": {
       "content": "您使用的保证金相对于资产价值的倍数。",
@@ -474,8 +476,8 @@
       }
     },
     "depositAPY": {
-      "content": "您存入/持有该资产当前的预估年化收益率。正余额的利息持续计提并自动支付，约每15分钟处理一次。",
-      "title": "存入年化收益率"
+      "content": "您的存款当前的预估年化收益率。正余额的利息持续计提并自动支付，约每15分钟处理一次。",
+      "title": "存款年化收益率"
     },
     "enableBorrowsSwitch": {
       "content": "允许您使用现有抵押品借贷资产。借贷会增加保证金使用率和账户风险。",
@@ -490,8 +492,8 @@
       "title": "快速提取费用"
     },
     "fuulReferralsTotalReferredVolume": {
-      "content": "您推荐的用户产生的总交易量。",
-      "title": "总成交量"
+      "content": "您邀请的用户产生的总交易量。",
+      "title": "总交易量"
     },
     "gasFee": {
       "content": "该费用由我们的排序器用于在链上提交交易。",
@@ -563,7 +565,7 @@
     },
     "maxWithBorrow": {
       "content": "您的可用余额和您可以用保证金借贷的金额的组合。借贷是自动进行的。",
-      "title": "含借贷最大值"
+      "title": "最大值(含借贷)"
     },
     "nlpLockedBalance": {
       "content": "存入 NLP 的资金有4天的锁定期。",
@@ -631,15 +633,15 @@
     },
     "overviewTimespanPerpVolume": {
       "content": "所选时间范围内的永续合约交易总量。",
-      "title": "永续合约成交量"
+      "title": "永续合约交易量"
     },
     "overviewTimespanSpotVolume": {
       "content": "所选时间范围内的现货交易总量。",
-      "title": "现货成交量"
+      "title": "现货交易量"
     },
     "overviewTimespanVolume": {
       "content": "所选时间范围内的总交易量。",
-      "title": "成交量"
+      "title": "交易量"
     },
     "overviewTotalEquity": {
       "content": "使用预言机价格计算的账户总美元价值。账户权益 = 资产 - 借贷 +/- 未结算盈亏。",
@@ -714,12 +716,36 @@
       "title": "滑点容差"
     },
     "spotLeverageSwitch": {
-      "content": "现货保证金允许您自动使用保证金借贷资产，以更大的规模交易。开启保证金以启用借贷。关闭以禁用借贷。",
-      "title": "现货保证金"
+      "content": "现货杠杆允许您自动使用保证金借贷资产，以更大的规模交易。开启保证金以启用借贷。关闭以禁用借贷。",
+      "title": "现货杠杆"
     },
     "totalAccountBalance": {
       "content": "所有显示账户的合并总余额。不包括通过我们的 API 创建的账户。",
       "title": "总余额"
+    },
+    "tradingCompMinAccountValue": {
+      "content": "符合本赛道参赛资格所需的最低账户价值。",
+      "title": "最低账户价值"
+    },
+    "tradingCompMinTradingVolume": {
+      "content": "符合本赛道参赛资格所需的最低交易量。",
+      "title": "最低交易量"
+    },
+    "tradingCompRoi": {
+      "content": "您在比赛期间的投资回报率（ROI）。它决定您在 ROI 排行榜上的排名。",
+      "title": "ROI"
+    },
+    "tradingCompRoiTrackEligibility": {
+      "content": "要具备 ROI 赛道参赛资格，您必须达到上方所示的所有最低要求。状态每小时更新一次。",
+      "title": "状态"
+    },
+    "tradingCompVolume": {
+      "content": "您在比赛期间的总交易量。它决定您在交易量排行榜上的排名。",
+      "title": "交易量"
+    },
+    "tradingCompVolumeTrackEligibility": {
+      "content": "要具备交易量赛道参赛资格，您必须达到上方所示的所有最低要求。状态每小时更新一次。",
+      "title": "状态"
     },
     "tradingOrderbookOpenOrder": {
       "content": "您在此价格水平有一笔订单。",
@@ -738,8 +764,8 @@
       "title": "市价单"
     },
     "tradingOrderTypeScaledOrder": {
-      "content": "缩放订单自动在指定范围内的不同价格水平下达多个限价单。这允许您在价格范围内逐步建立或减少仓位，获得更好的平均执行价格。",
-      "title": "缩放订单"
+      "content": "分段订单自动在指定范围内的不同价格水平下达多个限价单。这允许您在价格范围内逐步建立或减少仓位，获得更好的平均执行价格。",
+      "title": "分段订单"
     },
     "tradingOrderTypeStopLimit": {
       "content": "当达到止损（触发）价格时，止损限价单变为限价单。它将仅以您指定的限价或更优价格执行。",
@@ -763,12 +789,12 @@
     }
   },
   "delayedWithdrawalExplanation": "由于链上 Gas 费用较高，提取可能会延迟。如果该资产支持 <highlight>快速提取</highlight>，您可以在历史记录页面立即执行处理中的提取。",
-  "deposit": "存款",
-  "depositApy": "存入年化收益率",
-  "depositFromConnectedWallet": "从已连接钱包存入",
-  "depositFromExternalWallet": "从外部钱包存入",
-  "depositFundsFromConnectedWallet": "从已连接钱包存入资金",
-  "depositFundsFromOtherChains": "从其他链存入资金",
+  "deposit": "充值",
+  "depositApy": "存款年化收益率",
+  "depositFromConnectedWallet": "从已连接钱包充值",
+  "depositFromExternalWallet": "从外部钱包充值",
+  "depositFundsFromConnectedWallet": "从已连接钱包充值资金",
+  "depositFundsFromOtherChains": "从其他链充值资金",
   "depositLiquidity": "存入流动性",
   "deposits": "存款",
   "depth": "深度",
@@ -792,6 +818,7 @@
     "editColumns": "编辑列",
     "editOrderViaChart": "修改订单价格",
     "enableOneClickTrading": "启用一键交易",
+    "enterReferralCode": "输入推荐码",
     "exportHistory": "导出历史",
     "externalWalletDeposit": "外部钱包存款",
     "fastWithdraw": "快速提取",
@@ -864,7 +891,7 @@
     "perpPositions": "您的永续合约仓位将在此显示。",
     "perpSettlements": "您的永续合约结算将在此显示。",
     "pointsHistory": "您的积分历史将在此显示。",
-    "referredTraders": "您推荐的交易者将在此显示。",
+    "referredTraders": "您邀请的交易者将在此显示。",
     "spreads": "您的价差将在此显示。",
     "symbolBalance": "您的 {{symbol}} 余额将在此显示。",
     "symbolEvents": "您的 {{symbol}} 事件将在此显示。",
@@ -894,10 +921,10 @@
     "cannotClosePositionNoPrice": "无法平仓，没有可用价格",
     "cannotTransferToSameAccount": "不能划转到同一账户。",
     "closePositionFailed": "平仓失败",
-    "confirmReferralFailed": "确认推荐失败",
+    "confirmReferralFailed": "确认邀请失败",
     "connectionError": "连接错误",
-    "deleteRefereeFailed": "删除被推荐人失败",
-    "deleteReferralActiveAccount": "无法删除推荐。被推荐人有活跃账户",
+    "deleteRefereeFailed": "删除被邀请人失败",
+    "deleteReferralActiveAccount": "无法删除邀请。被邀请人有活跃账户",
     "depositFailed": "存款失败",
     "depositNlpFailed": "存入 NLP 失败",
     "disable1CTFailed": "禁用一键交易失败",
@@ -934,12 +961,10 @@
     "noAvailableBalancesToConvert": "没有可兑换的余额。",
     "noConnectedAddress": "未找到已连接地址",
     "noEnsConnected": "未连接 ENS",
-    "noInvitesRemaining": "无剩余邀请",
     "notBorrowingThisAsset": "您未借贷此资产。",
     "oneClickTradingApprovalRequired": "需要一键交易批准。",
     "oneClickTradingNotEnabled": "一键交易未启用。",
     "oneClickTradingRememberApprovalOff": "一键交易记住批准已关闭。",
-    "orderFailed_one": "订单下达失败。请查看错误详情了解更多信息。",
     "orderFailed_other": "{{count}} 个订单下达失败。请查看错误详情了解更多信息。",
     "orderModificationFailed": "订单修改失败",
     "orderTypeOrderFailed": "{{orderType}}订单失败",
@@ -1105,9 +1130,13 @@
   },
   "generatePrivateKeyInstruction": "生成私钥，或粘贴您之前生成的私钥。<highlight>请将密钥保存在安全的地方</highlight>。",
   "getStarted": "开始",
-  "getStartedDescription": "了解如何在 {{primaryChainName}} 上完成设置并存入资产开始交易。",
+  "getStartedDescription": "了解如何在 {{primaryChainName}} 上完成设置并充值资产开始交易。",
   "getStartedOnChain": "在 {{primaryChainName}} 上开始",
   "helpCenter": {
+    "depositHelp": {
+      "description": "获取存款帮助",
+      "title": "存款帮助"
+    },
     "faq": {
       "description": "常见问题解答",
       "title": "常见问题"
@@ -1130,7 +1159,6 @@
   "imageAltText": {
     "actionSymbol": "{{label}} {{symbol}}",
     "assetIcon": "资产图标",
-    "brandLogo": "Nado",
     "chainIcon": "链图标",
     "depositAddressQRCode": "Nado 存款地址二维码",
     "editOrderField": "编辑订单 {{label}}",
@@ -1145,7 +1173,7 @@
   },
   "important": "重要",
   "indexPrice": "指数价格",
-  "individual": "个人",
+  "individual": "明细",
   "info": "信息",
   "initialMargin": "初始保证金",
   "initialWeight": "初始权重",
@@ -1160,7 +1188,7 @@
     "ethereumAddress": "0x...",
     "linkedSignerAddress": "链接签名者地址（0x...）",
     "privateKeyHex": "私钥（0x...）",
-    "referralCode": "推荐码",
+    "referralCode": "邀请码",
     "search": "搜索",
     "select": "选择",
     "selectAsset": "选择资产",
@@ -1176,6 +1204,11 @@
   "isolatedAbbrev": "逐仓",
   "isolatedLeverage": "逐仓 {{leverage}}",
   "isolatedPositions": "逐仓仓位",
+  "isoOnlyMarketsCrossMarginOverride": {
+    "description": "允许在仅逐仓市场（例如 RWA）使用全仓保证金模式。专为做市商设计——启用后，将在 UI 中忽略仅逐仓限制，可为这些市场选择全仓保证金。",
+    "header": "全仓保证金覆盖",
+    "toggleLabel": "在仅逐仓市场启用全仓保证金"
+  },
   "isoUnrealizedPnl": "逐仓未实现盈亏",
   "keyFeatures": {
     "collateralInterest": "所有抵押品均可赚取利息",
@@ -1255,6 +1288,31 @@
   "marketOpensIn": "市场开盘倒计时：",
   "marketOrder": "市价单",
   "markets": "市场",
+  "marketsPage": {
+    "allTimeVolume": "累计成交量",
+    "annualized": "年化",
+    "avg24h": "24小时均",
+    "avg30d": "30日均",
+    "avg3d": "3日均",
+    "avg7d": "7日均",
+    "fundingRates": "资金费率",
+    "gainersAndLosers": "涨跌榜",
+    "hotMarkets": "🔥 热门市场",
+    "markPrice": "标记价格",
+    "moreDetails": "更多详情",
+    "nextPayment": "下次支付",
+    "openInterestAbbrev": "持仓 {{symbol}}",
+    "predicted": "预测",
+    "recentlyAdded": "最近上线",
+    "searchMarkets": "搜索市场",
+    "spotIndexPrice": "现货指数价格",
+    "subtitle24hChange": "24小时涨跌",
+    "subtitle24hVolume": "24小时成交量",
+    "topDepositRates": "最高存款利率",
+    "topPredictedFunding": "预测资金费率榜",
+    "trades24h": "24小时成交笔数",
+    "volume24hWithSymbol": "24小时成交量 {{symbol}}"
+  },
   "marketStatus": "市场状态",
   "marketStatusLiveDescription": "市场已开放交易。市场将在 {{reduceOnlyTime}} 进入仅减仓模式。",
   "marketStatusReduceOnlyDescription": "市场处于仅减仓模式。您可以关闭或减少现有仓位，但在市场于 {{reopenTime}} 重新开放前无法创建或增加仓位。",
@@ -1267,7 +1325,7 @@
   "maxRepay": "最大偿还",
   "maxRepayWarningDescription": "此交易可能以优于报价的价格执行，这意味着您可能收到略多的偿还资产，从而产生少量正余额。",
   "maxSlippage": "最大：{{maxSlippage}}",
-  "maxWithBorrow": "含借贷最大值",
+  "maxWithBorrow": "最大值(含借贷)",
   "midPrice": "中间价",
   "midPriceAbbrev": "中间价",
   "minimumDeposit": "最低存款",
@@ -1305,6 +1363,7 @@
     "withdraw": "提取"
   },
   "netBalance": "净余额",
+  "netDelta": "净 Delta",
   "netPnl": "净盈亏",
   "newMarket": "新市场",
   "newRewards": "新奖励",
@@ -1315,17 +1374,12 @@
   "noBorrowsAtTheMoment": "您目前没有借贷。",
   "notificationPosition": "通知位置",
   "notifications": {
-    "airdropSuccess": {
-      "description": "Gas 费用由我们承担 - 少量 ETH 空投已发送到您的钱包以处理 Gas 费用。",
-      "title": "已充值完成！"
-    },
     "bridgeInitiated": {
       "description": "您的 USDC 转账正在处理中。可能需要几分钟才能在浏览器中显示。",
       "title": "存款已发起",
       "trackOnExplorer": "在 USDC Explorer 上跟踪"
     },
     "cancelling": "取消中…",
-    "cancelMultiOrdersSuccess_one": "您已成功取消订单。",
     "cancelMultiOrdersSuccess_other": "您已成功取消 {{count}} 个订单。",
     "cancelOrderSuccess": {
       "orderCancelled": "您的 {{marketName}} 订单已取消。",
@@ -1338,34 +1392,38 @@
     "limitCloseOrderPlaced": "限价平仓订单已下达",
     "liquidationEvent": "清算事件",
     "marginUsageWarning": {
-      "body": "您的初始保证金使用率已达到 100%。请存入更多抵押品或平仓以继续交易。",
+      "body": "您的初始保证金使用率已达到 100%。请充值更多资产或平仓以继续交易。",
       "header": "保证金使用率 - 100%"
     },
     "marketCloseOrderPlaced": "市价平仓订单已下达",
     "newPerpMarkets": {
-      "content_one": "GM！我们新增了 <highlight>一个永续合约市场</highlight>",
       "content_other": "GM！我们新增了 <highlight>{{count}} 个永续合约市场</highlight>",
-      "title_one": "新永续合约市场",
       "title_other": "新永续合约市场"
     },
     "newSpotMarket": {
-      "description": "GM！您现在可以存入并使用 {{symbol}} 作为抵押品。您也可以交易 {{marketName}}。",
+      "description": "GM！您现在可以充值并使用 {{symbol}} 作为抵押品。您也可以交易 {{marketName}}。",
       "title": "新抵押品与现货市场"
+    },
+    "newSpotMarkets": {
+      "content_other": "GM！我们新增了 <highlight>{{count}} 个现货市场</highlight>",
+      "title_other": "新抵押品与现货市场"
     },
     "oneClickTradingRequired": "需要一键交易",
     "orderPlaced": "{{orderType}}订单已下达",
     "orderPriceRange": "{{startPrice}} - {{endPrice}}",
     "ordersCancelled": "订单已取消",
     "pendingDelists": {
-      "description_one": "以下市场将于 <highlight>{{delistTime}}</highlight> 下线。请管理您的仓位。",
       "description_other": "以下市场将于 <highlight>{{delistTime}}</highlight> 下线。请管理您的仓位。",
-      "title_one": "市场下线",
       "title_other": "市场下线"
     },
     "perpLiquidated": "您的永续合约仓位已被清算。",
     "smartContractWalletRequirement": "智能合约钱包需要一键交易才能与应用交互。请立即启用一键交易。",
     "spotAndPerpLiquidated": "您的现货余额和永续合约仓位已被清算。",
     "spotLiquidated": "您的现货余额已被清算。",
+    "tradingCompEnrollSuccess": {
+      "body": "您已成功参赛。在排行榜上追踪您的 ROI 和交易量排名。",
+      "title": "报名成功"
+    },
     "updating": "更新中…",
     "usdt0BridgeSuccess": {
       "description": "您的 USDT 存款交易已提交。在 LayerZero Scan 上跟踪跨链交付。",
@@ -1400,11 +1458,11 @@
   "operational": "运行中",
   "oraclePrice": "预言机价格",
   "oraclePriceAbbrev": "预言机",
-  "oracleSpotIndexPrice": "预言机（现货指数价格）",
   "order": "订单",
   "orderAmount": "订单数量",
   "orderbookAbbrev": "订单簿",
   "orderbookAnimations": "订单簿动画",
+  "orderbookOpenOrderMessage": "您在此价格水平有一个订单。",
   "orderCancelled": "订单已取消",
   "orderExpired": "订单已过期",
   "orderHistory": "订单历史",
@@ -1440,7 +1498,7 @@
   "orderTypes": {
     "limit": "限价",
     "market": "市价",
-    "scaled": "缩放",
+    "scaled": "分段订单",
     "stopLimit": "止损限价",
     "stopLoss": "止损",
     "stopLossLimit": "止损限价",
@@ -1461,11 +1519,12 @@
     "faucet": "水龙头",
     "history": "历史记录",
     "marginManager": "保证金管理器",
+    "markets": "市场",
     "overview": "概览",
     "perpetuals": "永续合约",
     "points": "积分",
     "portfolio": "投资组合",
-    "referrals": "推荐",
+    "referrals": "邀请",
     "spot": "现货",
     "vault": "Nado Liquidity Provider（NLP）"
   },
@@ -1473,13 +1532,14 @@
   "partialOrder": "部分订单",
   "payingRate": "支付 {{formattedEffectiveAPY}}",
   "payment": "支付",
+  "pendingBridgeDeposits": "待处理跨链存款",
   "period": "{{period}}",
   "perp": "永续合约",
   "perpetuals": "永续合约",
   "perpMarginModeCrossInfo": {
     "adjustLeverageScale": "调整杠杆以缩放当前订单的最大订单大小。",
     "leverageAdjustmentNoEffect": "杠杆调整不影响现有仓位消耗的保证金。",
-    "sharedMargin": "保证金在仓位和余额之间共享。"
+    "sharedMargin": "保证金在仓位和现货资产之间共享。"
   },
   "perpMarginModeIsolatedOnlyDisclosure": {
     "description": "此市场仅支持逐仓保证金模式。全仓交易不可用。",
@@ -1496,7 +1556,7 @@
   "perpPosition": "永续合约仓位",
   "perps": "永续合约",
   "perpSettlements": "永续合约结算",
-  "perpVolume": "永续合约成交量",
+  "perpVolume": "永续合约交易量",
   "placingOrder": "下单中",
   "pleaseEnableOneClickTradingToWithdraw": "请 <action>启用一键交易</action>以提取。",
   "pleaseUseAdvancedOneClickTradingSettings": "请使用 <action>高级一键交易设置</action>。",
@@ -1528,7 +1588,6 @@
   "priceDistribution": "价格分布",
   "priceRange": "价格范围",
   "priceRangeValue": "{{startPrice}} - {{endPrice}}",
-  "privateBeta": "内测",
   "protocolFee": "协议费用",
   "qrCodeLoginDescription": "此二维码允许您从移动设备登录账户。",
   "qrCodeTrustWarning": "仅使用您信任的设备扫描二维码。",
@@ -1547,9 +1606,8 @@
   "reducePriceType": "{{priceType}}减仓",
   "referrals": {
     "cannotDeleteRefereeWithTradingVolume": "无法删除有交易量的被推荐人",
-    "invitesLeft": "剩余邀请",
+    "enterReferralCodeDescription": "有推荐码吗？请在下方输入。",
     "joined": "已加入",
-    "pageDescription": "您是 Nado 的首批用户。每交易 $250k 解锁 1 个邀请，最多 100 个。",
     "referralCode": "您的推荐码",
     "referredTraders": "推荐的交易者",
     "referredUsers": "推荐的用户",
@@ -1578,7 +1636,7 @@
   },
   "scanQrCodeToLogin": "扫描桌面上的二维码登录。",
   "sell": "卖出",
-  "sellAbbrev": "卖",
+  "sellAbbrev": "秒",
   "sellShort": "卖出/做空",
   "seo": {
     "description": "Nado DEX：基于 Ink L2 的订单簿，融合 CEX 速度（5-15ms 延迟）与 DeFi 安全性。通过统一的全仓保证金系统交易现货和永续合约，享受深度流动性和资金自托管。由 Kraken 团队打造，驾驭完美风暴。",
@@ -1614,13 +1672,13 @@
   "smartContractWalletWarning": "您似乎正在使用智能合约钱包。存款后请 <action>启用一键交易</action>以使用应用。请确保钱包中至少保留 <highlight>{{SEQUENCER_FEE_AMOUNT_USDT}} {{primaryQuoteTokenSymbol}}</highlight> 用于支付设置费用。",
   "sold": "已卖出",
   "spot": "现货",
-  "spotLeverageDisclaimerText": "现货保证金允许您自动使用保证金借贷资产来买卖超出当前持有量的资产。借贷会增加风险。",
-  "spotLeverageOffDisclaimerText": "关闭现货保证金不会取消现有的未完成订单。",
-  "spotMargin": "现货保证金",
+  "spotLeverageDisclaimerText": "现货杠杆允许您自动使用保证金借贷资产来买卖超出当前持有量的资产。借贷会增加风险。",
+  "spotLeverageOffDisclaimerText": "关闭现货杠杆不会取消现有的未完成订单。",
+  "spotMargin": "现货杠杆",
   "spotPerp": "现货/永续合约",
   "spotPnl": "现货盈亏",
   "spotPosition": "现货仓位",
-  "spotVolume": "现货成交量",
+  "spotVolume": "现货交易量",
   "spread": "价差",
   "spreadIsHigh": "价差过高",
   "spreads": "价差",
@@ -1700,7 +1758,7 @@
   "tooltips": {
     "fillInMidPrice": "以中间价填入",
     "twapOrdersNotAvailableForIsolated": "TWAP 订单不适用于逐仓保证金",
-    "twapOrdersRequireSpotMargin": "TWAP 订单需要启用现货保证金"
+    "twapOrdersRequireSpotMargin": "TWAP 订单需要启用现货杠杆"
   },
   "total": "总计",
   "totalBalance": "总余额",
@@ -1708,25 +1766,18 @@
   "totalEquity": "总权益",
   "totalMarginInIsolatedPositions": "逐仓仓位总保证金",
   "totalPnl": "总盈亏",
+  "totals": "总计",
   "totalSize": "总大小",
   "totalSizeWithSymbol": "{{formattedSize}} {{symbol}}",
   "totalSupplied": "总供应",
   "totalSymbol": "总 {{symbol}}",
-  "totalVolume": "总成交量",
+  "totalVolume": "总交易量",
   "tpSl": "止盈/止损",
   "tpslAbbrev": "止盈/止损",
-  "tpslEstimatedPnlBoth": "预估 <0/> 和 <1/>",
-  "tpslEstimatedPnlParts": {
-    "sl": {
-      "loss": "止损亏损 <0>{{usd}} (ROE: {{roe}})</0>",
-      "profit": "止损盈利 <0>{{usd}} (ROE: {{roe}})</0>"
-    },
-    "tp": {
-      "loss": "止盈亏损 <0>{{usd}} (ROE: {{roe}})</0>",
-      "profit": "止盈盈利 <0>{{usd}} (ROE: {{roe}})</0>"
-    }
+  "tpslEstimatedPnl": {
+    "loss": "预估亏损 <highlight>{{usd}} (ROE: {{roe}})</highlight>",
+    "profit": "预估盈利 <highlight>{{usd}} (ROE: {{roe}})</highlight>"
   },
-  "tpslEstimatedPnlSingle": "预估 <0/>",
   "trade": "交易",
   "tradeHistory": "交易历史",
   "tradePerpContracts": "交易永续合约",
@@ -1737,9 +1788,13 @@
   "tradingChart": {
     "backfillMark": "回填",
     "backfillMarkTooltip": "此时间之前的K线由外部数据回填",
+    "broker": {
+      "notTradableReason": "连接您的钱包以开始交易",
+      "placeOrderFailed": "下单失败",
+      "tradingAccount": "交易账户"
+    },
     "dragToAdjustPriceTooltip": "拖动以调整价格",
     "estLiquidationLabel": "预估清算价（{{marginTypeLabel}}）",
-    "orderLineLabel": "{{orderTypeLabel}} ({{marginTypeLabel}}) {{comparator}} {{formattedPrice}}",
     "pnlLabel": "盈亏 {{formattedPnl}} ({{marginTypeLabel}})",
     "tooltips": {
       "crossLiquidationPriceDesc": "全仓清算价格不太准确，因为它们取决于整体账户权益。",
@@ -1750,8 +1805,44 @@
     },
     "tradeMarkTooltip": "{{formattedTime}}: {{formattedSize}}@{{formattedPrice}}"
   },
+  "tradingCompetition": {
+    "accountValueRequirementNotMet": "未达到账户价值要求",
+    "bothRequirementsNotMet": "两项要求均未达到",
+    "competitionEnded": "比赛已结束",
+    "competitionEndsIn": "距离比赛结束还有",
+    "competitionStartsIn": "距离比赛开始还有",
+    "depositMoreForTrackEligibility": "您还差 {{amount}} 即可满足 {{track}} 的参赛资格",
+    "eligibility": "资格",
+    "enrolled": "已报名",
+    "enrolling": "报名中",
+    "enrollNow": "立即报名",
+    "initialDepositRequired": "需要先完成首次充值才能参赛",
+    "lastUpdatedAt": "最后更新于 {{time}}",
+    "leaderboard": "排行榜",
+    "minAccountValue": "最低账户价值",
+    "minTradingVolume": "最低交易量",
+    "notEnrolled": "未报名",
+    "notificationDescription": "$100k 奖金在此一战。7 天竞逐排名。<linebreak />通过交易冲击 ROI 和成交量两大榜单。每个榜单前 10 名都将获得奖励。",
+    "notificationTitle": "交易大赛",
+    "prize": "奖金",
+    "qualified": "已达标",
+    "rankDisplay": "排名 #<rank>{{rank}}</rank>",
+    "restrictedRegion": {
+      "description": "您正尝试从受限地区访问此页面。交易大赛不对您所在地区开放。",
+      "title": "地区受限"
+    },
+    "status": "状态",
+    "totalPrizePool": "总奖池",
+    "totalPrizePoolDescription": "两大排行榜共设 {{prizePoolAmount}} 奖金。ROI 榜奖励精准度，交易量榜奖励执行力。两个榜单都会向表现最好的交易者发放现金奖励。邀请一位最终上榜的朋友参赛，您可获得推荐现金奖励。请谨慎选择您邀请的人。排行榜和状态每小时更新一次。",
+    "tracks": {
+      "roi": "ROI",
+      "volume": "交易量"
+    },
+    "trackTitle": "{{track}} 赛道",
+    "trader": "交易者",
+    "volumeRequirementNotMet": "未达到交易量要求"
+  },
   "tradingConsole": "交易控制台",
-  "tradingConsoleLocation": "交易控制台位置",
   "tradingPageTitle": "{{price}} {{marketName}} | Nado",
   "transaction": "交易",
   "transactionCost": "交易成本",
@@ -1799,7 +1890,7 @@
   "vault": {
     "nlpOverview": {
       "aboutTab": {
-        "betaCapNotice": "测试期间，存款上限根据交易等级和 NFT 状态动态分配。每个钱包的默认上限为 $20,000，视可用容量而定。",
+        "betaCapNotice": "测试期间，存款额度将根据交易等级和 NFT 状态动态分配。默认每个钱包的最高额度为 $20,000，具体个人可存额度受当前总金库可存额度影响。",
         "descriptionLabel": "描述",
         "features": {
           "burnToWithdraw": "销毁 {{tokenSymbol}} 以 {{quoteSymbol}} 提取收益",
@@ -1812,19 +1903,19 @@
     }
   },
   "vaultStats": "金库统计",
-  "volume": "成交量",
-  "volume24h": "24小时成交量",
-  "volume30d": "30天成交量",
-  "volumeSymbol": "成交量 {{primaryQuoteTokenSymbol}}",
+  "volume": "交易量",
+  "volume24h": "24小时交易量",
+  "volume30d": "30天交易量",
+  "volumeSymbol": "交易量 {{primaryQuoteTokenSymbol}}",
   "wallet": "钱包",
   "walletConnect": "WalletConnect",
   "walletConnectSupportsManyOptions": "WalletConnect 支持 50 多种选项",
   "walletDeposit": "钱包存款",
   "website": "网站",
   "weeklyActivationsRemaining": "每周剩余激活次数",
-  "weeklyPoints": "每周积分",
-  "weeklyRank": "每周排名",
+  "weeklyRank": "上周排名",
   "withdraw": "提取",
+  "withdrawalDestinationDisclosure": "提取将发送至<highlight>{{destinationLabel}}</highlight>，链：<highlight>{{chainName}}</highlight>。",
   "withdrawals": "提取",
   "withdrawalsSubmittedOnChainOnceGasThresholdReached": "达到 Gas 阈值后，提取将在链上提交。",
   "withdrawalStatus": {

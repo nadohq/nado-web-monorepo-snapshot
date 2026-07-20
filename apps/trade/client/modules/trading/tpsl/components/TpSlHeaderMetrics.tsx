@@ -26,9 +26,10 @@ export function TpSlHeaderMetrics({
 }: Props) {
   const { t } = useTranslation();
 
-  const priceFormatSpecifier = getMarketPriceFormatSpecifier(
-    staticMarketData?.priceIncrement,
-  );
+  const priceFormatSpecifier = getMarketPriceFormatSpecifier({
+    priceIncrement: staticMarketData?.priceIncrement,
+    exchangeRate: undefined,
+  });
 
   if (!positionData || !staticMarketData) {
     return null;

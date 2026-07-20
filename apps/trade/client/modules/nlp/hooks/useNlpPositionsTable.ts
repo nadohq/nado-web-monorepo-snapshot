@@ -11,6 +11,7 @@ import { useQueryAllMarketsLatestPrices } from 'client/hooks/query/markets/useQu
 import { useNlpAggregatedBalances } from 'client/modules/nlp/hooks/useNlpAggregatedBalances';
 import { NlpPositionsTableItem } from 'client/modules/nlp/types/NlpPositionsTableItem';
 import { getProductTableItem } from 'client/modules/tables/utils/getProductTableItem';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { getEstimatedExitPrice } from 'client/utils/getEstimatedExitPrice';
 import { useMemo } from 'react';
 
@@ -18,6 +19,7 @@ export function useNlpPositionsTable() {
   const { data: allMarketsStaticData } = useAllMarketsStaticData();
   const { data: latestMarketPrices } = useQueryAllMarketsLatestPrices();
   const { data: nlpBalances, isLoading } = useNlpAggregatedBalances();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const mappedData = useMemo(() => {
     if (!nlpBalances || !allMarketsStaticData) {
@@ -35,6 +37,7 @@ export function useNlpPositionsTable() {
         const productTableItem = getProductTableItem({
           productId,
           allMarketsStaticData,
+          exchangeRate: getExchangeRate(productId),
         });
 
         if (!productTableItem) {
@@ -106,7 +109,7 @@ export function useNlpPositionsTable() {
         };
       })
       .filter(nonNullFilter);
-  }, [nlpBalances, allMarketsStaticData, latestMarketPrices]);
+  }, [nlpBalances, allMarketsStaticData, latestMarketPrices, getExchangeRate]);
 
   return {
     positions: mappedData,

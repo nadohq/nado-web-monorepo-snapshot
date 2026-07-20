@@ -1,16 +1,25 @@
 import { Scanner } from '@yudiel/react-qr-scanner';
+import { ErrorPanel } from 'client/components/ErrorPanel';
 import { useDesktopWalletLinkConnector } from 'client/modules/app/desktopWalletLink/useDesktopWalletLinkConnector';
 import { BaseAppDialog } from 'client/modules/app/dialogs/BaseAppDialog';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
+import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
 export function ConnectDesktopWalletLinkDialog() {
   const { t } = useTranslation();
   const { hide } = useDialog();
-  const { connectWithDesktopWalletLink } = useDesktopWalletLinkConnector();
+  const { connectWithDesktopWalletLink, validateDesktopWalletLink } =
+    useDesktopWalletLinkConnector();
+  const [isInvalidQR, setIsInvalidQR] = useState(false);
 
   const handleQRScan = (scannedValue: string | undefined) => {
     if (!scannedValue) {
+      return;
+    }
+
+    if (!validateDesktopWalletLink(scannedValue)) {
+      setIsInvalidQR(true);
       return;
     }
 
@@ -51,6 +60,22 @@ export function ConnectDesktopWalletLinkDialog() {
             finder: false,
           }}
         />
+
+        {isInvalidQR && (
+          <ErrorPanel>
+            <p>
+              <Trans
+                i18nKey={($) => $.scanningInvalidQrCodeNotice}
+                components={{
+                  highlight: <span className="text-text-primary" />,
+                }}
+                values={{
+                  revealButton: t(($) => $.buttons.revealLoginQrCode),
+                }}
+              />
+            </p>
+          </ErrorPanel>
+        )}
       </BaseAppDialog.Body>
     </BaseAppDialog.Container>
   );

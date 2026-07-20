@@ -59,8 +59,9 @@ export function useExecuteClosePosition() {
       }
 
       const marketOrderExecutionPrice = getMarketOrderExecutionPrice({
-        // Closing a position will be opposite sign of existing position size
-        isSell: currentPosition.amount.isPositive(),
+        // Closing a position is the opposite side of the existing
+        // position: short position closes via buy, long via sell.
+        isBuy: currentPosition.amount.isNegative(),
         latestMarketPrices: latestMarketPrices?.[productId],
         marketSlippageFraction,
       });

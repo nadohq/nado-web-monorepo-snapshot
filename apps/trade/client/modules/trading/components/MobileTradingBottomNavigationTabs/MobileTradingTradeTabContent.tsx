@@ -1,10 +1,10 @@
-import { MarketCategory } from '@nadohq/react-client';
 import { joinClassNames, WithClassnames } from '@nadohq/web-common';
 import { Divider, Icons, TextButton } from '@nadohq/web-ui';
 import { FavoriteTickersBar } from 'client/modules/trading/components/FavoriteTickersBar/FavoriteTickersBar';
 import { MarketDataTabs } from 'client/modules/trading/components/MarketDataTabs';
 import { TradingMarketSwitcher } from 'client/modules/trading/components/TradingMarketSwitcher/TradingMarketSwitcher';
 import { TradingPageCard } from 'client/modules/trading/components/TradingPageCard';
+import { TradingPageNewMarketBanner } from 'client/modules/trading/components/TradingPageNewMarketBanner/TradingPageNewMarketBanner';
 import { MobileTradingTableTabs } from 'client/modules/trading/components/TradingTableTabs/MobileTradingTableTabs';
 import { MOBILE_TRADING_MARKET_DATA_TABS_HEIGHT } from 'client/modules/trading/layout/consts';
 import { MobileOrderbook } from 'client/modules/trading/marketOrders/orderbook/MobileOrderbook';
@@ -13,14 +13,12 @@ import { useTranslation } from 'react-i18next';
 
 interface Props {
   productId: number | undefined;
-  marketSwitcherDefaultCategory: MarketCategory;
   InfoCards: ElementType<WithClassnames>;
   OrderPlacement: ElementType<WithClassnames>;
 }
 
 export function MobileTradingTradeTabContent({
   productId,
-  marketSwitcherDefaultCategory,
   InfoCards,
   OrderPlacement,
 }: Props) {
@@ -30,11 +28,11 @@ export function MobileTradingTradeTabContent({
 
   return (
     <>
+      <TradingPageNewMarketBanner productId={productId} />
       <TradingPageCard className="flex flex-col">
         <FavoriteTickersBar activeProductId={productId} />
         <TradingMarketSwitcher
           productId={productId}
-          defaultMarketCategory={marketSwitcherDefaultCategory}
           triggerClassName="rounded-b-none border-y border-overlay-divider"
         />
         <InfoCards />

@@ -26,7 +26,7 @@ export function SignatureModeUserStateErrorCard({
         </p>
         <LinkButton
           colorVariant="secondary"
-          onClick={() => push({ type: 'deposit_options', params: {} })}
+          onClick={() => push({ type: 'deposit_entrypoint', params: {} })}
         >
           {t(($) => $.buttons.deposit)}
         </LinkButton>

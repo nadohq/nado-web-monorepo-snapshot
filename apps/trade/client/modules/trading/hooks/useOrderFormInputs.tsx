@@ -9,6 +9,7 @@ import {
   OrderFormValues,
 } from 'client/modules/trading/types/orderFormTypes';
 import { PRICE_TRIGGER_PLACE_ORDER_TYPES } from 'client/modules/trading/types/placeOrderTypes';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { useCallback, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
@@ -20,9 +21,11 @@ interface Params {
   minAssetOrderSize: BigNumber | undefined;
   inputConversionPrice: BigNumber | undefined;
   isPrimaryQuote: boolean | undefined;
+  productId: number | undefined;
 }
 
 export function useOrderFormInputs({
+  productId,
   formError,
   validators,
   priceIncrement,
@@ -32,6 +35,8 @@ export function useOrderFormInputs({
   isPrimaryQuote,
 }: Params) {
   const form = useFormContext<OrderFormValues>();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
+  const exchangeRate = getExchangeRate(productId);
 
   const { register, setValue, formState } = form;
 
@@ -53,6 +58,7 @@ export function useOrderFormInputs({
     sizeDenom,
     inputConversionPrice,
     isPrimaryQuote,
+    exchangeRate,
   });
 
   const priceErrorTooltipContent = useOrderFormLimitPriceErrorTooltipContent({
@@ -127,5 +133,6 @@ export function useOrderFormInputs({
     showTwapOrderFormInputs,
     showScaledOrderFormInputs,
     setValue,
+    exchangeRate,
   };
 }

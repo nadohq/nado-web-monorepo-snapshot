@@ -24,6 +24,8 @@ interface Params {
   inputConversionPrice: BigNumber | undefined;
   /** Whether the market's quote currency is the primary quote. */
   isPrimaryQuote: boolean | undefined;
+  /** xStocks exchange rate, or 1 if not an xStock */
+  exchangeRate: BigNumber;
 }
 
 export function useOrderFormSizeErrorTooltipContent({
@@ -33,6 +35,7 @@ export function useOrderFormSizeErrorTooltipContent({
   sizeDenom,
   inputConversionPrice,
   isPrimaryQuote,
+  exchangeRate,
 }: Params) {
   const { t } = useTranslation();
 
@@ -52,6 +55,7 @@ export function useOrderFormSizeErrorTooltipContent({
       : getMarketSizeFormatSpecifier({
           sizeIncrement,
           shouldRemoveDecimals: false,
+          exchangeRate,
         }),
   });
 

@@ -11,7 +11,6 @@ import {
   useEVMContext,
   usePrimaryChainPublicClient,
 } from '@nadohq/react-client';
-import { nonNullFilter } from '@nadohq/web-common';
 import { useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'bignumber.js';
 import { useAllMarkets } from 'client/hooks/markets/useAllMarkets';
@@ -45,7 +44,10 @@ export function useQueryAllDepositableTokenBalances(): QueryState<Data> {
   const { data: allMarkets } = useAllMarkets();
 
   const spotProducts = useMemo(() => {
-    return Object.values(allMarkets?.spotProducts ?? {});
+    return Object.values(allMarkets?.spotProducts ?? {}).filter(
+      // NLP is non-depositable and non-withdrawable
+      (p) => p.productId !== NLP_PRODUCT_ID,
+    );
   }, [allMarkets?.spotProducts]);
   const disabled = !spotProducts.length || !address || !publicClient;
 
@@ -58,21 +60,14 @@ export function useQueryAllDepositableTokenBalances(): QueryState<Data> {
       // In case of failure, default to 0
       // Return type depends on this flag
       allowFailure: true,
-      contracts: spotProducts
-        .map((spotProduct) => {
-          // NLP is non-depositable and non-withdrawable
-          if (spotProduct.productId === NLP_PRODUCT_ID) {
-            return;
-          }
-
-          return {
-            functionName: 'balanceOf',
-            address: getValidatedAddress(spotProduct.product.tokenAddr),
-            abi: ERC20_ABI,
-            args: [address],
-          };
-        })
-        .filter(nonNullFilter),
+      contracts: spotProducts.map((spotProduct) => {
+        return {
+          functionName: 'balanceOf',
+          address: getValidatedAddress(spotProduct.product.tokenAddr),
+          abi: ERC20_ABI,
+          args: [address],
+        };
+      }),
     });
 
     const productIdToBalance: Data = {};

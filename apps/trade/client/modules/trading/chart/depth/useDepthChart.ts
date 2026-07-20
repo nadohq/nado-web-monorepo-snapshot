@@ -7,11 +7,14 @@ import {
   getMarketPriceFormatSpecifier,
   getMarketSizeFormatSpecifier,
   safeDiv,
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
 } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { useMarket } from 'client/hooks/markets/useMarket';
 import { useQueryMarketLiquidity } from 'client/hooks/query/markets/useQueryMarketLiquidity';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { getSharedProductMetadata } from 'client/utils/getSharedProductMetadata';
 import { first } from 'lodash';
 import { useMemo } from 'react';
@@ -43,19 +46,14 @@ export function useDepthChart({ productId, limit }: Params) {
     useQueryMarketLiquidity({
       productId,
     });
-
-  const priceFormatSpecifier = getMarketPriceFormatSpecifier(
-    market?.priceIncrement,
-  );
-
-  const sizeFormatSpecifier = getMarketSizeFormatSpecifier({
-    sizeIncrement: market?.sizeIncrement,
-  });
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const chartData = useMemo(() => {
     if (!liquidityQueryData || !market) {
       return [];
     }
+
+    const exchangeRate = getExchangeRate(market.productId);
 
     // Data starts from the top-of-book price, so the first item is the lowest ask / highest bid
     const { asks, bids } = liquidityQueryData;
@@ -63,24 +61,38 @@ export function useDepthChart({ productId, limit }: Params) {
     const highestBidPrice = first(bids)?.price;
     const lowestAskPrice = first(asks)?.price;
 
-    const mappedBids = mapDepthChartData(
-      bids,
+    const mappedBids = mapDepthChartData({
+      ticks: bids,
       // If one side of the book doesn't exist, we still need `limit` number of data points starting from an appropriate number (either the other side of the book, or a default of 0)
-      highestBidPrice ?? lowestAskPrice ?? BigNumbers.ZERO,
-      market.priceIncrement,
-      false,
+      startPrice: highestBidPrice ?? lowestAskPrice ?? BigNumbers.ZERO,
+      priceIncrement: market.priceIncrement,
+      isAsk: false,
       limit,
-    );
-    const mappedAsks = mapDepthChartData(
-      asks,
-      lowestAskPrice ?? highestBidPrice ?? BigNumbers.ZERO,
-      market.priceIncrement,
-      true,
+      exchangeRate,
+    });
+    const mappedAsks = mapDepthChartData({
+      ticks: asks,
+      startPrice: lowestAskPrice ?? highestBidPrice ?? BigNumbers.ZERO,
+      priceIncrement: market.priceIncrement,
+      isAsk: true,
       limit,
-    );
+      exchangeRate,
+    });
 
     return [...mappedBids, ...mappedAsks];
-  }, [liquidityQueryData, limit, market]);
+  }, [liquidityQueryData, limit, market, getExchangeRate]);
+
+  const exchangeRate = getExchangeRate(market?.productId);
+
+  const priceFormatSpecifier = getMarketPriceFormatSpecifier({
+    priceIncrement: market?.priceIncrement,
+    exchangeRate,
+  });
+
+  const sizeFormatSpecifier = getMarketSizeFormatSpecifier({
+    sizeIncrement: market?.sizeIncrement,
+    exchangeRate,
+  });
 
   return {
     chartData,
@@ -93,13 +105,23 @@ export function useDepthChart({ productId, limit }: Params) {
   };
 }
 
-function mapDepthChartData(
-  ticks: EnginePriceTickLiquidity[],
-  startPrice: BigNumber,
-  priceIncrement: BigNumber,
-  isAsk: boolean,
-  limit: number,
-) {
+interface MapDepthChartDataParams {
+  ticks: EnginePriceTickLiquidity[];
+  startPrice: BigNumber;
+  priceIncrement: BigNumber;
+  isAsk: boolean;
+  limit: number;
+  exchangeRate: BigNumber;
+}
+
+function mapDepthChartData({
+  ticks,
+  startPrice,
+  priceIncrement,
+  isAsk,
+  limit,
+  exchangeRate,
+}: MapDepthChartDataParams) {
   let cumulativeBaseSize = BigNumbers.ZERO;
   let cumulativeQuoteSize = BigNumbers.ZERO;
   let currentPrice = startPrice;
@@ -118,12 +140,17 @@ function mapDepthChartData(
     );
     currentPrice = tick.price;
 
+    // changeFraction is a ratio of prices — rate cancels out, no conversion needed
     const changeFraction = safeDiv(currentPrice.minus(startPrice), startPrice);
 
     items.push({
-      price: currentPrice.toNumber(),
-      cumulativeBidBaseSize: isAsk ? undefined : cumulativeBaseSize.toNumber(),
-      cumulativeAskBaseSize: isAsk ? cumulativeBaseSize.toNumber() : undefined,
+      price: toXStocksDisplayPrice(currentPrice, exchangeRate).toNumber(),
+      cumulativeBidBaseSize: isAsk
+        ? undefined
+        : toXStocksDisplayAmount(cumulativeBaseSize, exchangeRate).toNumber(),
+      cumulativeAskBaseSize: isAsk
+        ? toXStocksDisplayAmount(cumulativeBaseSize, exchangeRate).toNumber()
+        : undefined,
       cumulativeQuoteSize: cumulativeQuoteSize.toNumber(),
       changeFraction,
     });
@@ -137,9 +164,13 @@ function mapDepthChartData(
     const changeFraction = safeDiv(currentPrice.minus(startPrice), startPrice);
 
     items.push({
-      price: currentPrice.toNumber(),
-      cumulativeBidBaseSize: isAsk ? undefined : cumulativeBaseSize.toNumber(),
-      cumulativeAskBaseSize: isAsk ? cumulativeBaseSize.toNumber() : undefined,
+      price: toXStocksDisplayPrice(currentPrice, exchangeRate).toNumber(),
+      cumulativeBidBaseSize: isAsk
+        ? undefined
+        : toXStocksDisplayAmount(cumulativeBaseSize, exchangeRate).toNumber(),
+      cumulativeAskBaseSize: isAsk
+        ? toXStocksDisplayAmount(cumulativeBaseSize, exchangeRate).toNumber()
+        : undefined,
       cumulativeQuoteSize: cumulativeQuoteSize.toNumber(),
       changeFraction,
     });

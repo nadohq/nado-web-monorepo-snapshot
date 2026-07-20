@@ -28,6 +28,7 @@ import { CellSignalMediumIcon } from '@phosphor-icons/react/dist/ssr/CellSignalM
 import { CellSignalSlashIcon } from '@phosphor-icons/react/dist/ssr/CellSignalSlash';
 import { ChartBarIcon } from '@phosphor-icons/react/dist/ssr/ChartBar';
 import { ChartLineIcon } from '@phosphor-icons/react/dist/ssr/ChartLine';
+import { ChatsIcon } from '@phosphor-icons/react/dist/ssr/Chats';
 import { CheckIcon } from '@phosphor-icons/react/dist/ssr/Check';
 import { CheckCircleIcon } from '@phosphor-icons/react/dist/ssr/CheckCircle';
 import { CircleIcon } from '@phosphor-icons/react/dist/ssr/Circle';
@@ -62,6 +63,7 @@ import { IntersectIcon } from '@phosphor-icons/react/dist/ssr/Intersect';
 import { LightningIcon } from '@phosphor-icons/react/dist/ssr/Lightning';
 import { LightningSlashIcon } from '@phosphor-icons/react/dist/ssr/LightningSlash';
 import { LinkIcon } from '@phosphor-icons/react/dist/ssr/Link';
+import { LinkBreakIcon } from '@phosphor-icons/react/dist/ssr/LinkBreak';
 import { ListIcon } from '@phosphor-icons/react/dist/ssr/List';
 import { ListDashesIcon } from '@phosphor-icons/react/dist/ssr/ListDashes';
 import { ListMagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/ListMagnifyingGlass';
@@ -72,6 +74,7 @@ import { MathOperationsIcon } from '@phosphor-icons/react/dist/ssr/MathOperation
 import { MinusIcon } from '@phosphor-icons/react/dist/ssr/Minus';
 import { NavigationArrowIcon } from '@phosphor-icons/react/dist/ssr/NavigationArrow';
 import { NewspaperIcon } from '@phosphor-icons/react/dist/ssr/Newspaper';
+import { NotchesIcon } from '@phosphor-icons/react/dist/ssr/Notches';
 import { NotePencilIcon } from '@phosphor-icons/react/dist/ssr/NotePencil';
 import { PencilSimpleIcon } from '@phosphor-icons/react/dist/ssr/PencilSimple';
 import { PlayIcon } from '@phosphor-icons/react/dist/ssr/Play';
@@ -94,6 +97,7 @@ import { StarIcon } from '@phosphor-icons/react/dist/ssr/Star';
 import { TelegramLogoIcon } from '@phosphor-icons/react/dist/ssr/TelegramLogo';
 import { TimerIcon } from '@phosphor-icons/react/dist/ssr/Timer';
 import { TrashIcon } from '@phosphor-icons/react/dist/ssr/Trash';
+import { TrophyIcon } from '@phosphor-icons/react/dist/ssr/Trophy';
 import { UserIcon } from '@phosphor-icons/react/dist/ssr/User';
 import { UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 import { VaultIcon } from '@phosphor-icons/react/dist/ssr/Vault';
@@ -147,6 +151,8 @@ export const Icons = {
   CellSignalSlash: CellSignalSlashIcon,
   ChartBar: ChartBarIcon,
   ChartLine: ChartLineIcon,
+  Chats: ChatsIcon,
+  ChatsFill: (props: IconBaseProps) => <ChatsIcon weight="fill" {...props} />,
   Check: CheckIcon,
   CheckBold: (props: IconBaseProps) => <CheckIcon weight="bold" {...props} />,
   CheckCircle: CheckCircleIcon,
@@ -192,6 +198,7 @@ export const Icons = {
   ),
   LightningSlash: LightningSlashIcon,
   Link: LinkIcon,
+  LinkBreak: LinkBreakIcon,
   List: ListIcon,
   ListDashes: ListDashesIcon,
   ListMagnifyingGlass: ListMagnifyingGlassIcon,
@@ -206,6 +213,7 @@ export const Icons = {
     <NavigationArrowIcon weight="fill" {...props} />
   ),
   Newspaper: NewspaperIcon,
+  Notches: NotchesIcon,
   NotePencil: NotePencilIcon,
   PencilSimpleFill: (props: IconBaseProps) => (
     <PencilSimpleIcon weight="fill" {...props} />
@@ -236,6 +244,7 @@ export const Icons = {
   TelegramLogo: TelegramLogoIcon,
   Timer: TimerIcon,
   Trash: TrashIcon,
+  Trophy: TrophyIcon,
   User: UserIcon,
   Users: UsersIcon,
   Vault: VaultIcon,

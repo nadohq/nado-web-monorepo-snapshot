@@ -1,5 +1,5 @@
 import { ChainEnv } from '@nadohq/client';
-import { INK_CHAIN_ENVS, useEVMContext } from '@nadohq/react-client';
+import { useEVMContext } from '@nadohq/react-client';
 import {
   FEATURE_NOTIFICATION_DISCLOSURE_KEYS,
   FeatureNotificationDisclosureKey,
@@ -12,17 +12,13 @@ import { toast } from 'sonner';
 // If undefined, the notification will be enabled for all chain envs.
 type EnabledChainEnvsFilter = ChainEnv[] | undefined;
 
-// All chain envs that are supported by Nado
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const NADO_CHAIN_ENVS: ChainEnv[] = [...INK_CHAIN_ENVS];
-
 /**
  * A mapping of new feature key -> chain IDs for which the notification should be enabled.
  * Use `satisfies` to have type-checking that also works when `NewFeatureDisclosureKey` is `never` (when there are no keys)
  */
 const ENABLED_NOTIFICATION_CHAIN_ENVS: Record<string, EnabledChainEnvsFilter> =
   {
-    new_mkts_apr_23_2026: undefined,
+    new_mkts_jul_09_2026: undefined,
   } satisfies Record<FeatureNotificationDisclosureKey, EnabledChainEnvsFilter>;
 
 export function FeatureNotificationsEmitter() {

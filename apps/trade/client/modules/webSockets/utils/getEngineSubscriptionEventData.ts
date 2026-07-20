@@ -5,8 +5,13 @@ export function getEngineSubscriptionEventData(
 ): EngineServerSubscriptionEvent | undefined {
   try {
     const parsedData: EngineServerSubscriptionEvent = JSON.parse(event.data);
-    // All events should have a type and product_id
-    if (!parsedData.type || parsedData.product_id === undefined) {
+    if (!parsedData.type) {
+      return;
+    }
+    // Most engine subscription events are per-product and include `product_id`.
+    // Full-market snapshots (e.g. `all_bbo`) do not, so we only require
+    // `product_id` for non-`all_bbo` events.
+    if (parsedData.type !== 'all_bbo' && parsedData.product_id === undefined) {
       return;
     }
     return parsedData;

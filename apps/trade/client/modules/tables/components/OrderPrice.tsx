@@ -1,11 +1,11 @@
-import { formatNumber } from '@nadohq/react-client';
+import { formatNumber, NumberFormatSpecifier } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
   isMarket: boolean;
   orderPrice: BigNumber;
-  formatSpecifier: string;
+  formatSpecifier: NumberFormatSpecifier;
 }
 
 export function OrderPrice({ isMarket, orderPrice, formatSpecifier }: Props) {

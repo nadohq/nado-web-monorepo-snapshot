@@ -1,10 +1,17 @@
-import { Inter } from 'next/font/google';
 import localFont from 'next/font/local';
 
-// Google Font
-export const INTER = Inter({
+// Local Font: Inter Variable
+export const INTER = localFont({
+  src: [
+    {
+      path: './Inter-Variable.woff2',
+      weight: '100 900',
+      style: 'normal',
+    },
+  ],
   variable: '--font-inter',
-  subsets: ['latin'],
+  display: 'swap',
+  fallback: ['system-ui', 'sans-serif'],
 });
 
 // Local Font: Replica LL

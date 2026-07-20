@@ -1,32 +1,59 @@
-import { joinClassNames, WithChildren, WithRef } from '@nadohq/web-common';
-import { ComponentPropsWithRef } from 'react';
 import {
-  STANDARD_BUTTON_VERTICAL_PADDING_CLASSNAME,
-  TabButtonProps,
-  TabTextButton,
-} from './Button';
+  joinClassNames,
+  mergeClassNames,
+  WithChildren,
+  WithRef,
+} from '@nadohq/web-common';
+import { ComponentPropsWithRef } from 'react';
+import { DistributedOmit } from 'type-fest';
+import { getStateOverlayClassNames } from '../utils/stateOverlay/getStateOverlayClassNames';
+import { Button } from './Button/Button';
+import { STANDARD_BUTTON_VERTICAL_PADDING_CLASSNAME } from './Button/consts';
+import { ButtonProps } from './Button/types';
 import { CARD_PADDING_CLASSNAMES } from './Card';
 
-function Button({
+export type PillTabButtonProps = DistributedOmit<ButtonProps, 'isLoading'> & {
+  active?: boolean;
+  sizeVariant: 'sm' | 'xs';
+  dataTestId?: string;
+};
+
+function PillTabButton({
   id,
+  className,
   active,
+  sizeVariant,
   children,
-  dataTestId,
   ...rest
-}: WithChildren<TabButtonProps>) {
+}: WithChildren<PillTabButtonProps>) {
+  const stateOverlayClassNames = getStateOverlayClassNames({
+    borderRadiusVariant: 'sm',
+    disabled: rest.disabled,
+    active,
+  });
+
+  const sizeClassNames = {
+    sm: 'text-sm',
+    xs: 'text-xs',
+  }[sizeVariant];
+
   return (
-    <TabTextButton
+    <Button
       id={id}
-      className={joinClassNames(
-        'gap-x-0.5 rounded-sm p-1 text-xs',
-        active && 'bg-surface-1',
+      className={mergeClassNames(
+        'px-2.5',
+        sizeClassNames,
+        STANDARD_BUTTON_VERTICAL_PADDING_CLASSNAME['xs'],
+        active
+          ? 'bg-surface-2 text-text-primary rounded-md'
+          : 'text-text-tertiary',
+        stateOverlayClassNames,
+        className,
       )}
-      active={active ?? false}
-      dataTestId={dataTestId}
       {...rest}
     >
       {children}
-    </TabTextButton>
+    </Button>
   );
 }
 
@@ -49,6 +76,6 @@ function TabsList({
 }
 
 export const PillTabs = {
-  Button,
+  Button: PillTabButton,
   TabsList,
 };

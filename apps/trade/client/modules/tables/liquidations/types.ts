@@ -11,10 +11,10 @@ export interface LiquidatedBalance {
   symbol: string;
 
   oraclePrice: BigNumber;
-  priceFormatSpecifier: NumberFormatSpecifier | string;
-  sizeFormatSpecifier: NumberFormatSpecifier | string;
+  priceFormatSpecifier: NumberFormatSpecifier;
+  sizeFormatSpecifier: NumberFormatSpecifier;
   // For position changes
-  signedSizeFormatSpecifier: NumberFormatSpecifier | string;
+  signedSizeFormatSpecifier: NumberFormatSpecifier;
   // Decimal adjusted
   amountLiquidated: BigNumber;
   liquidatedValueUsd: BigNumber;

@@ -5,6 +5,7 @@ import { Form } from 'client/components/Form';
 import { InputSummaryItem } from 'client/components/InputSummaryItem';
 import { useNumericInputPlaceholder } from 'client/hooks/ui/useNumericInputPlaceholder';
 import { CollateralSelectInput } from 'client/modules/collateral/components/CollateralSelectInput';
+import { DepositInfoCard } from 'client/modules/collateral/components/DepositInfoCard';
 import { DepositSummaryDisclosure } from 'client/modules/collateral/components/DepositSummaryDisclosure';
 import { useDepositAmountErrorTooltipContent } from 'client/modules/collateral/deposit/hooks/useDepositAmountErrorTooltipContent';
 import { RepayDepositButton } from 'client/modules/collateral/repay/components/RepayDepositButton';
@@ -27,6 +28,7 @@ export const RepayDepositTab = ({
     buttonState,
     amountInputValueUsd,
     minDepositAmount,
+    displayedInfoCardType,
     onMaxRepayClicked,
     onAmountBorrowingClicked,
     onMaxDepositClicked,
@@ -43,6 +45,7 @@ export const RepayDepositTab = ({
 
   return (
     <Form onSubmit={onSubmit} className="flex w-full flex-col gap-y-4">
+      <DepositInfoCard displayedInfoCardType={displayedInfoCardType} />
       {/*Amount input*/}
       <div className="flex flex-col gap-y-2">
         <div className="flex items-center justify-between">

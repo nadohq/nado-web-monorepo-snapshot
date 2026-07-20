@@ -6,6 +6,7 @@ import { useTpSlOrders } from 'client/hooks/subaccount/useTpSlOrders';
 import { PerpPositionsTableItem } from 'client/modules/tables/types/PerpPositionsTableItem';
 import { getProductTableItem } from 'client/modules/tables/utils/getProductTableItem';
 import { getPriceTriggerCriteria } from 'client/modules/trading/utils/trigger/getPriceTriggerCriteria';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { createRowId } from 'client/utils/createRowId';
 import { useMemo } from 'react';
 
@@ -17,6 +18,7 @@ export function usePerpPositionsTable({ productIds }: Params) {
   const { data: tpSlOrdersData } = useTpSlOrders();
   const { data: perpBalances, isLoading } = usePerpPositions();
   const { data: allMarketsStaticData } = useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const mappedData: PerpPositionsTableItem[] | undefined = useMemo(() => {
     if (!perpBalances || !allMarketsStaticData) {
@@ -45,6 +47,7 @@ export function usePerpPositionsTable({ productIds }: Params) {
         const productTableItem = getProductTableItem({
           productId: position.productId,
           allMarketsStaticData,
+          exchangeRate: getExchangeRate(position.productId),
         });
 
         return {
@@ -80,7 +83,13 @@ export function usePerpPositionsTable({ productIds }: Params) {
           },
         };
       });
-  }, [productIds, perpBalances, tpSlOrdersData, allMarketsStaticData]);
+  }, [
+    productIds,
+    perpBalances,
+    tpSlOrdersData,
+    allMarketsStaticData,
+    getExchangeRate,
+  ]);
 
   return {
     positions: mappedData,

@@ -1,5 +1,6 @@
 @import './base.css';
 @import '@nadohq/web-ui/styles/ui-kit-styles.css';
+@import './privy.css';
 
 @layer base {
   /*Remove default outline that occurs on focus of different elements*/

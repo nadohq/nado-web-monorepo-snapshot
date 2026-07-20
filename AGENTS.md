@@ -13,6 +13,7 @@ Read the doc that matches your task:
 | Adding or modifying a UI component | [packages/web-ui/AGENTS.md](packages/web-ui/AGENTS.md) |
 | Formatting numbers, prices, or sizes | [packages/react-client/AGENTS.md](packages/react-client/AGENTS.md) |
 | Adding user-facing strings | [packages/i18n/GUIDELINES.md](packages/i18n/GUIDELINES.md) |
+| Writing market descriptions or names | [docs/playbooks/WRITE_MARKET_DESCRIPTIONS.md](docs/playbooks/WRITE_MARKET_DESCRIPTIONS.md) |
 | Style, component, or naming conventions | [docs/STYLEGUIDE.md](docs/STYLEGUIDE.md) |
 | Architectural decisions | [docs/TECHNICAL_DECISIONS.md](docs/TECHNICAL_DECISIONS.md) |
 
@@ -21,6 +22,7 @@ Read the doc that matches your task:
 Playbooks for common tasks. These are written as skills but located in the repo:
 - [Adding new markets to testnet](docs/playbooks/LIST_TESTNET_MARKETS.md)
 - [Releasing hidden mainnet markets](docs/playbooks/UNLOCK_MAINNET_MARKETS.md)
+- [Writing market descriptions](docs/playbooks/WRITE_MARKET_DESCRIPTIONS.md)
 
 
 ## Verification

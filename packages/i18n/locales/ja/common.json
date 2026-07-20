@@ -1,6 +1,5 @@
 {
   "about": "概要",
-  "accessLimitedJoinWaitlistGetYourSpot": "アクセスは招待されたユーザーに限られています。ウェイトリストに参加し、XでNadoをフォローしてスポットを獲得してください。",
   "account": "アカウント",
   "accountDetails": "アカウント詳細",
   "accountEquity": "アカウント資産",
@@ -50,20 +49,25 @@
   "availableMaintMargin": "利用可能な維持証拠金",
   "availableMargin": "利用可能な証拠金",
   "avatar": "アバター",
+  "avgDailyVol7d": "7日間平均日次出来高",
   "avgEntryPrice": "平均エントリー価格",
   "avgFilledPrice": "平均約定価格",
   "avgOrderPrice": "平均/注文価格",
+  "avgPrice": "平均価格",
   "balance": "残高",
   "balanceChange": "残高変動",
   "balances": "残高",
   "balanceValue": "残高/価値",
-  "beholderByKraken": "Beholder by Kraken",
   "borrow": "借入",
   "borrowApy": "借入APY",
   "borrowing": "借入中",
   "borrowRate": "借入金利",
   "borrowRiskWarningDescription": "既存の担保を使って資産を借りることができます。借入は証拠金使用率とアカウントリスクを増加させます。",
   "bought": "購入済み",
+  "bridgeDepositDisclosure": {
+    "description": "Nadoアカウントに資金をブリッジしています。入金のステータスは<action>こちら</action>で確認できます。",
+    "title": "ブリッジ入金"
+  },
   "bridgeUsdcApprovalInfo": "入金トランザクションの前に承認トランザクションへの署名を求められる場合があります。",
   "bridgeUsdcNative": "USDC（ネイティブ）をブリッジ",
   "bridgeUsdcNativeDescription": "Circle CCTPを通じてネイティブにUSDCをブリッジ",
@@ -111,7 +115,6 @@
     "confirm": "確認",
     "confirmDeposit": "入金を確認",
     "confirmingReferral": "リファラル確認中",
-    "confirmReferral": "リファラルを確認",
     "confirmTransaction": "取引を確認",
     "confirmTransfer": "送金を確認",
     "connect": "接続",
@@ -176,6 +179,7 @@
     "marketDetails": "マーケット詳細",
     "maxRepay": "最大返済額",
     "mintTokens": "トークンをミント",
+    "nextSlide": "次のスライド",
     "ok": "OK",
     "openDialog": "ダイアログを開く",
     "orderSubmitted": "注文が送信されました",
@@ -183,6 +187,7 @@
     "placingOrder": "注文中",
     "post": "投稿",
     "previewOrders": "注文をプレビュー",
+    "previousSlide": "前のスライド",
     "privateKeyCopied": "秘密鍵がコピーされました",
     "referralConfirmed": "リファラルが確認されました",
     "rejectAll": "すべて拒否",
@@ -235,7 +240,6 @@
     "viewHistory": "履歴を見る",
     "viewTutorial": "チュートリアルを見る",
     "waitingForWallet": "ウォレット待機中",
-    "waitlist": "ウェイトリスト",
     "withdraw": "出金",
     "withdrawalSuccessful": "出金が完了しました",
     "withdrawingLiquidity": "流動性出金中",
@@ -260,7 +264,6 @@
   "changeInBalances": "残高変動",
   "changeOneClickTradingPreferencesInSettings": "設定でワンクリック取引の設定を変更できます。",
   "changesApplied": "変更が適用されました",
-  "chaosLabsAggregate": "Chaos Labs集計",
   "chart": "チャート",
   "chartBuySellMarks": "チャート売買マーク",
   "chartOrderLines": "チャート注文ライン",
@@ -297,7 +300,6 @@
   "convertRepay": "変換返済",
   "convertRepayDescription": "変換は、プラス残高を簡単に売却（変換）して借入資産を返済する機能です。この機能は{{primaryQuoteTokenSymbol}}を決済通貨とするマーケットのみサポートされています。",
   "cookiesNotice": "Nadoは、サービスプロバイダーを含む第三者パートナーに対し、Cookieおよびその他のデータ収集技術（「Cookie」）を使用してデータを収集・開示する場合があります。このデータには、基本的な識別情報、デバイス情報、お客様の当社ウェブサイトおよびアプリケーションでの活動に関連するその他の一意の識別子（位置情報、閲覧ページ、カスタムイベント、取引機能との特定のインタラクション、商業データなど）が含まれる場合があります。プロンプトが表示された際に「すべて受け入れる」または「すべて拒否」ボタンをクリックして、すべてのCookieを承認または拒否できます。また、設定を変更することでいつでもCookieへの同意を撤回できます。さらに、ブラウザの設定を通じて直接Cookieをブロックまたは削除することもできます。詳しくは<action>Cookieポリシー</action>をご覧ください。",
-  "countDetails_one": "詳細",
   "countDetails_other": "{{count}} 件の詳細",
   "countdown": "カウントダウン",
   "cross": "クロス",
@@ -721,6 +723,30 @@
       "content": "表示されているすべてのアカウントの合計残高。APIで作成されたアカウントは含まれません。",
       "title": "合計残高"
     },
+    "tradingCompMinAccountValue": {
+      "content": "この部門の参加資格に必要な最低口座価値です。",
+      "title": "最低口座価値"
+    },
+    "tradingCompMinTradingVolume": {
+      "content": "この部門の参加資格に必要な最低取引高です。",
+      "title": "最低取引高"
+    },
+    "tradingCompRoi": {
+      "content": "コンペティション期間中の投資収益率（ROI）です。ROIリーダーボードの順位を決定します。",
+      "title": "ROI"
+    },
+    "tradingCompRoiTrackEligibility": {
+      "content": "ROI部門の参加資格を得るには、上記の最低要件をすべて満たす必要があります。ステータスは毎時更新されます。",
+      "title": "ステータス"
+    },
+    "tradingCompVolume": {
+      "content": "コンペティション期間中の合計取引高です。出来高リーダーボードの順位を決定します。",
+      "title": "出来高"
+    },
+    "tradingCompVolumeTrackEligibility": {
+      "content": "出来高部門の参加資格を得るには、上記の最低要件をすべて満たす必要があります。ステータスは毎時更新されます。",
+      "title": "ステータス"
+    },
     "tradingOrderbookOpenOrder": {
       "content": "この価格水準に注文があります。",
       "title": "あなたの注文"
@@ -792,6 +818,7 @@
     "editColumns": "列を編集",
     "editOrderViaChart": "注文価格を変更中",
     "enableOneClickTrading": "ワンクリック取引を有効化",
+    "enterReferralCode": "紹介コードを入力",
     "exportHistory": "履歴をエクスポート",
     "externalWalletDeposit": "外部ウォレット入金",
     "fastWithdraw": "高速出金",
@@ -934,12 +961,10 @@
     "noAvailableBalancesToConvert": "変換可能な残高がありません。",
     "noConnectedAddress": "接続されたアドレスが見つかりません",
     "noEnsConnected": "ENSが接続されていません",
-    "noInvitesRemaining": "残りの招待はありません",
     "notBorrowingThisAsset": "この資産を借入していません。",
     "oneClickTradingApprovalRequired": "ワンクリック取引の承認が必要です。",
     "oneClickTradingNotEnabled": "ワンクリック取引が有効になっていません。",
     "oneClickTradingRememberApprovalOff": "ワンクリック取引の承認記憶がオフになっています。",
-    "orderFailed_one": "注文の発注に失敗しました。詳細はエラー情報をご確認ください。",
     "orderFailed_other": "{{count}}件の注文の発注に失敗しました。詳細はエラー情報をご確認ください。",
     "orderModificationFailed": "注文の変更に失敗しました",
     "orderTypeOrderFailed": "{{orderType}}注文が失敗しました",
@@ -1108,6 +1133,10 @@
   "getStartedDescription": "{{primaryChainName}}での設定方法と、取引を開始するための資産の入金方法を学びましょう。",
   "getStartedOnChain": "{{primaryChainName}}で始める",
   "helpCenter": {
+    "depositHelp": {
+      "description": "入金に関するヘルプ",
+      "title": "入金ヘルプ"
+    },
     "faq": {
       "description": "よくある質問への回答",
       "title": "FAQ"
@@ -1130,7 +1159,6 @@
   "imageAltText": {
     "actionSymbol": "{{label}} {{symbol}}",
     "assetIcon": "資産アイコン",
-    "brandLogo": "Nado",
     "chainIcon": "チェーンアイコン",
     "depositAddressQRCode": "Nado入金アドレスQRコード",
     "editOrderField": "注文を編集 {{label}}",
@@ -1176,6 +1204,11 @@
   "isolatedAbbrev": "分離",
   "isolatedLeverage": "分離 {{leverage}}",
   "isolatedPositions": "分離ポジション",
+  "isoOnlyMarketsCrossMarginOverride": {
+    "description": "分離専用マーケット（RWA など）でクロスマージンモードを許可します。マーケットメーカー向け — 有効にすると、UI で分離専用の制限が無視され、これらのマーケットでクロスマージンを選択できるようになります。",
+    "header": "クロスマージン上書き",
+    "toggleLabel": "分離専用マーケットでクロスマージンを有効化"
+  },
   "isoUnrealizedPnl": "分離未実現損益",
   "keyFeatures": {
     "collateralInterest": "すべての担保で利息が発生",
@@ -1255,6 +1288,31 @@
   "marketOpensIn": "マーケットオープンまで：",
   "marketOrder": "成行注文",
   "markets": "マーケット",
+  "marketsPage": {
+    "allTimeVolume": "累計出来高",
+    "annualized": "年率換算",
+    "avg24h": "24h平均",
+    "avg30d": "30日平均",
+    "avg3d": "3日平均",
+    "avg7d": "7日平均",
+    "fundingRates": "ファンディングレート",
+    "gainersAndLosers": "値上がり・値下がり",
+    "hotMarkets": "🔥 注目マーケット",
+    "markPrice": "マーク価格",
+    "moreDetails": "詳細",
+    "nextPayment": "次回支払い",
+    "openInterestAbbrev": "建玉 {{symbol}}",
+    "predicted": "予測",
+    "recentlyAdded": "最近追加",
+    "searchMarkets": "マーケットを検索",
+    "spotIndexPrice": "現物インデックス価格",
+    "subtitle24hChange": "24h変動",
+    "subtitle24hVolume": "24h出来高",
+    "topDepositRates": "トップ預入利率",
+    "topPredictedFunding": "予測ファンディング上位",
+    "trades24h": "24h取引数",
+    "volume24hWithSymbol": "24h出来高 {{symbol}}"
+  },
   "marketStatus": "マーケットステータス",
   "marketStatusLiveDescription": "マーケットは取引可能です。{{reduceOnlyTime}}にリデュースオンリーモードに入ります。",
   "marketStatusReduceOnlyDescription": "マーケットはリデュースオンリーモードです。既存のポジションの決済または削減は可能ですが、マーケットが{{reopenTime}}に再開するまで、新規ポジションの作成や増加はできません。",
@@ -1305,6 +1363,7 @@
     "withdraw": "出金"
   },
   "netBalance": "純残高",
+  "netDelta": "ネットデルタ",
   "netPnl": "純損益",
   "newMarket": "新マーケット",
   "newRewards": "新しい報酬",
@@ -1315,17 +1374,12 @@
   "noBorrowsAtTheMoment": "現在借入はありません。",
   "notificationPosition": "通知の位置",
   "notifications": {
-    "airdropSuccess": {
-      "description": "ガス代は当社が負担します - ガス手数料を処理するために少量のETHエアドロップがウォレットに送信されました。",
-      "title": "チャージ完了！"
-    },
     "bridgeInitiated": {
       "description": "USDCの送金を処理中です。エクスプローラーに表示されるまで数分かかる場合があります。",
       "title": "入金が開始されました",
       "trackOnExplorer": "USDC Explorerで追跡"
     },
     "cancelling": "キャンセル中…",
-    "cancelMultiOrdersSuccess_one": "注文を正常にキャンセルしました。",
     "cancelMultiOrdersSuccess_other": "{{count}}件の注文を正常にキャンセルしました。",
     "cancelOrderSuccess": {
       "orderCancelled": "{{marketName}}の注文がキャンセルされました。",
@@ -1343,29 +1397,33 @@
     },
     "marketCloseOrderPlaced": "成行決済注文が発注されました",
     "newPerpMarkets": {
-      "content_one": "GM！<highlight>新しいパーペチュアルマーケット</highlight>を追加しました",
       "content_other": "GM！<highlight>{{count}}件の新しいパーペチュアルマーケット</highlight>を追加しました",
-      "title_one": "新しいパーペチュアルマーケット",
       "title_other": "新しいパーペチュアルマーケット"
     },
     "newSpotMarket": {
       "description": "GM！{{symbol}}を入金して担保として使用できるようになりました。{{marketName}}の取引も可能です。",
       "title": "新しい担保と現物マーケット"
     },
+    "newSpotMarkets": {
+      "content_other": "GM！<highlight>{{count}}件の新しい現物マーケット</highlight>を追加しました",
+      "title_other": "新しい担保と現物マーケット"
+    },
     "oneClickTradingRequired": "ワンクリック取引が必要です",
     "orderPlaced": "{{orderType}}注文が発注されました",
     "orderPriceRange": "{{startPrice}} - {{endPrice}}",
     "ordersCancelled": "注文がキャンセルされました",
     "pendingDelists": {
-      "description_one": "以下のマーケットは<highlight>{{delistTime}}</highlight>に上場廃止されます。ポジションを管理してください。",
       "description_other": "以下のマーケットは<highlight>{{delistTime}}</highlight>に上場廃止されます。ポジションを管理してください。",
-      "title_one": "マーケット上場廃止",
       "title_other": "マーケット上場廃止"
     },
     "perpLiquidated": "パーペチュアルポジションが清算されました。",
     "smartContractWalletRequirement": "スマートコントラクトウォレットはアプリとのインタラクションにワンクリック取引が必要です。今すぐ1CTを有効にしてください。",
     "spotAndPerpLiquidated": "現物残高とパーペチュアルポジションが清算されました。",
     "spotLiquidated": "現物残高が清算されました。",
+    "tradingCompEnrollSuccess": {
+      "body": "参加登録が完了しました。リーダーボードでROIと出来高のランキングを確認しましょう。",
+      "title": "参加登録が完了しました"
+    },
     "updating": "更新中…",
     "usdt0BridgeSuccess": {
       "description": "USDT入金トランザクションが送信されました。LayerZero Scanでクロスチェーン配信を追跡してください。",
@@ -1400,11 +1458,11 @@
   "operational": "稼働中",
   "oraclePrice": "オラクル価格",
   "oraclePriceAbbrev": "オラクル",
-  "oracleSpotIndexPrice": "オラクル（現物インデックス価格）",
   "order": "注文",
   "orderAmount": "注文数量",
   "orderbookAbbrev": "オーダーブック",
   "orderbookAnimations": "オーダーブックアニメーション",
+  "orderbookOpenOrderMessage": "この価格レベルに注文があります。",
   "orderCancelled": "注文がキャンセルされました",
   "orderExpired": "注文が期限切れになりました",
   "orderHistory": "注文履歴",
@@ -1461,6 +1519,7 @@
     "faucet": "フォーセット",
     "history": "履歴",
     "marginManager": "証拠金マネージャー",
+    "markets": "マーケット",
     "overview": "概要",
     "perpetuals": "パーペチュアル",
     "points": "ポイント",
@@ -1473,6 +1532,7 @@
   "partialOrder": "部分注文",
   "payingRate": "支払い {{formattedEffectiveAPY}}",
   "payment": "支払い",
+  "pendingBridgeDeposits": "ブリッジ入金処理中",
   "period": "{{period}}",
   "perp": "パーペチュアル",
   "perpetuals": "パーペチュアル",
@@ -1528,7 +1588,6 @@
   "priceDistribution": "価格分布",
   "priceRange": "価格帯",
   "priceRangeValue": "{{startPrice}} - {{endPrice}}",
-  "privateBeta": "プライベートベータ",
   "protocolFee": "プロトコル手数料",
   "qrCodeLoginDescription": "このQRコードでモバイルデバイスからアカウントにログインできます。",
   "qrCodeTrustWarning": "信頼できるデバイスでのみQRコードをスキャンしてください。",
@@ -1547,9 +1606,8 @@
   "reducePriceType": "{{priceType}}減少",
   "referrals": {
     "cannotDeleteRefereeWithTradingVolume": "取引量のある被紹介者は削除できません",
-    "invitesLeft": "残り招待数",
+    "enterReferralCodeDescription": "紹介コードをお持ちですか？以下に入力してください。",
     "joined": "参加済み",
-    "pageDescription": "あなたはNadoの第一波メンバーです。$250kの取引量ごとに1つの招待を解除でき、最大100件まで可能です。",
     "referralCode": "あなたの紹介コード",
     "referredTraders": "紹介されたトレーダー",
     "referredUsers": "紹介されたユーザー",
@@ -1708,6 +1766,7 @@
   "totalEquity": "合計資産",
   "totalMarginInIsolatedPositions": "分離ポジションの合計証拠金",
   "totalPnl": "合計損益",
+  "totals": "合計",
   "totalSize": "合計サイズ",
   "totalSizeWithSymbol": "{{formattedSize}} {{symbol}}",
   "totalSupplied": "合計供給量",
@@ -1715,18 +1774,10 @@
   "totalVolume": "合計出来高",
   "tpSl": "TP/SL",
   "tpslAbbrev": "TP/SL",
-  "tpslEstimatedPnlBoth": "推定 <0/> と <1/>",
-  "tpslEstimatedPnlParts": {
-    "sl": {
-      "loss": "SL損失 <0>{{usd}} (ROE: {{roe}})</0>",
-      "profit": "SL利益 <0>{{usd}} (ROE: {{roe}})</0>"
-    },
-    "tp": {
-      "loss": "TP損失 <0>{{usd}} (ROE: {{roe}})</0>",
-      "profit": "TP利益 <0>{{usd}} (ROE: {{roe}})</0>"
-    }
+  "tpslEstimatedPnl": {
+    "loss": "推定損失 <highlight>{{usd}} (ROE: {{roe}})</highlight>",
+    "profit": "推定利益 <highlight>{{usd}} (ROE: {{roe}})</highlight>"
   },
-  "tpslEstimatedPnlSingle": "推定 <0/>",
   "trade": "取引",
   "tradeHistory": "取引履歴",
   "tradePerpContracts": "パーペチュアル契約を取引",
@@ -1737,9 +1788,13 @@
   "tradingChart": {
     "backfillMark": "バックフィル",
     "backfillMarkTooltip": "この時間以前のローソク足は外部データでバックフィルされています",
+    "broker": {
+      "notTradableReason": "取引を開始するにはウォレットを接続してください",
+      "placeOrderFailed": "注文の発注に失敗しました",
+      "tradingAccount": "取引アカウント"
+    },
     "dragToAdjustPriceTooltip": "ドラッグして価格を調整",
     "estLiquidationLabel": "推定清算価格 ({{marginTypeLabel}})",
-    "orderLineLabel": "{{orderTypeLabel}} ({{marginTypeLabel}}) {{comparator}} {{formattedPrice}}",
     "pnlLabel": "損益 {{formattedPnl}} ({{marginTypeLabel}})",
     "tooltips": {
       "crossLiquidationPriceDesc": "クロスマージンの清算価格は全体的なアカウント資産に依存するため、精度が低くなります。",
@@ -1750,8 +1805,44 @@
     },
     "tradeMarkTooltip": "{{formattedTime}}: {{formattedSize}}@{{formattedPrice}}"
   },
+  "tradingCompetition": {
+    "accountValueRequirementNotMet": "口座価値の条件を満たしていません",
+    "bothRequirementsNotMet": "両方の条件を満たしていません",
+    "competitionEnded": "コンペティションは終了しました",
+    "competitionEndsIn": "コンペティション終了まで",
+    "competitionStartsIn": "コンペティション開始まで",
+    "depositMoreForTrackEligibility": "{{track}}の参加資格まであと{{amount}}必要です",
+    "eligibility": "参加資格",
+    "enrolled": "登録済み",
+    "enrolling": "登録中",
+    "enrollNow": "今すぐ登録",
+    "initialDepositRequired": "参加するには最初の入金が必要です",
+    "lastUpdatedAt": "最終更新 {{time}}",
+    "leaderboard": "リーダーボード",
+    "minAccountValue": "最低口座価値",
+    "minTradingVolume": "最低取引高",
+    "notEnrolled": "未登録",
+    "notificationDescription": "$100kが懸かっています。競う期間は7日間です。<linebreak />ROIと取引高のどちらかのリーダーボードを目指して取引しましょう。各上位10名に賞金が支払われます。",
+    "notificationTitle": "トレーディングコンペティション",
+    "prize": "賞金",
+    "qualified": "条件達成",
+    "rankDisplay": "<rank>{{rank}}</rank>位",
+    "restrictedRegion": {
+      "description": "制限地域からこのページにアクセスしようとしています。トレーディングコンペティションはお住まいの地域では利用できません。",
+      "title": "地域制限"
+    },
+    "status": "ステータス",
+    "totalPrizePool": "総賞金",
+    "totalPrizePoolDescription": "2つのリーダーボードにまたがって{{prizePoolAmount}}の賞金が用意されています。ROIは精度を、出来高は確信を評価します。どちらも好成績のトレーダーに現金で支払われます。コンペティションで入賞する友人を紹介すると、紹介者向けの現金ボーナスを獲得できます。誰を連れてくるかは慎重に選びましょう。リーダーボードとステータスは毎時更新されます。",
+    "tracks": {
+      "roi": "ROI",
+      "volume": "出来高"
+    },
+    "trackTitle": "{{track}}部門",
+    "trader": "トレーダー",
+    "volumeRequirementNotMet": "取引高の条件を満たしていません"
+  },
   "tradingConsole": "取引コンソール",
-  "tradingConsoleLocation": "取引コンソールの位置",
   "tradingPageTitle": "{{price}} {{marketName}} | Nado",
   "transaction": "トランザクション",
   "transactionCost": "取引コスト",
@@ -1822,9 +1913,9 @@
   "walletDeposit": "ウォレット入金",
   "website": "ウェブサイト",
   "weeklyActivationsRemaining": "今週の残り有効化回数",
-  "weeklyPoints": "週間ポイント",
   "weeklyRank": "週間ランク",
   "withdraw": "出金",
+  "withdrawalDestinationDisclosure": "出金は<highlight>{{destinationLabel}}</highlight>（<highlight>{{chainName}}</highlight>）に送信されます。",
   "withdrawals": "出金",
   "withdrawalsSubmittedOnChainOnceGasThresholdReached": "ガスの閾値に達すると、出金はオンチェーンで送信されます。",
   "withdrawalStatus": {

@@ -1,15 +1,20 @@
 import { useIsClient } from '@nadohq/web-common';
 import { SizeClass, useSizeClass } from '@nadohq/web-ui';
 import { useSyncedRef } from 'client/hooks/util/useSyncedRef';
+import { BROKER_CONFIG } from 'client/modules/trading/chart/broker/brokerConfig';
+import { NadoBroker } from 'client/modules/trading/chart/broker/NadoBroker';
 import { TradingViewSymbolInfo } from 'client/modules/trading/chart/config/datafeedConfig';
 import { WidgetConfig } from 'client/modules/trading/chart/config/types';
+import {
+  NadoBrokerDeps,
+  TradingViewDataFeed,
+} from 'client/modules/trading/chart/types';
 import { cloneDeep } from 'lodash';
 import {
   ChartingLibraryWidgetConstructor,
-  ChartingLibraryWidgetOptions,
-  IBasicDataFeed,
   IChartingLibraryWidget,
   Timezone,
+  TradingTerminalWidgetOptions,
 } from 'public/charting_library';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,8 +26,9 @@ interface UseTradingViewWidget {
 
 interface Params {
   selectedSymbolInfo: TradingViewSymbolInfo | undefined;
-  datafeed: IBasicDataFeed | undefined;
+  datafeed: TradingViewDataFeed | undefined;
   widgetConfig: WidgetConfig;
+  brokerDepsRef: RefObject<NadoBrokerDeps>;
 }
 
 // Cached import for the TV charting library widget
@@ -42,13 +48,15 @@ function getWidgetOptions({
   datafeed,
   widgetConfig,
   sizeClass,
+  brokerDepsRef,
 }: {
   symbol: string;
-  datafeed: IBasicDataFeed;
+  datafeed: TradingViewDataFeed;
   widgetConfig: WidgetConfig;
   sizeClass: SizeClass;
-}): ChartingLibraryWidgetOptions {
-  const options: ChartingLibraryWidgetOptions = {
+  brokerDepsRef: RefObject<NadoBrokerDeps>;
+}): TradingTerminalWidgetOptions {
+  const options: TradingTerminalWidgetOptions = {
     ...cloneDeep(widgetConfig.options),
     symbol: symbol,
     // Tradingview expects olsendb as the timezone, which is close to, but not the same, as IANA
@@ -57,11 +65,21 @@ function getWidgetOptions({
       | Timezone
       | undefined,
     datafeed,
+    // Wire the broker so the Order Panel and Buy/Sell buttons can place
+    // orders. Order/position lines remain hand-drawn (see useTradingViewChart).
+    // broker_factory fires once per widget; the broker holds no resources
+    // of its own, so its lifetime is just the widget's — when TV calls
+    // widget.remove() the broker becomes unreachable and is GC'd.
+    broker_factory: (host) => new NadoBroker(host, brokerDepsRef),
+    broker_config: BROKER_CONFIG,
   };
 
-  // default hide drawing tools on mobile
+  // Mobile-only overrides: hide drawing tools by default, and hide the
+  // Buy/Sell legend buttons (desktop-only UX).
   if (sizeClass === 'mobile') {
     options.enabled_features?.push('hide_left_toolbar_by_default');
+
+    options.disabled_features?.push('buy_sell_buttons');
   }
 
   return options;
@@ -71,6 +89,7 @@ export function useTradingViewWidget({
   selectedSymbolInfo,
   datafeed,
   widgetConfig,
+  brokerDepsRef,
 }: Params): UseTradingViewWidget {
   const { t } = useTranslation();
 
@@ -106,32 +125,14 @@ export function useTradingViewWidget({
         datafeed,
         widgetConfig,
         sizeClass,
+        brokerDepsRef,
       });
+
       const widget = new ChartWidget(options);
 
       console.debug('[useTradingViewWidget] Chart widget created');
 
       await new Promise<void>((resolve) => {
-        // Hack for `onChartReady` not being called in V28.3 of the library
-        // this is fixed in V29 but V29 removes position & order lines
-        // https://github.com/tradingview/charting_library/issues/8889#issuecomment-2625312225
-        (() => {
-          const startTime = Date.now();
-          const timeoutLimit = 3000;
-
-          (function checkValue() {
-            try {
-              if (
-                (widget as any)._innerWindow().tradingViewApi ||
-                Date.now() - startTime >= timeoutLimit
-              ) {
-                return (widget as any)._innerWindowResolver();
-              }
-            } catch {}
-            setTimeout(checkValue, 100);
-          })();
-        })();
-
         widget.onChartReady(() => {
           resolve();
         });
@@ -163,6 +164,7 @@ export function useTradingViewWidget({
       isCancelled = true;
     };
   }, [
+    brokerDepsRef,
     chartContainerRef,
     datafeed,
     hasLoadedInitialSymbol,
@@ -173,8 +175,9 @@ export function useTradingViewWidget({
     widgetConfig,
   ]);
 
+  // When tvWidget changes, dispose the previous widget. The associated
+  // broker is owned by the widget and gets dropped along with it.
   const prevWidgetRef = useRef<IChartingLibraryWidget | undefined>(null);
-
   useEffect(() => {
     if (prevWidgetRef.current !== tvWidget) {
       prevWidgetRef.current?.remove();

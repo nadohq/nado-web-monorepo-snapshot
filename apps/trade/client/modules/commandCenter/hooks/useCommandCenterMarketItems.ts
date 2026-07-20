@@ -2,8 +2,10 @@ import { removeDecimals } from '@nadohq/client';
 import {
   getMarketPriceFormatSpecifier,
   MarketCategory,
+  NumberFormatSpecifier,
   PerpProductMetadata,
   SpotProductMetadata,
+  toXStocksDisplayPrice,
 } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import { WithDataTableRowId } from 'client/components/DataTable/types';
@@ -12,6 +14,7 @@ import { useAllMarketsStats } from 'client/hooks/markets/useAllMarketsStats';
 import { useFavoritedMarkets } from 'client/hooks/markets/useFavoritedMarkets';
 import { useQueryAllMarketsLatestPrices } from 'client/hooks/query/markets/useQueryAllMarketsLatestPrices';
 import { usePushTradePage } from 'client/hooks/ui/navigation/usePushTradePage';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { useMemo } from 'react';
 
 export interface MarketTableItem extends WithDataTableRowId {
@@ -20,7 +23,7 @@ export interface MarketTableItem extends WithDataTableRowId {
   price: {
     currentPrice: BigNumber | undefined;
     priceChangeFrac24h: BigNumber | undefined;
-    marketPriceFormatSpecifier: string;
+    marketPriceFormatSpecifier: NumberFormatSpecifier;
   };
   pastDayVolumeInPrimaryQuote: BigNumber | undefined;
   isFavorited: boolean;
@@ -40,6 +43,7 @@ export function useCommandCenterMarketItems({ marketCategory }: Params) {
   const { favoritedMarketIds } = useFavoritedMarkets();
 
   const pushTradePage = usePushTradePage();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const mappedData: MarketTableItem[] = useMemo(() => {
     if (!allMarketsData) {
@@ -56,17 +60,22 @@ export function useCommandCenterMarketItems({ marketCategory }: Params) {
         const productId = market.productId;
         const marketStats = marketStatsData?.statsByMarket[productId];
         const latestMarketPrices = latestMarketPricesData?.[productId];
+        const exchangeRate = getExchangeRate(productId);
 
         return {
           rowId: String(productId),
           metadata: market.metadata,
           productId: market.productId,
           price: {
-            currentPrice: latestMarketPrices?.safeMidPrice,
-            priceChangeFrac24h: marketStats?.pastDayPriceChangeFrac,
-            marketPriceFormatSpecifier: getMarketPriceFormatSpecifier(
-              market.priceIncrement,
+            currentPrice: toXStocksDisplayPrice(
+              latestMarketPrices?.safeMidPrice,
+              exchangeRate,
             ),
+            priceChangeFrac24h: marketStats?.pastDayPriceChangeFrac,
+            marketPriceFormatSpecifier: getMarketPriceFormatSpecifier({
+              priceIncrement: market.priceIncrement,
+              exchangeRate: getExchangeRate(market.productId),
+            }),
           },
           pastDayVolumeInPrimaryQuote: removeDecimals(
             marketStats?.pastDayVolumeInPrimaryQuote,
@@ -86,6 +95,7 @@ export function useCommandCenterMarketItems({ marketCategory }: Params) {
     latestMarketPricesData,
     favoritedMarketIds,
     pushTradePage,
+    getExchangeRate,
   ]);
 
   return { markets: mappedData };

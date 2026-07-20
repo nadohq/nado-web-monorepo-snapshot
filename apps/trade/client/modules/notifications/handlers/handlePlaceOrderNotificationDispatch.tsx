@@ -1,4 +1,4 @@
-import { asyncResult } from '@nadohq/client';
+import { asyncResult, removeDecimals, toBigNumber } from '@nadohq/client';
 import { DEFAULT_TOAST_TTL } from 'client/components/Toast/consts';
 import { ActionErrorNotification } from 'client/modules/notifications/components/ActionErrorNotification';
 import { PlaceOrderSuccessNotification } from 'client/modules/notifications/components/orders/PlaceOrderSuccessNotification';
@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 
 export async function handlePlaceOrderNotificationDispatch(
   placeOrderNotificationData: PlaceOrderNotificationData,
-  { t, enableTradingNotifications }: NotificationDispatchContext,
+  { t, enableTradingNotifications, sendGTMEvent }: NotificationDispatchContext,
 ) {
   const verifyOrderActionResult = async () => {
     const awaitedResult = await placeOrderNotificationData.executeResult;
@@ -24,6 +24,15 @@ export async function handlePlaceOrderNotificationDispatch(
 
   const [digest, orderActionError] = await asyncResult(
     verifyOrderActionResult(),
+  );
+
+  const valueUsd = Math.round(
+    toBigNumber(
+      removeDecimals(placeOrderNotificationData.placeOrderParams.amount),
+    )
+      .multipliedBy(placeOrderNotificationData.metadata.displayOraclePrice ?? 0)
+      .abs()
+      .toNumber(),
   );
 
   if (!orderActionError) {
@@ -43,7 +52,16 @@ export async function handlePlaceOrderNotificationDispatch(
         { id: `place-order-${digest}`, duration: DEFAULT_TOAST_TTL },
       );
     }
+    sendGTMEvent({
+      event: 'place_order',
+      market: placeOrderNotificationData.metadata.marketName,
+      iso: !!placeOrderNotificationData.placeOrderParams.iso,
+      valueUsd,
+      digest: digest ?? '',
+    });
   } else if (!isUserDeniedError(orderActionError)) {
+    const parsedError = parseExecuteError(t, orderActionError);
+
     toast.custom(
       (toastId) => {
         return (
@@ -54,7 +72,7 @@ export async function handlePlaceOrderNotificationDispatch(
                 placeOrderNotificationData.orderType,
               ),
             })}
-            error={parseExecuteError(t, orderActionError)}
+            error={parsedError}
             ttl={DEFAULT_TOAST_TTL}
             onDismiss={() => {
               toast.dismiss(toastId);
@@ -64,5 +82,12 @@ export async function handlePlaceOrderNotificationDispatch(
       },
       { duration: DEFAULT_TOAST_TTL },
     );
+    sendGTMEvent({
+      event: 'place_order_error',
+      market: placeOrderNotificationData.metadata.marketName,
+      iso: !!placeOrderNotificationData.placeOrderParams.iso,
+      valueUsd,
+      errorMessage: parsedError.errorMessage,
+    });
   }
 }

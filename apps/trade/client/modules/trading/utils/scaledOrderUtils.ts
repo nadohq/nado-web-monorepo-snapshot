@@ -17,28 +17,28 @@ import { getRangeBigNumberValidator } from 'client/utils/inputValidators';
 import { range } from 'lodash';
 
 /**
- * Calculates the worst case execution price for a scaled order based on order side.
+ * Calculates the worst-fill price for a scaled order based on order side.
  *
- * For scaled orders, the "worst case" price depends on the order direction:
- * - **Long orders**: Worst case is the highest price (max), as you'll pay more
- * - **Short orders**: Worst case is the lowest price (min), as you'll receive less
+ * For scaled orders, the worst-fill price depends on the order direction:
+ * - Long orders: Worst fill is the highest price (max), as you'll pay more
+ * - Short orders: Worst fill is the lowest price (min), as you'll receive less
  *
  * @param startPrice - The starting price of the scaled order range (undefined if not set)
  * @param endPrice - The ending price of the scaled order range (undefined if not set)
  * @param orderSide - The order direction ('long' for buy, 'short' for sell)
- * @returns The worst case price for the given order side, or undefined if prices are not provided
+ * @returns The worst-fill price for the given order side, or undefined if prices are not provided
  *
  * @example
- * // Long order from 90 to 100: worst case is 100 (highest price to pay)
- * getScaledOrderWorstCasePrice(90, 100, 'long') // returns 100
+ * Long order from 90 to 100: worst fill is 100 (highest price to pay)
+ * getScaledOrderWorstFillPrice(90, 100, 'long') // returns 100
  *
- * // Short order from 90 to 100: worst case is 90 (lowest price to receive)
- * getScaledOrderWorstCasePrice(90, 100, 'short') // returns 90
+ * Short order from 90 to 100: worst fill is 90 (lowest price to receive)
+ * getScaledOrderWorstFillPrice(90, 100, 'short') // returns 90
  *
- * // Missing prices return undefined
- * getScaledOrderWorstCasePrice(undefined, 100, 'long') // returns undefined
+ * Missing prices return undefined
+ * getScaledOrderWorstFillPrice(undefined, 100, 'long') // returns undefined
  */
-export function getScaledOrderWorstCasePrice(
+export function getScaledOrderWorstFillPrice(
   startPrice: BigNumber | undefined,
   endPrice: BigNumber | undefined,
   orderSide: BalanceSide,
@@ -49,6 +49,60 @@ export function getScaledOrderWorstCasePrice(
   return orderSide === 'long'
     ? BigNumber.max(startPrice, endPrice)
     : BigNumber.min(startPrice, endPrice);
+}
+
+interface GetScaledOrderHealthStressPriceParams {
+  startPrice: BigNumber | undefined;
+  endPrice: BigNumber | undefined;
+  orderSide: BalanceSide;
+}
+
+/**
+ * Returns the price that stress-tests margin requirements when sizing a scaled order.
+ *
+ * For scaled orders, the stress price depends on the order direction:
+ * - Long orders: Stress price is the lowest price (min), as it gives the largest position for the quote spend
+ * - Short orders: Stress price is the highest price (max), as it gives the most quote received
+ *
+ * @param params - Stress price calculation parameters
+ * @returns The stress price, or undefined if either price is missing
+ *
+ * @example
+ * getScaledOrderHealthStressPrice({ startPrice: 90, endPrice: 100, orderSide: 'long' })  // 90
+ * getScaledOrderHealthStressPrice({ startPrice: 90, endPrice: 100, orderSide: 'short' }) // 100
+ */
+export function getScaledOrderHealthStressPrice({
+  startPrice,
+  endPrice,
+  orderSide,
+}: GetScaledOrderHealthStressPriceParams): BigNumber | undefined {
+  if (!startPrice || !endPrice) {
+    return undefined;
+  }
+  return orderSide === 'long'
+    ? BigNumber.min(startPrice, endPrice)
+    : BigNumber.max(startPrice, endPrice);
+}
+
+/**
+ * Returns the midpoint of the scaled order's price range, independent of the
+ * configured price/size distribution.
+ *
+ * @param startPrice - Start of the scaled order price range
+ * @param endPrice - End of the scaled order price range
+ * @returns The midpoint price, or undefined if either price is missing
+ *
+ * @example
+ * getScaledOrderAveragePrice(90, 100) // 95
+ */
+export function getScaledOrderAveragePrice(
+  startPrice: BigNumber | undefined,
+  endPrice: BigNumber | undefined,
+): BigNumber | undefined {
+  if (!startPrice || !endPrice) {
+    return undefined;
+  }
+  return startPrice.plus(endPrice).div(2);
 }
 
 /**

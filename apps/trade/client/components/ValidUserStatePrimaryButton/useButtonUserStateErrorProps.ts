@@ -4,6 +4,7 @@ import {
   getChainName,
   useEVMContext,
 } from '@nadohq/react-client';
+import { useShowConnectWalletUI } from 'client/context/wagmi/useShowConnectWalletUI';
 import {
   UserStateError,
   useUserStateError,
@@ -45,16 +46,24 @@ export interface UseButtonUserStateErrorPropsParams {
   requiredChainEnv?: ChainEnv;
 }
 
+interface UseButtonUserStateError {
+  onClick: (ev: React.MouseEvent<HTMLButtonElement>) => void;
+  children: React.ReactNode;
+}
+
 export function useButtonUserStateErrorProps({
   handledErrors,
   requiredConnectedChain,
   requiredChainEnv,
-}: UseButtonUserStateErrorPropsParams = {}) {
+}: UseButtonUserStateErrorPropsParams = {}):
+  | UseButtonUserStateError
+  | undefined {
   const { t } = useTranslation();
   const userStateError = useUserStateError({
     requiredConnectedChain,
     requiredChainEnv,
   });
+  const { onConnectWalletClick } = useShowConnectWalletUI();
   const { show } = useDialog();
   const {
     switchConnectedChain,
@@ -71,8 +80,8 @@ export function useButtonUserStateErrorProps({
   switch (userStateError) {
     case 'not_connected':
       return {
-        onClick: () => show({ type: 'connect', params: {} }),
-        children: t(($) => $.buttons.connectWallet),
+        onClick: onConnectWalletClick,
+        children: t(($) => $.buttons.signIn),
       };
     case 'incorrect_chain_env':
       const destinationChainEnv = requiredChainEnv ?? primaryChainEnv;
@@ -94,7 +103,7 @@ export function useButtonUserStateErrorProps({
       };
     case 'requires_initial_deposit':
       return {
-        onClick: () => show({ type: 'deposit_options', params: {} }),
+        onClick: () => show({ type: 'deposit_entrypoint', params: {} }),
         children: t(($) => $.buttons.depositToStartTrading),
       };
     case 'requires_sign_once_approval':

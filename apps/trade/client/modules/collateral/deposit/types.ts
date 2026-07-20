@@ -19,10 +19,14 @@ export type DepositActionButtonState = OnChainActionButtonStateWithApproval;
 
 export interface DepositProductSelectValue extends CollateralSpotProductSelectValue {
   tokenDecimals: number;
-  decimalAdjustedNadoBalance: BigNumber;
+  isXStocksProduct: boolean;
+  /**
+   * Nado balance in the raw xStocks space - i.e. the underlying wrapped balance amount
+   */
+  decimalAdjustedRawNadoBalance: BigNumber;
   decimalAdjustedWalletBalance: BigNumber | undefined;
   decimalAdjustedMinimumInitialDepositAmount: BigNumber | undefined;
   oraclePrice: BigNumber;
 }
 
-export type DepositInfoCardType = 'wrap_weth';
+export type DepositInfoCardType = 'xstocks';

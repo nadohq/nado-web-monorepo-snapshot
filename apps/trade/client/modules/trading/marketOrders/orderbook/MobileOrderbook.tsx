@@ -31,6 +31,7 @@ export function MobileOrderbook({ className, productId, depth }: Props) {
   const {
     orderbookData,
     setNewPriceInput,
+    rowPriceFormatSpecifier,
     priceFormatSpecifier,
     amountSymbol,
     tickSpacingMultiplier,
@@ -41,6 +42,7 @@ export function MobileOrderbook({ className, productId, depth }: Props) {
     openOrderPrices,
     cumulativeAmountSpecifier,
     lastPrice,
+    roundedPriceIncrement,
   } = useOrderbook({
     productId,
     depth,
@@ -76,7 +78,7 @@ export function MobileOrderbook({ className, productId, depth }: Props) {
               />
             )}
             {formatNumber(row.price, {
-              formatSpecifier: priceFormatSpecifier,
+              formatSpecifier: rowPriceFormatSpecifier,
             })}
           </MarketOrderRow.Item>
           <MarketOrderRow.Item className="justify-end">
@@ -90,7 +92,7 @@ export function MobileOrderbook({ className, productId, depth }: Props) {
     [
       orderbookData?.maxCumulativeTotalAmount,
       openOrderPrices,
-      priceFormatSpecifier,
+      rowPriceFormatSpecifier,
       cumulativeAmountSpecifier,
       setNewPriceInput,
       enableTradingOrderbookAnimations,
@@ -106,7 +108,7 @@ export function MobileOrderbook({ className, productId, depth }: Props) {
         )}
       >
         <TickSpacingSelect
-          priceIncrement={orderbookData?.priceIncrement}
+          roundedPriceIncrement={roundedPriceIncrement}
           currentTickSpacing={currentTickSpacing}
           tickSpacingMultiplier={tickSpacingMultiplier}
           setTickSpacingMultiplier={setTickSpacingMultiplier}
@@ -141,7 +143,7 @@ export function MobileOrderbook({ className, productId, depth }: Props) {
               ORDERBOOK_ROW_PADDING,
               'flex-col gap-y-1.5 text-xs',
             )}
-            priceIncrement={orderbookData?.priceIncrement}
+            priceFormatSpecifier={priceFormatSpecifier}
             setPriceInput={setNewPriceInput}
             lastPrice={lastPrice}
             spread={orderbookData?.spread}

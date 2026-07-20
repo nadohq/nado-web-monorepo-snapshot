@@ -195,18 +195,17 @@ export function useTpSlOrderFormPriceState({
     ) {
       return;
     }
-
     return calcPnl(
       positionCloseAmount,
       executionPriceForPnl,
       positionCloseAmountNetEntry,
     );
   }, [positionCloseAmount, positionCloseAmountNetEntry, executionPriceForPnl]);
+
   const estimatedPnlFrac = useMemo(() => {
     if (!estimatedPnlUsd || !positionCloseAmountNetCostForPnl) {
       return;
     }
-
     return estimatedPnlUsd.dividedBy(positionCloseAmountNetCostForPnl);
   }, [estimatedPnlUsd, positionCloseAmountNetCostForPnl]);
 

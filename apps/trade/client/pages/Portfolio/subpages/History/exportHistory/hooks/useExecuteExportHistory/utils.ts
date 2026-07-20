@@ -1,5 +1,6 @@
 import { GetExportHistoryDataContext } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/types';
 import {
+  ExportHistoryAggregatedTradeItem,
   ExportHistoryDepositItem,
   ExportHistoryEngineOrderItem,
   ExportHistoryFundingItem,
@@ -44,16 +45,19 @@ export function updateProgressFrac(
 type HeadingsForItem<TData> = Record<keyof TData, string>;
 
 export const getExportHistoryHeadingsByType = (t: TFunction) => {
-  const baseCollateralHeadings: HeadingsForItem<
-    ExportHistoryDepositItem | ExportHistoryWithdrawalItem
-  > = {
+  const deposits: HeadingsForItem<ExportHistoryDepositItem> = {
     time: t(($) => $.exportHeadings.time),
     asset: t(($) => $.exportHeadings.asset),
     balanceChange: t(($) => $.exportHeadings.balanceChange),
   };
 
+  const withdrawals: HeadingsForItem<ExportHistoryWithdrawalItem> = {
+    ...deposits,
+    recipientAddress: t(($) => $.exportHeadings.recipient),
+  };
+
   const transfers: HeadingsForItem<ExportHistoryTransferItem> = {
-    ...baseCollateralHeadings,
+    ...deposits,
     fromSubaccountName: t(($) => $.exportHeadings.from),
     toSubaccountName: t(($) => $.exportHeadings.to),
     fromSubaccountDisplayName: t(($) => $.exportHeadings.fromDisplayName),
@@ -83,7 +87,7 @@ export const getExportHistoryHeadingsByType = (t: TFunction) => {
     primaryQuoteAmountDelta: t(($) => $.exportHeadings.quoteChange),
   };
 
-  const trades: HeadingsForItem<ExportHistoryTradeItem> = {
+  const individualTrades: HeadingsForItem<ExportHistoryTradeItem> = {
     time: t(($) => $.exportHeadings.time),
     marketName: t(($) => $.exportHeadings.market),
     direction: t(($) => $.exportHeadings.direction),
@@ -92,6 +96,20 @@ export const getExportHistoryHeadingsByType = (t: TFunction) => {
     price: t(($) => $.exportHeadings.price),
     fee: t(($) => $.exportHeadings.fee),
     total: t(($) => $.exportHeadings.total),
+    realizedPnl: t(($) => $.exportHeadings.realizedPnl),
+    closedSize: t(($) => $.exportHeadings.closedSizeRealizedPnl),
+    orderId: t(($) => $.exportHeadings.orderId),
+  };
+
+  const aggregatedTrades: HeadingsForItem<ExportHistoryAggregatedTradeItem> = {
+    time: t(($) => $.exportHeadings.lastUpdated),
+    marketName: t(($) => $.exportHeadings.market),
+    direction: t(($) => $.exportHeadings.direction),
+    marginModeType: t(($) => $.exportHeadings.marginType),
+    price: t(($) => $.exportHeadings.price),
+    size: t(($) => $.exportHeadings.size),
+    tradeValue: t(($) => $.exportHeadings.tradeValue),
+    fee: t(($) => $.exportHeadings.fee),
     realizedPnl: t(($) => $.exportHeadings.realizedPnl),
     closedSize: t(($) => $.exportHeadings.closedSizeRealizedPnl),
     orderId: t(($) => $.exportHeadings.orderId),
@@ -165,13 +183,14 @@ export const getExportHistoryHeadingsByType = (t: TFunction) => {
     };
 
   return {
-    deposits: baseCollateralHeadings,
-    withdrawals: baseCollateralHeadings,
+    deposits,
+    withdrawals,
     transfers,
     nlp,
     settlements,
     liquidations,
-    trades,
+    individual_trades: individualTrades,
+    aggregated_trades: aggregatedTrades,
     funding_payments: funding,
     interest_payments: interest,
     historical_engine_orders: engineOrders,

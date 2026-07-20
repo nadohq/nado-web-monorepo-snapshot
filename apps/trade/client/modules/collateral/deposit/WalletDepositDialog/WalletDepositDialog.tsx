@@ -15,6 +15,7 @@ import { useIsSmartContractWalletConnected } from 'client/hooks/util/useIsSmartC
 import { BaseAppDialog } from 'client/modules/app/dialogs/BaseAppDialog';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { CollateralSelectInput } from 'client/modules/collateral/components/CollateralSelectInput';
+import { DepositInfoCard } from 'client/modules/collateral/components/DepositInfoCard';
 import { DepositSummaryDisclosure } from 'client/modules/collateral/components/DepositSummaryDisclosure';
 import { MinimumDepositAmount } from 'client/modules/collateral/components/MinimumDepositAmount';
 import { useDepositAmountErrorTooltipContent } from 'client/modules/collateral/deposit/hooks/useDepositAmountErrorTooltipContent';
@@ -111,6 +112,7 @@ export function WalletDepositDialog({
               }
             />
           )}
+          <DepositInfoCard displayedInfoCardType={displayedInfoCardType} />
           <div className="flex flex-col gap-y-3">
             <CollateralSelectInput
               {...register('amount', {
@@ -179,7 +181,6 @@ export function WalletDepositDialog({
             <ButtonHelperInfo.Container>
               <ActionSummary.Container>
                 <DepositSummaryDisclosure
-                  displayedInfoCardType={displayedInfoCardType}
                   estimateStateTxs={estimateStateTxs}
                   productId={selectedProduct?.productId}
                   symbol={selectedProduct?.symbol}

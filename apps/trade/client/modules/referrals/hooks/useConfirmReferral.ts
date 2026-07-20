@@ -1,0 +1,67 @@
+import { safeParseForData } from '@nadohq/web-common';
+import { useNotificationManagerContext } from 'client/modules/notifications/NotificationManagerContext';
+import { useFuulReferralsContext } from 'client/modules/referrals/FuulReferralsContext';
+import { useExecuteUseFuulReferralCode } from 'client/modules/referrals/hooks/execute/useExecuteUseFuulReferralCode';
+import { BaseActionButtonState } from 'client/types/BaseActionButtonState';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { z } from 'zod';
+
+const referralCodeValidator = z.string().min(5).max(15);
+
+export type ConfirmReferralActionButtonState = BaseActionButtonState;
+
+export function useConfirmReferral() {
+  const { t } = useTranslation();
+  const { referralCodeForSession } = useFuulReferralsContext();
+  const { dispatchNotification } = useNotificationManagerContext();
+  const [referralCodeInput, setReferralCodeInput] = useState(
+    referralCodeForSession ?? '',
+  );
+  const validReferralCodeInput = safeParseForData(
+    referralCodeValidator,
+    referralCodeInput,
+  );
+
+  const { mutateAsync, isPending, isSuccess } = useExecuteUseFuulReferralCode(
+    {},
+  );
+
+  const onSubmit = () => {
+    if (!validReferralCodeInput) {
+      return;
+    }
+
+    const serverExecutionResult = mutateAsync({
+      referralCode: validReferralCodeInput,
+    });
+
+    dispatchNotification({
+      type: 'action_error_handler',
+      data: {
+        executionData: { serverExecutionResult },
+        errorNotificationTitle: t(($) => $.errors.confirmReferralFailed),
+      },
+    });
+  };
+
+  const buttonState = useMemo((): ConfirmReferralActionButtonState => {
+    if (isSuccess) {
+      return 'success';
+    }
+    if (isPending) {
+      return 'loading';
+    }
+    if (validReferralCodeInput) {
+      return 'idle';
+    }
+    return 'disabled';
+  }, [isPending, isSuccess, validReferralCodeInput]);
+
+  return {
+    onSubmit,
+    referralCodeInput,
+    setReferralCodeInput,
+    buttonState,
+  };
+}

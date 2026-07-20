@@ -8,6 +8,9 @@ import {
 import {
   AnnotatedBalanceWithProduct,
   AnnotatedSpotBalanceWithProduct,
+  toXStocksDisplayAmount,
+  toXStocksRawAmount,
+  toXStocksRawPrice,
 } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import {
@@ -19,6 +22,7 @@ import {
   EstimatedSubaccountInfo,
   useEstimateSubaccountInfoChange,
 } from 'client/hooks/subaccount/useEstimateSubaccountInfoChange';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { useCallback, useMemo } from 'react';
 
 interface AdditionalSubaccountInfo {
@@ -56,6 +60,12 @@ export function useSpotTradingFormAccountMetrics({
   maxAssetOrderSize,
   validAssetAmount,
 }: Params): SpotTradingFormTradingAccountMetrics {
+  const { getExchangeRate } = useGetXStocksExchangeRate();
+  const exchangeRate = useMemo(
+    () => getExchangeRate(currentMarket?.productId),
+    [getExchangeRate, currentMarket?.productId],
+  );
+
   const estimateStateTxs = useMemo((): SubaccountTx[] => {
     const productId = currentMarket?.productId;
     const quoteProductId = quoteMetadata?.productId;
@@ -76,11 +86,14 @@ export function useSpotTradingFormAccountMetrics({
       return [];
     }
 
-    const assetAmountDelta = addDecimals(
+    // Simulation deltas must be in raw (wQQQx) space — convert display amount/price before addDecimals
+    const rawAssetAmountWithSign = toXStocksRawAmount(
       orderSide === 'long' ? validAssetAmount : validAssetAmount.negated(),
+      exchangeRate,
     );
+    const assetAmountDelta = addDecimals(rawAssetAmountWithSign);
     const quoteAmountDelta = assetAmountDelta
-      .multipliedBy(executionConversionPrice)
+      .multipliedBy(toXStocksRawPrice(executionConversionPrice, exchangeRate))
       .negated();
 
     return [
@@ -109,6 +122,7 @@ export function useSpotTradingFormAccountMetrics({
     validAssetAmount,
     executionConversionPrice,
     orderSide,
+    exchangeRate,
   ]);
 
   const additionalInfoFactory = useCallback<
@@ -132,11 +146,15 @@ export function useSpotTradingFormAccountMetrics({
       }
 
       return {
-        assetBalance: removeDecimals(balance.amount),
+        // balance.amount is raw (wQQQx) — convert to display after decimal adjustment
+        assetBalance: toXStocksDisplayAmount(
+          removeDecimals(balance.amount),
+          exchangeRate,
+        ),
         quoteBalance: removeDecimals(quoteBalance.amount),
       };
     },
-    [currentMarket, quoteMetadata?.productId],
+    [currentMarket, quoteMetadata?.productId, exchangeRate],
   );
 
   // State change

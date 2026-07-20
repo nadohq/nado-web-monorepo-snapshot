@@ -1,4 +1,4 @@
-import { formatNumber } from '@nadohq/react-client';
+import { formatNumber, NumberFormatSpecifier } from '@nadohq/react-client';
 import { joinClassNames, WithClassnames } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 interface Props extends WithClassnames {
   tpTriggerPrice: BigNumber | undefined;
   slTriggerPrice: BigNumber | undefined;
-  priceFormatSpecifier: string;
+  priceFormatSpecifier: NumberFormatSpecifier;
   hasMultipleTpOrSlOrders: boolean;
   numTpSlOrders: number;
 }

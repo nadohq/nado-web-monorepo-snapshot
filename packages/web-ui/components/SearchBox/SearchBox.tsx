@@ -5,7 +5,7 @@ import {
   WithClassnames,
   WithRef,
 } from '@nadohq/web-common';
-import { SizeVariant } from '../..';
+import { SizeVariant } from '../../types';
 import { Button } from '../Button';
 import { Icons } from '../Icons';
 import { Input } from '../Input';
@@ -45,13 +45,13 @@ export function SearchBox({
   return (
     <div
       className={mergeClassNames(
-        'flex items-center gap-x-1 p-1.5',
+        'flex items-center gap-x-1 p-2',
         'bg-surface-2 rounded-md',
         className,
       )}
     >
       {!hideSearchIcon && (
-        <div className="flex items-center justify-center p-1">
+        <div className="flex items-center justify-center">
           <Icons.MagnifyingGlass className={iconClassNames} />
         </div>
       )}

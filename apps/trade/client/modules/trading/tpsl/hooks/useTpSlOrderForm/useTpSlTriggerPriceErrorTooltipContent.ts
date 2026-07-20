@@ -1,4 +1,4 @@
-import { formatNumber } from '@nadohq/react-client';
+import { formatNumber, NumberFormatSpecifier } from '@nadohq/react-client';
 import { TpSlOrderFormPriceState } from 'client/modules/trading/tpsl/hooks/useTpSlOrderForm/types';
 import { getTriggerReferencePriceTypeLabel } from 'client/modules/trading/utils/trigger/getTriggerReferencePriceTypeLabel';
 import { useMemo } from 'react';
@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 interface Params {
   state: TpSlOrderFormPriceState;
   isTakeProfit: boolean;
-  priceFormatSpecifier: string;
+  priceFormatSpecifier: NumberFormatSpecifier;
 }
 
 export function useTpSlTriggerPriceErrorTooltipContent({

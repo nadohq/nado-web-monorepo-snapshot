@@ -1,6 +1,5 @@
 import {
   formatNumber,
-  getMarketPriceFormatSpecifier,
   PresetNumberFormatSpecifier,
 } from '@nadohq/react-client';
 import { TextButton } from '@nadohq/web-ui';
@@ -30,7 +29,7 @@ export function FavoriteTickerItem({ ticker }: Props) {
 
       <span>
         {formatNumber(ticker.currentPrice, {
-          formatSpecifier: getMarketPriceFormatSpecifier(ticker.priceIncrement),
+          formatSpecifier: ticker.priceFormatSpecifier,
         })}
       </span>
     </TextButton>

@@ -26,7 +26,7 @@ export function isUserDeniedError(err?: any): boolean {
   // Walletconnect throws something containing `User rejected the request`, Abstract GW throws `User rejected request`
   try {
     const errorString = safeStringify(err);
-    return !!errorString?.match(/user.*request/i)?.length;
+    return !!errorString?.match(/user rejected(?: the)? request/i)?.length;
   } catch (err) {
     console.debug('[isUserDeniedError] Failed to stringify error', err);
   }

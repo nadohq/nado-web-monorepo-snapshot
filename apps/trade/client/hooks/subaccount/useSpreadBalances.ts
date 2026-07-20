@@ -5,11 +5,13 @@ import {
   calcSpreadBasisAmount,
   calcSpreadHealthIncrease,
   InitialMaintMetrics,
+  toXStocksDisplayAmount,
 } from '@nadohq/react-client';
 import { nonNullFilter } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
 import { useQueryHealthGroups } from 'client/hooks/query/markets/useQueryHealthGroups';
 import { useQuerySubaccountSummary } from 'client/hooks/query/subaccount/subaccountSummary/useQuerySubaccountSummary';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { useMemo } from 'react';
 
 export interface SpreadBalanceItem {
@@ -22,6 +24,7 @@ export interface SpreadBalanceItem {
 export function useSpreadBalances() {
   const { data: healthGroups, isLoading: healthGroupsLoading } =
     useQueryHealthGroups();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
   const {
     data: summaryData,
     isError: summaryError,
@@ -53,7 +56,10 @@ export function useSpreadBalances() {
         );
 
         const basisAmount = calcSpreadBasisAmount(
-          spotBalance.amount,
+          toXStocksDisplayAmount(
+            spotBalance.amount,
+            getExchangeRate(spotBalance.productId),
+          ),
           perpBalance.amount,
         );
 
@@ -72,7 +78,7 @@ export function useSpreadBalances() {
         };
       })
       .filter(nonNullFilter);
-  }, [healthGroups, summaryData?.balances]);
+  }, [getExchangeRate, healthGroups, summaryData?.balances]);
 
   return {
     data: mappedData,

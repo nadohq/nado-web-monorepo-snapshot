@@ -24,7 +24,7 @@ export function useQueryNlpPools() {
       if (disabled) {
         throw new QueryDisabledError();
       }
-      return nadoClient.context.engineClient.getNlpPoolInfo();
+      return nadoClient.context.engineClient.getCachedNlpPoolInfo();
     },
     enabled: !disabled,
     // Although NLP positions, balances, and open orders can change quite frequently,

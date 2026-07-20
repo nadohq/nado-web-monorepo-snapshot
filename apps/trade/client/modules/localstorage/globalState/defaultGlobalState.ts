@@ -4,7 +4,7 @@ import { cloneDeep } from 'lodash';
 const DEFAULT_GLOBAL_STATE = Object.freeze<SavedGlobalState>({
   areCookiesAccepted: null,
   lastSelectedChainEnv: undefined,
-  betaGatingBypass: undefined,
+  activeWagmiProvider: 'privy',
 });
 
 /**
@@ -23,8 +23,9 @@ export function getGlobalStateWithDefaults(
     lastSelectedChainEnv:
       currentSaved?.lastSelectedChainEnv ??
       DEFAULT_GLOBAL_STATE.lastSelectedChainEnv,
-    betaGatingBypass:
-      currentSaved?.betaGatingBypass ?? DEFAULT_GLOBAL_STATE.betaGatingBypass,
+    activeWagmiProvider:
+      currentSaved?.activeWagmiProvider ??
+      DEFAULT_GLOBAL_STATE.activeWagmiProvider,
   };
 
   return cloneDeep(withDefaults);

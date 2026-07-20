@@ -20,7 +20,7 @@ interface Props {
   setShowOrderbookTotalInQuote: (value: boolean) => void;
   symbol: string | undefined;
   quoteSymbol: string | undefined;
-  priceIncrement: BigNumber | undefined;
+  roundedPriceIncrement: BigNumber | undefined;
 }
 
 function BaseOrderbookSettings({
@@ -33,7 +33,7 @@ function BaseOrderbookSettings({
   setShowOrderbookTotalInQuote,
   symbol,
   quoteSymbol,
-  priceIncrement,
+  roundedPriceIncrement,
 }: Props) {
   return (
     <div className="flex items-center justify-between px-3">
@@ -56,7 +56,7 @@ function BaseOrderbookSettings({
       </div>
       <div className="flex gap-x-3">
         <TickSpacingSelect
-          priceIncrement={priceIncrement}
+          roundedPriceIncrement={roundedPriceIncrement}
           currentTickSpacing={currentTickSpacing}
           tickSpacingMultiplier={tickSpacingMultiplier}
           setTickSpacingMultiplier={setTickSpacingMultiplier}

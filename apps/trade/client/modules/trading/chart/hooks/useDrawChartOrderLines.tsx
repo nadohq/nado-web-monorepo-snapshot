@@ -9,6 +9,8 @@ import {
   formatNumber,
   getMarketPriceFormatSpecifier,
   getMarketSizeFormatSpecifier,
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
 } from '@nadohq/react-client';
 import { nonNullFilter } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
@@ -35,6 +37,7 @@ import { getOrderTypeLabel } from 'client/modules/trading/utils/getOrderTypeLabe
 import { getIsTriggerPriceAbove } from 'client/modules/trading/utils/trigger/getIsTriggerPriceAbove';
 import { getPriceTriggerCriteria } from 'client/modules/trading/utils/trigger/getPriceTriggerCriteria';
 import { getTriggerOrderDisplayType } from 'client/modules/trading/utils/trigger/getTriggerOrderDisplayType';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import type { TFunction } from 'i18next';
 import { debounce } from 'lodash';
 import {
@@ -70,26 +73,34 @@ const MODIFY_DEBOUNCE_DELAY = 500;
 
 export function useDrawChartOrderLines({ tvWidget, loadedSymbolInfo }: Params) {
   const { t } = useTranslation();
-
-  const productId = loadedSymbolInfo?.productId;
-  const existingLinesByProductId = useRef<OrderLinesByProductId>(new Map());
+  const { dispatchNotification } = useNotificationManagerContext();
 
   const { enableTradingOrderLines } = useEnableTradingOrderLines();
 
   const { data: openEngineOrders } = useQuerySubaccountOpenEngineOrders();
   const { data: openTriggerOrders } = useQuerySubaccountOpenTriggerOrders();
+  const { data: marketsStaticData } = useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
+
+  const productId = loadedSymbolInfo?.marketData.productId;
+  const existingLinesByProductId = useRef<OrderLinesByProductId>(new Map());
+
+  // Serializes async draw runs onto a single FIFO chain. `createOrderLine` returns a
+  // Promise (TV Trading Platform v29+), so without serialization a second run can start
+  // before the previous run writes its result back to `existingLinesByProductId`,
+  // causing both runs to call `createOrderLine` for the same digest and leaving an
+  // orphan line on the chart.
+  const inFlightDrawRef = useRef<Promise<unknown> | null>(null);
 
   const { cancelOrdersWithNotification } =
     useExecuteCancelOrdersWithNotification();
   const { mutateAsync: modifyOrderAsync } = useExecuteModifyOrder();
 
-  const { dispatchNotification } = useNotificationManagerContext();
-
-  const { data: marketsStaticData } = useAllMarketsStaticData();
-
   // When TV Widget reloads, clear any cached lines as they are all removed
   useEffect(() => {
     existingLinesByProductId.current.clear();
+    // Reset the FIFO chain so new draws don't wait on a draw queued against the old widget.
+    inFlightDrawRef.current = null;
   }, [tvWidget]);
 
   // When a user disables showing order lines, remove all existing lines
@@ -109,14 +120,21 @@ export function useDrawChartOrderLines({ tvWidget, loadedSymbolInfo }: Params) {
       return [];
     }
 
+    const exchangeRate = getExchangeRate(productId);
+
     const mappedEngineOrders: OrderInfo[] =
       openEngineOrders?.[productId]?.map((engineOrder) => {
-        const { price, totalAmount, productId, digest } = engineOrder;
-
-        return {
+        const {
           price,
           totalAmount,
-          productId,
+          productId: orderProductId,
+          digest,
+        } = engineOrder;
+
+        return {
+          price: toXStocksDisplayPrice(price, exchangeRate),
+          totalAmount: toXStocksDisplayAmount(totalAmount, exchangeRate),
+          productId: orderProductId,
           digest,
           orderDisplayType: 'limit',
           orderAppendix: engineOrder.appendix,
@@ -138,8 +156,11 @@ export function useDrawChartOrderLines({ tvWidget, loadedSymbolInfo }: Params) {
           }
 
           return {
-            price: toBigNumber(priceTriggerCriteria.triggerPrice),
-            totalAmount: order.amount,
+            price: toXStocksDisplayPrice(
+              toBigNumber(priceTriggerCriteria.triggerPrice),
+              exchangeRate,
+            ),
+            totalAmount: toXStocksDisplayAmount(order.amount, exchangeRate),
             productId: order.productId,
             digest: order.digest,
             orderAppendix: order.appendix,
@@ -150,78 +171,99 @@ export function useDrawChartOrderLines({ tvWidget, loadedSymbolInfo }: Params) {
         .filter(nonNullFilter) ?? [];
 
     return [...mappedEngineOrders, ...mappedTriggerOrders];
-  }, [enableTradingOrderLines, openEngineOrders, openTriggerOrders, productId]);
+  }, [
+    enableTradingOrderLines,
+    openEngineOrders,
+    openTriggerOrders,
+    productId,
+    getExchangeRate,
+  ]);
 
   // Upon moving a line, we show a dialog to the user about editing orders via the chart.
   // These values are used within `attachOrderLineActions` to show the dialog.
   const { show } = useDialog();
 
   return useCallback(() => {
-    const selectedProductId = loadedSymbolInfo?.productId;
+    const drawTask = async () => {
+      const selectedProductId = loadedSymbolInfo?.marketData.productId;
 
-    if (
-      !tvWidget ||
-      !selectedProductId ||
-      !marketsStaticData?.allMarkets[selectedProductId]
-    ) {
-      return;
-    }
-
-    const activeChart = tvWidget.activeChart();
-
-    const existingOrderLines: OrderLineByDigest =
-      existingLinesByProductId.current.get(selectedProductId) ?? new Map();
-
-    const newOrderLines: OrderLineByDigest = new Map();
-
-    // Draw lines for relevant orders if needed
-    ordersToDraw.forEach((relevantOrder: OrderInfo) => {
-      const { digest, price } = relevantOrder;
-
-      const existingLine = existingOrderLines.get(digest);
-      if (existingLine) {
-        // Replace the line if it already exists, note that we don't need to
-        // update the line, because orders cannot be modified after they are placed (they can only be cancelled and re-placed)
-        newOrderLines.set(digest, existingLine);
-      } else {
-        // Create a new line if it doesn't exist
-        console.debug(
-          '[useDrawChartOrderLines]: Creating order line:',
-          digest,
-          price.toNumber(),
-        );
-
-        // Create the TV orderline and add it to the map
-        const line = createOrderLine(
-          t,
-          activeChart,
-          relevantOrder,
-          marketsStaticData?.allMarkets[selectedProductId],
-        );
-
-        attachOrderLineActions({
-          t,
-          line,
-          relevantOrder,
-          modifyOrderAsync,
-          cancelOrdersWithNotification,
-          show,
-          dispatchNotification,
-        });
-
-        newOrderLines.set(digest, line);
+      if (
+        !tvWidget ||
+        !selectedProductId ||
+        !marketsStaticData?.allMarkets[selectedProductId]
+      ) {
+        return;
       }
-    });
 
-    // Remove lines no longer relevant ie) those in existingOrderLines but not in newOrderLines
-    existingOrderLines.forEach((line, digest) => {
-      if (!newOrderLines.has(digest)) {
-        console.debug('[useDrawChartOrderLines]: Removing order line:', digest);
-        line.remove();
+      const activeChart = tvWidget.activeChart();
+
+      const existingOrderLines: OrderLineByDigest =
+        existingLinesByProductId.current.get(selectedProductId) ?? new Map();
+
+      const newOrderLines: OrderLineByDigest = new Map();
+
+      // Draw lines for relevant orders if needed
+      for (const relevantOrder of ordersToDraw) {
+        const { digest, price } = relevantOrder;
+
+        const existingLine = existingOrderLines.get(digest);
+        if (existingLine) {
+          // Replace the line if it already exists, note that we don't need to
+          // update the line, because orders cannot be modified after they are placed (they can only be cancelled and re-placed)
+          newOrderLines.set(digest, existingLine);
+        } else {
+          // Create a new line if it doesn't exist
+          console.debug(
+            '[useDrawChartOrderLines]: Creating order line:',
+            digest,
+            price.toNumber(),
+          );
+
+          // createOrderLine returns a Promise in v29+
+          const line = await createOrderLine(
+            t,
+            activeChart,
+            relevantOrder,
+            marketsStaticData?.allMarkets[selectedProductId],
+            loadedSymbolInfo.exchangeRate,
+          );
+
+          attachOrderLineActions({
+            t,
+            line,
+            relevantOrder,
+            modifyOrderAsync,
+            cancelOrdersWithNotification,
+            show,
+            dispatchNotification,
+          });
+
+          newOrderLines.set(digest, line);
+        }
       }
-    });
 
-    existingLinesByProductId.current.set(selectedProductId, newOrderLines);
+      // Remove lines no longer relevant ie) those in existingOrderLines but not in newOrderLines
+      existingOrderLines.forEach((line, digest) => {
+        if (!newOrderLines.has(digest)) {
+          console.debug(
+            '[useDrawChartOrderLines]: Removing order line:',
+            digest,
+          );
+          line.remove();
+        }
+      });
+
+      existingLinesByProductId.current.set(selectedProductId, newOrderLines);
+    };
+
+    // Chain this draw onto the in-flight FIFO queue so concurrent calls run sequentially.
+    // The stored ref is always the `.catch()`-masked version (or `null` when the chain
+    // is fresh), so it can only fulfill — no need to handle rejection in `then`.
+    const queued = (inFlightDrawRef.current ?? Promise.resolve()).then(
+      drawTask,
+    );
+    inFlightDrawRef.current = queued.catch(() => undefined);
+    return queued;
   }, [
     cancelOrdersWithNotification,
     modifyOrderAsync,
@@ -235,12 +277,13 @@ export function useDrawChartOrderLines({ tvWidget, loadedSymbolInfo }: Params) {
   ]);
 }
 
-function createOrderLine(
+async function createOrderLine(
   t: TFunction,
   activeChart: IChartWidgetApi,
   order: OrderInfo,
   market: StaticMarketData,
-): IOrderLineAdapter {
+  exchangeRate: BigNumber,
+): Promise<IOrderLineAdapter> {
   const { orderAppendix, priceTriggerCriteria, totalAmount } = order;
   const decimalAdjustedAmount = removeDecimals(totalAmount);
 
@@ -248,9 +291,8 @@ function createOrderLine(
 
   const isLongOrder = totalAmount.gte(0);
 
-  const price = order.priceTriggerCriteria
-    ? toBigNumber(order.priceTriggerCriteria.triggerPrice).toNumber()
-    : order.price.toNumber();
+  // This is correctly the trigger price for trigger orders
+  const price = order.price.toNumber();
 
   /**
    * Unlike the font fns which accept CSS variables, we need to use the actual color values here.
@@ -269,6 +311,7 @@ function createOrderLine(
     : formatNumber(decimalAdjustedAmount.abs(), {
         formatSpecifier: getMarketSizeFormatSpecifier({
           sizeIncrement: market.sizeIncrement,
+          exchangeRate,
         }),
       });
 
@@ -295,13 +338,15 @@ function createOrderLine(
   const contentText = `${orderTypeLabel} (${marginTypeLabel}) ${comparatorSymbolContent}${formatNumber(
     price,
     {
-      formatSpecifier: getMarketPriceFormatSpecifier(market.priceIncrement),
+      formatSpecifier: getMarketPriceFormatSpecifier({
+        priceIncrement: market.priceIncrement,
+        exchangeRate,
+      }),
     },
   )}`;
 
   return (
-    activeChart
-      .createOrderLine()
+    (await activeChart.createOrderLine())
       .setPrice(price)
       // Distance from right side of chart to the limit order box, in % units
       .setLineLength(80)

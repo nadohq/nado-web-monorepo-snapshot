@@ -4,6 +4,7 @@ import {
   FundingRates,
   getFundingRates,
   getMarketPriceFormatSpecifier,
+  NumberFormatSpecifier,
   PerpProductMetadata,
   useNadoMetadataContext,
 } from '@nadohq/react-client';
@@ -20,8 +21,8 @@ import { usePerpOrderFormContext } from 'client/pages/PerpTrading/context/PerpOr
 import { useMemo } from 'react';
 
 export interface PerpMarketInfo {
-  priceFormatSpecifier: string;
-  signedPriceFormatSpecifier: string;
+  priceFormatSpecifier: NumberFormatSpecifier;
+  signedPriceFormatSpecifier: NumberFormatSpecifier;
   oraclePrice: BigNumber;
   indexPrice: BigNumber | undefined;
   marketPrice: BigNumber | undefined;
@@ -70,13 +71,15 @@ export function usePerpMarketInfoCards(): UsePerpMarketInfoCards {
     const indexPrice = latestPerpPricesData?.[productId]?.indexPrice;
 
     return {
-      priceFormatSpecifier: getMarketPriceFormatSpecifier(
-        perpMarket.priceIncrement,
-      ),
-      signedPriceFormatSpecifier: getMarketPriceFormatSpecifier(
-        perpMarket.priceIncrement,
-        true,
-      ),
+      priceFormatSpecifier: getMarketPriceFormatSpecifier({
+        priceIncrement: perpMarket.priceIncrement,
+        exchangeRate: undefined,
+      }),
+      signedPriceFormatSpecifier: getMarketPriceFormatSpecifier({
+        priceIncrement: perpMarket.priceIncrement,
+        isSigned: true,
+        exchangeRate: undefined,
+      }),
       fundingRates: dailyFundingRate
         ? getFundingRates(dailyFundingRate)
         : undefined,

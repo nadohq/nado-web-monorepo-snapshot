@@ -1,3 +1,4 @@
+import { useEVMContext } from '@nadohq/react-client';
 import { ButtonHelperInfo, LinkButton } from '@nadohq/web-ui';
 import { ActionSummary } from 'client/components/ActionSummary';
 import { EnableBorrowsSwitch } from 'client/components/EnableBorrowsSwitch';
@@ -12,6 +13,7 @@ import { DelayedWithdrawalWarning } from 'client/modules/collateral/components/D
 import { SlowMode1CTSetupPrompt } from 'client/modules/collateral/components/SlowMode1CTSetupPrompt';
 import { BorrowingFundsDismissible } from 'client/modules/collateral/withdraw/components/BorrowingFundsDismissible';
 import { WithdrawButton } from 'client/modules/collateral/withdraw/components/WithdrawButton';
+import { WithdrawDestinationDisclosure } from 'client/modules/collateral/withdraw/components/WithdrawDestinationDisclosure';
 import { WithdrawInputSummary } from 'client/modules/collateral/withdraw/components/WithdrawInputSummary';
 import { WithdrawSummaryDisclosure } from 'client/modules/collateral/withdraw/components/WithdrawSummaryDisclosure';
 import { useWithdrawAmountErrorTooltipContent } from 'client/modules/collateral/withdraw/hooks/useWithdrawAmountErrorTooltipContent';
@@ -34,7 +36,10 @@ export function WithdrawDialog({
   const { hide } = useDialog();
   const pushHistoryPage = usePushHistoryPage();
   const {
-    formError,
+    primaryChain,
+    connectionStatus: { address },
+  } = useEVMContext();
+  const {
     suggestBorrowing,
     showGasWarning,
     showOneClickTradingPrompt,
@@ -48,13 +53,14 @@ export function WithdrawDialog({
     enableBorrows,
     onEnableBorrowsChange,
     validateAmount,
+    validateWithdrawAddress,
     onFractionSelected,
     onMaxAmountSelected,
     onSubmit,
   } = useWithdrawForm({ defaultEnableBorrows, initialProductId });
 
   const amountErrorTooltipContent = useWithdrawAmountErrorTooltipContent({
-    formError,
+    form,
     suggestBorrowing,
   });
 
@@ -103,6 +109,14 @@ export function WithdrawDialog({
           </div>
           <FractionAmountButtons onFractionSelected={onFractionSelected} />
           {showGasWarning && <DelayedWithdrawalWarning />}
+          {address && (
+            <WithdrawDestinationDisclosure
+              form={form}
+              address={address}
+              chainName={primaryChain.name}
+              validateWithdrawAddress={validateWithdrawAddress}
+            />
+          )}
           <ButtonHelperInfo.Container>
             <ActionSummary.Container>
               <WithdrawSummaryDisclosure

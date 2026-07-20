@@ -88,7 +88,7 @@ export function AddSubaccountDialog() {
           <PrimaryButton
             onClick={() => {
               handleSubmit();
-              show({ type: 'deposit_options', params: {} });
+              show({ type: 'deposit_entrypoint', params: {} });
             }}
           >
             {t(($) => $.buttons.depositFunds)}

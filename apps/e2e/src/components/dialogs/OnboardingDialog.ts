@@ -7,23 +7,15 @@ import { BaseDialog } from 'src/components/dialogs/BaseDialog';
  */
 export class OnboardingDialog extends BaseDialog {
   readonly agreeToTermsButton: Locator;
-  readonly startTradingButton: Locator;
 
   constructor(page: Page) {
     super(page);
     this.agreeToTermsButton = this.container.getByTestId(
       'terms-of-use-dialog-agree-to-terms-button',
     );
-    this.startTradingButton = this.container.getByTestId(
-      'key-features-dialog-start-trading-button',
-    );
   }
 
   async agreeToTerms(): Promise<void> {
     await this.agreeToTermsButton.click();
-  }
-
-  async startTrading(): Promise<void> {
-    await this.startTradingButton.click();
   }
 }

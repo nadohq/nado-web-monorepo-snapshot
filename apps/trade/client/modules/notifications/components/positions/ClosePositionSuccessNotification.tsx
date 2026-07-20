@@ -33,6 +33,7 @@ export function ClosePositionSuccessNotification({
     formatSpecifier: getMarketSizeFormatSpecifier({
       sizeIncrement: metadata.sizeIncrement,
       shouldRemoveDecimals: false,
+      exchangeRate: undefined,
     }),
   });
 

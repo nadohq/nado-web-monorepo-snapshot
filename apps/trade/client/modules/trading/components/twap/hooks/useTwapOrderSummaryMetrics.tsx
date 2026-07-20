@@ -28,6 +28,7 @@ interface Params {
   baseSymbol: string | undefined;
   validAssetAmount: BigNumber | undefined;
   roundAssetAmount: RoundAmountFn;
+  exchangeRate: BigNumber | undefined;
 }
 
 export function useTwapOrderSummaryMetrics({
@@ -36,6 +37,7 @@ export function useTwapOrderSummaryMetrics({
   baseSymbol,
   validAssetAmount,
   roundAssetAmount,
+  exchangeRate,
 }: Params) {
   const { t } = useTranslation();
 
@@ -95,7 +97,10 @@ export function useTwapOrderSummaryMetrics({
       {
         label: t(($) => $.totalSize),
         value: totalAmount,
-        numberFormatSpecifier: getMarketSizeFormatSpecifier({ sizeIncrement }),
+        numberFormatSpecifier: getMarketSizeFormatSpecifier({
+          sizeIncrement,
+          exchangeRate,
+        }),
         tooltip: { id: 'tradingOrderTwapTotalSize' },
         valueEndElement: baseSymbol,
       },
@@ -118,6 +123,7 @@ export function useTwapOrderSummaryMetrics({
             {formatNumber(assetAmountPerSuborder, {
               formatSpecifier: getMarketSizeFormatSpecifier({
                 sizeIncrement,
+                exchangeRate,
               }),
             })}
           </>
@@ -134,7 +140,8 @@ export function useTwapOrderSummaryMetrics({
     roundAssetAmount,
     isRandomOrder,
     sizeIncrement,
-    baseSymbol,
     t,
+    exchangeRate,
+    baseSymbol,
   ]);
 }

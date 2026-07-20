@@ -87,8 +87,9 @@ export function useExecuteCloseAllPositions({
       const orders = positionsToClose
         .map((position) => {
           const price = getMarketOrderExecutionPrice({
-            // Closing a position will be opposite sign of existing position size
-            isSell: position.amount.isPositive(),
+            // Closing a position is the opposite side of the existing
+            // position: short position closes via buy, long via sell.
+            isBuy: position.amount.isNegative(),
             latestMarketPrices: latestMarketPrices?.[position.productId],
             marketSlippageFraction,
           });

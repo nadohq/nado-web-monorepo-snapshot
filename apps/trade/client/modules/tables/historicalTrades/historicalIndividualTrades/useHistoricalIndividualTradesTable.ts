@@ -5,8 +5,13 @@ import {
   removeDecimals,
   toBigNumber,
 } from '@nadohq/client';
-import { calcOrderFillPrice } from '@nadohq/react-client';
+import {
+  calcOrderFillPrice,
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
 import { nonNullFilter } from '@nadohq/web-common';
+import { BigNumber } from 'bignumber.js';
 import { useDataTablePaginatedQuery } from 'client/components/DataTable/hooks/useDataTablePaginatedQuery';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { AllMarketsStaticDataForChainEnv } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
@@ -16,6 +21,7 @@ import { calcHistoricalIsoLeverage } from 'client/modules/tables/utils/calcHisto
 import { calcRealizedPnlInfo } from 'client/modules/tables/utils/calcRealizedPnlInfo';
 import { getOrderTableItem } from 'client/modules/tables/utils/getOrderTableItem';
 import { getProductTableItem } from 'client/modules/tables/utils/getProductTableItem';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { createRowId } from 'client/utils/createRowId';
 import { secondsToMilliseconds } from 'date-fns';
 import { useMemo } from 'react';
@@ -34,6 +40,7 @@ export function useHistoricalIndividualTradesTable({
   productIds,
 }: Params) {
   const { data: allMarketsStaticData } = useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const {
     currentPageData,
@@ -67,10 +74,11 @@ export function useHistoricalIndividualTradesTable({
         return getHistoricalIndividualTradesTableItem({
           event,
           allMarketsStaticData,
+          exchangeRate: getExchangeRate(event.productId),
         });
       })
       .filter(nonNullFilter);
-  }, [allMarketsStaticData, currentPageData]);
+  }, [allMarketsStaticData, currentPageData, getExchangeRate]);
 
   return {
     isLoading: historicalOrdersLoading || isFetchingCurrPage,
@@ -82,17 +90,20 @@ export function useHistoricalIndividualTradesTable({
 interface GetHistoricalTradesTableItemParams {
   event: IndexerMatchEvent;
   allMarketsStaticData: AllMarketsStaticDataForChainEnv;
+  exchangeRate: BigNumber;
 }
 
 export function getHistoricalIndividualTradesTableItem({
   event,
   allMarketsStaticData,
+  exchangeRate,
 }: GetHistoricalTradesTableItemParams): HistoricalTradesTableItem {
   const { productId, quoteFilled, baseFilled, totalFee, closedAmount } = event;
 
   const productTableItem = getProductTableItem({
     productId,
     allMarketsStaticData,
+    exchangeRate,
   });
 
   const preBase = event.preBalances.base;
@@ -105,7 +116,10 @@ export function getHistoricalIndividualTradesTableItem({
   const decimalAdjustedQuoteAmount = removeDecimals(toBigNumber(quoteFilled));
   const decimalAdjustedFilledAmount = removeDecimals(toBigNumber(baseFilled));
 
-  const orderTableItem = getOrderTableItem({ indexerMatchEvent: event });
+  const orderTableItem = getOrderTableItem({
+    indexerMatchEvent: event,
+    exchangeRate,
+  });
 
   const fillPrice = calcOrderFillPrice(
     decimalAdjustedQuoteAmount,
@@ -133,11 +147,14 @@ export function getHistoricalIndividualTradesTableItem({
 
   // preBalances.base.amount is the signed position size before the trade.
   const preClosePositionAmount = hasClosedPosition
-    ? decimalAdjustedPreBaseAmount
+    ? toXStocksDisplayAmount(decimalAdjustedPreBaseAmount, exchangeRate)
     : undefined;
 
   const averageEntryPrice = hasClosedPosition
-    ? decimalAdjustedClosedNetEntry.div(decimalAdjustedClosedSize).abs()
+    ? toXStocksDisplayPrice(
+        decimalAdjustedClosedNetEntry.div(decimalAdjustedClosedSize).abs(),
+        exchangeRate,
+      )
     : undefined;
 
   return {
@@ -146,12 +163,17 @@ export function getHistoricalIndividualTradesTableItem({
     rowId: createRowId(event.submissionIndex, productId, orderTableItem.digest),
     submissionIndex: event.submissionIndex,
     timeFilledMillis: secondsToMilliseconds(event.timestamp.toNumber()),
-    filledPrice: fillPrice,
-    filledBaseSize: decimalAdjustedFilledAmount.abs(),
+    filledPrice: toXStocksDisplayPrice(fillPrice, exchangeRate),
+    filledBaseSize: toXStocksDisplayAmount(
+      decimalAdjustedFilledAmount.abs(),
+      exchangeRate,
+    ),
     filledQuoteSize: decimalAdjustedQuoteAmount.abs(),
     tradeFeeQuote: decimalAdjustedTotalFee,
     marginModeType: orderTableItem.isIsolated ? 'isolated' : 'cross',
-    closedBaseSize: hasClosedPosition ? decimalAdjustedClosedSize : undefined,
+    closedBaseSize: hasClosedPosition
+      ? toXStocksDisplayAmount(decimalAdjustedClosedSize, exchangeRate)
+      : undefined,
     preClosePositionAmount,
     averageEntryPrice,
     isoLeverage,

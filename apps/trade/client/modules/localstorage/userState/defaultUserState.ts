@@ -2,7 +2,11 @@ import { SavedUserState } from 'client/modules/localstorage/userState/types/Save
 import { userStateSchema } from 'client/modules/localstorage/userState/userStateSchema';
 import { validateOrReset } from 'client/modules/localstorage/utils/zodValidators';
 import { DEFAULT_ORDER_SLIPPAGE } from 'client/modules/trading/consts/defaultOrderSlippage';
-import { cloneDeep } from 'lodash';
+import {
+  DEFAULT_DESKTOP_TRADING_GRID_LAYOUT,
+  DEFAULT_TABLET_TRADING_GRID_LAYOUT,
+} from 'client/modules/trading/layout/consts';
+import { cloneDeep, isEqual } from 'lodash';
 
 const DEFAULT_USER_STATE: SavedUserState = Object.freeze<SavedUserState>({
   onboardingComplete: false,
@@ -13,15 +17,11 @@ const DEFAULT_USER_STATE: SavedUserState = Object.freeze<SavedUserState>({
   },
   fundingRatePeriod: '1h',
   notificationPosition: 'right',
-  privacy: {
-    areAccountValuesPrivate: false,
-    isAddressPrivate: false,
-  },
+  isPrivacyModeEnabled: false,
   profileBySubaccountKey: {},
   selectedSubaccountNameByChainEnv: {},
   signingPreferenceBySubaccountKey: {},
   trading: {
-    consolePosition: 'right',
     favoriteMarketIds: [],
     leverageByProductId: {},
     marginMode: {
@@ -36,12 +36,18 @@ const DEFAULT_USER_STATE: SavedUserState = Object.freeze<SavedUserState>({
       takeProfit: 'last_price',
       stopLoss: 'oracle_price',
     },
+    tpSlGainOrLossInputType: {
+      takeProfit: 'percentage',
+      stopLoss: 'percentage',
+    },
     enableTradingNotifications: true,
     enableTradingOrderLines: true,
     enableTradingPositionLines: true,
     enableTradingOrderbookAnimations: true,
     enableChartMarks: true,
     enableQuickMarketClose: false,
+    enableClassicDepositUi: false,
+    enableCrossMarginForIsoOnlyMarkets: false,
     tradingTableTabFilters: {
       showAllMarkets: true,
       hideSmallBalances: false,
@@ -51,6 +57,10 @@ const DEFAULT_USER_STATE: SavedUserState = Object.freeze<SavedUserState>({
     lastSelectedEngineOrderType: 'market',
     lastSelectedSizeDenom: 'asset',
     lastSelectedSide: 'long',
+    gridLayout: {
+      desktop: DEFAULT_DESKTOP_TRADING_GRID_LAYOUT,
+      tablet: DEFAULT_TABLET_TRADING_GRID_LAYOUT,
+    },
   },
   tables: {
     perpPositions: {
@@ -59,6 +69,18 @@ const DEFAULT_USER_STATE: SavedUserState = Object.freeze<SavedUserState>({
     },
   },
 });
+
+function isLegacyDefaultDesktopGridLayout(
+  desktopGridLayout: SavedUserState['trading']['gridLayout']['desktop'],
+) {
+  return isEqual(desktopGridLayout, {
+    chart: { x: 0, y: 0, w: 16, h: 25 },
+    'market-data': { x: 16, y: 0, w: 4, h: 25 },
+    'order-placement': { x: 20, y: 0, w: 4, h: 25 },
+    'trading-table': { x: 0, y: 25, w: 20, h: 18 },
+    'account-info': { x: 20, y: 25, w: 4, h: 18 },
+  });
+}
 
 /**
  * Validates each field of a partial user state against its schema, falling back to defaults
@@ -69,8 +91,13 @@ export function getUserStateWithDefaults(
   currentSaved: Partial<SavedUserState> | undefined,
 ): SavedUserState {
   const tutorialSchema = userStateSchema.shape.tutorial;
-  const privacySchema = userStateSchema.shape.privacy;
   const tradingSchema = userStateSchema.shape.trading;
+  const gridLayoutSchema = tradingSchema.shape.gridLayout;
+  const desktopGridLayout = validateOrReset(
+    currentSaved?.trading?.gridLayout?.desktop,
+    DEFAULT_USER_STATE.trading.gridLayout.desktop,
+    gridLayoutSchema.shape.desktop,
+  );
 
   const withDefaults: SavedUserState = {
     onboardingComplete: validateOrReset(
@@ -105,18 +132,11 @@ export function getUserStateWithDefaults(
       DEFAULT_USER_STATE.notificationPosition,
       userStateSchema.shape.notificationPosition,
     ),
-    privacy: {
-      areAccountValuesPrivate: validateOrReset(
-        currentSaved?.privacy?.areAccountValuesPrivate,
-        DEFAULT_USER_STATE.privacy.areAccountValuesPrivate,
-        privacySchema.shape.areAccountValuesPrivate,
-      ),
-      isAddressPrivate: validateOrReset(
-        currentSaved?.privacy?.isAddressPrivate,
-        DEFAULT_USER_STATE.privacy.isAddressPrivate,
-        privacySchema.shape.isAddressPrivate,
-      ),
-    },
+    isPrivacyModeEnabled: validateOrReset(
+      currentSaved?.isPrivacyModeEnabled,
+      DEFAULT_USER_STATE.isPrivacyModeEnabled,
+      userStateSchema.shape.isPrivacyModeEnabled,
+    ),
     profileBySubaccountKey: validateOrReset(
       currentSaved?.profileBySubaccountKey,
       DEFAULT_USER_STATE.profileBySubaccountKey,
@@ -133,11 +153,6 @@ export function getUserStateWithDefaults(
       userStateSchema.shape.signingPreferenceBySubaccountKey,
     ),
     trading: {
-      consolePosition: validateOrReset(
-        currentSaved?.trading?.consolePosition,
-        DEFAULT_USER_STATE.trading.consolePosition,
-        tradingSchema.shape.consolePosition,
-      ),
       favoriteMarketIds: validateOrReset(
         currentSaved?.trading?.favoriteMarketIds,
         DEFAULT_USER_STATE.trading.favoriteMarketIds,
@@ -178,6 +193,11 @@ export function getUserStateWithDefaults(
         DEFAULT_USER_STATE.trading.tpSlTriggerPriceType,
         tradingSchema.shape.tpSlTriggerPriceType,
       ),
+      tpSlGainOrLossInputType: validateOrReset(
+        currentSaved?.trading?.tpSlGainOrLossInputType,
+        DEFAULT_USER_STATE.trading.tpSlGainOrLossInputType,
+        tradingSchema.shape.tpSlGainOrLossInputType,
+      ),
       enableTradingNotifications: validateOrReset(
         currentSaved?.trading?.enableTradingNotifications,
         DEFAULT_USER_STATE.trading.enableTradingNotifications,
@@ -207,6 +227,16 @@ export function getUserStateWithDefaults(
         currentSaved?.trading?.enableQuickMarketClose,
         DEFAULT_USER_STATE.trading.enableQuickMarketClose,
         tradingSchema.shape.enableQuickMarketClose,
+      ),
+      enableClassicDepositUi: validateOrReset(
+        currentSaved?.trading?.enableClassicDepositUi,
+        DEFAULT_USER_STATE.trading.enableClassicDepositUi,
+        tradingSchema.shape.enableClassicDepositUi,
+      ),
+      enableCrossMarginForIsoOnlyMarkets: validateOrReset(
+        currentSaved?.trading?.enableCrossMarginForIsoOnlyMarkets,
+        DEFAULT_USER_STATE.trading.enableCrossMarginForIsoOnlyMarkets,
+        tradingSchema.shape.enableCrossMarginForIsoOnlyMarkets,
       ),
       tradingTableTabFilters: validateOrReset(
         currentSaved?.trading?.tradingTableTabFilters,
@@ -238,6 +268,17 @@ export function getUserStateWithDefaults(
         DEFAULT_USER_STATE.trading.lastSelectedSide,
         tradingSchema.shape.lastSelectedSide,
       ),
+      gridLayout: {
+        // Temporary migration for the desktop width change
+        desktop: isLegacyDefaultDesktopGridLayout(desktopGridLayout)
+          ? DEFAULT_USER_STATE.trading.gridLayout.desktop
+          : desktopGridLayout,
+        tablet: validateOrReset(
+          currentSaved?.trading?.gridLayout?.tablet,
+          DEFAULT_USER_STATE.trading.gridLayout.tablet,
+          gridLayoutSchema.shape.tablet,
+        ),
+      },
     },
     tables: validateOrReset(
       currentSaved?.tables,

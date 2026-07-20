@@ -1,3 +1,4 @@
+import { useAnalyticsContext } from 'client/modules/analytics/AnalyticsContext';
 import { DialogParams } from 'client/modules/app/dialogs/types';
 import { useAtom } from 'jotai';
 import { atomWithReset, useResetAtom } from 'jotai/utils';
@@ -28,12 +29,14 @@ export interface UseDialog {
 export function useDialog(): UseDialog {
   const [dialogHead, setDialogHead] = useAtom(dialogAtom);
   const hide = useResetAtom(dialogAtom);
+  const { sendGTMEvent } = useAnalyticsContext();
 
   const show = useCallback(
     (newDialog: DialogParams) => {
       setDialogHead({ currentDialog: newDialog, prevDialogNode: null });
+      sendGTMEvent({ event: 'dialog_opened', dialogType: newDialog.type });
     },
-    [setDialogHead],
+    [setDialogHead, sendGTMEvent],
   );
 
   const push = useCallback(
@@ -42,8 +45,9 @@ export function useDialog(): UseDialog {
         currentDialog: newDialog,
         prevDialogNode: currentDialogNode,
       }));
+      sendGTMEvent({ event: 'dialog_opened', dialogType: newDialog.type });
     },
-    [setDialogHead],
+    [setDialogHead, sendGTMEvent],
   );
 
   const goBack = useCallback(() => {

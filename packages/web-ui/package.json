@@ -22,7 +22,6 @@
     "@radix-ui/react-switch": "1.2.6",
     "@nadohq/web-common": "workspace:*",
     "ahooks": "catalog:",
-    "date-fns": "catalog:",
     "motion": "catalog:",
     "react-merge-refs": "3.0.2",
     "react-popper-tooltip": "catalog:",

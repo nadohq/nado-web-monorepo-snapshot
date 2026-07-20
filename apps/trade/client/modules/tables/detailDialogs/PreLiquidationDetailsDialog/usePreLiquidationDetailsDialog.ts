@@ -3,6 +3,9 @@ import {
   getHealthWeights,
   getMarketPriceFormatSpecifier,
   getMarketSizeFormatSpecifier,
+  NumberFormatSpecifier,
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
 } from '@nadohq/react-client';
 import { NextImageSrc } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
@@ -15,6 +18,7 @@ import {
 import { useQuerySubaccountIndexerSnapshotsAtTimes } from 'client/hooks/query/subaccount/useQuerySubaccountIndexerSnapshotsAtTimes';
 import { MarginModeType } from 'client/modules/localstorage/userState/types/tradingSettings';
 import { PreLiquidationDetailsDialogParams } from 'client/modules/tables/detailDialogs/PreLiquidationDetailsDialog/types';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { getSharedProductMetadata } from 'client/utils/getSharedProductMetadata';
 import { millisecondsToSeconds } from 'date-fns';
 import { first } from 'lodash';
@@ -28,7 +32,7 @@ interface PreLiquidationBalance {
   symbol: string;
   balanceAmount: BigNumber;
   oraclePrice: BigNumber;
-  priceFormatSpecifier: string;
+  priceFormatSpecifier: NumberFormatSpecifier;
   marginModeType: MarginModeType;
   maintenanceWeight: BigNumber;
 }
@@ -40,7 +44,7 @@ interface PreLiquidationSpotBalance extends PreLiquidationBalance {
 
 interface PreLiquidationPerpBalance extends PreLiquidationBalance {
   vQuoteBalance: BigNumber;
-  sizeFormatSpecifier: string;
+  sizeFormatSpecifier: NumberFormatSpecifier;
 }
 
 interface UsePreLiquidationDetailsDialog {
@@ -71,6 +75,8 @@ export function usePreLiquidationDetailsDialog({
   } = useQuerySubaccountIndexerSnapshotsAtTimes([snapshotTimestamp]);
   const snapshot = first(snapshots);
 
+  const { getExchangeRate } = useGetXStocksExchangeRate();
+
   const balances = useMemo((): Pick<
     UsePreLiquidationDetailsDialog,
     'spotBalances' | 'perpBalances'
@@ -97,11 +103,20 @@ export function usePreLiquidationDetailsDialog({
       }
 
       const marketMetadata = getSharedProductMetadata(marketData.metadata);
-      const balanceAmount = removeDecimals(state.postBalance.amount);
-      const oraclePrice = state.market.product.oraclePrice;
-      const priceFormatSpecifier = getMarketPriceFormatSpecifier(
-        marketData.priceIncrement,
+      const exchangeRate = getExchangeRate(productId);
+
+      const balanceAmount = toXStocksDisplayAmount(
+        removeDecimals(state.postBalance.amount),
+        exchangeRate,
       );
+      const oraclePrice = toXStocksDisplayPrice(
+        state.market.product.oraclePrice,
+        exchangeRate,
+      );
+      const priceFormatSpecifier = getMarketPriceFormatSpecifier({
+        priceIncrement: marketData.priceIncrement,
+        exchangeRate,
+      });
 
       if (balanceAmount.isZero() && state.postBalance.amount.isZero()) {
         return;
@@ -141,6 +156,7 @@ export function usePreLiquidationDetailsDialog({
           vQuoteBalance: removeDecimals(state.postBalance.vQuoteBalance),
           sizeFormatSpecifier: getMarketSizeFormatSpecifier({
             sizeIncrement: marketData.sizeIncrement,
+            exchangeRate,
           }),
         });
       }
@@ -150,7 +166,7 @@ export function usePreLiquidationDetailsDialog({
       spotBalances,
       perpBalances,
     };
-  }, [allMarketsStaticData, snapshot]);
+  }, [allMarketsStaticData, snapshot, getExchangeRate]);
 
   const rawJsonData = useMemo(() => {
     if (!snapshots) return;

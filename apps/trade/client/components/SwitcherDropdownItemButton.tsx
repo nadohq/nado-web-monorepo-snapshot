@@ -1,7 +1,10 @@
 import { mergeClassNames } from '@nadohq/web-common';
-import { DropdownUi, DropdownUiItemProps } from '@nadohq/web-ui';
+import {
+  DropdownUi,
+  DropdownUiItemProps,
+  StatusIndicator,
+} from '@nadohq/web-ui';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import { StatusIndicator } from 'client/components/StatusIndicator';
 import { ReactNode } from 'react';
 
 type Props = DropdownUiItemProps & {

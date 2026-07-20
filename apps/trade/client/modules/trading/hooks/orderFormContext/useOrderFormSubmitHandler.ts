@@ -2,17 +2,14 @@ import {
   addDecimals,
   BigNumbers,
   EngineServerExecuteSuccessResult,
-  PriceTriggerRequirementType,
   ProductEngineType,
-  QUOTE_PRODUCT_ID,
-  sumBigNumberBy,
   toBigNumber,
   toPrintableObject,
   TriggerServerExecuteSuccessResult,
 } from '@nadohq/client';
 import {
   calcIsoOrderRequiredMargin,
-  calcMarketConversionPriceFromOraclePrice,
+  toXStocksDisplayPrice,
 } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import {
@@ -50,6 +47,9 @@ import {
   buildScaledOrders,
   BuildScaledOrdersIsoParams,
 } from 'client/modules/trading/utils/scaledOrderUtils';
+import { getOraclePriceTriggerType } from 'client/modules/trading/utils/trigger/getOraclePriceTriggerType';
+import { useGetIsXStocksProduct } from 'client/modules/xStocks/hooks/useGetIsXStocksProduct';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { first, merge } from 'lodash';
 import { RefObject, useCallback } from 'react';
 
@@ -106,6 +106,8 @@ export function useOrderFormSubmitHandler({
   roundAssetAmount,
 }: Params) {
   const { dispatchNotification } = useNotificationManagerContext();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
+  const getIsXStocksProduct = useGetIsXStocksProduct();
   const { data: latestOraclePrices } = useQueryLatestOraclePrices();
   const latestOraclePricesRef = useSyncedRef(latestOraclePrices);
   const {
@@ -124,6 +126,8 @@ export function useOrderFormSubmitHandler({
     (formValues: OrderFormValues) => {
       const executionConversionPrice = executionConversionPriceRef.current;
       const inputConversionPrice = inputConversionPriceRef.current;
+      const exchangeRate = getExchangeRate(currentMarket?.productId);
+      const isXStocksMarket = getIsXStocksProduct(currentMarket?.productId);
 
       if (
         !currentMarket ||
@@ -217,6 +221,7 @@ export function useOrderFormSubmitHandler({
         })();
 
       let mutationParams: ExecutePlaceOrderParams;
+
       const commonOrderParams: ExecutePlaceOrderCommonParams = {
         productId: currentMarket.productId,
         price: executionConversionPrice,
@@ -251,44 +256,30 @@ export function useOrderFormSubmitHandler({
 
             const triggerPrice = toBigNumber(formValues.triggerPrice);
 
-            // Avoid placing bad stop orders by deriving trigger condition from latest oracle prices
-            const baseOraclePrice =
-              latestOraclePricesRef.current?.[currentMarket.productId]
-                ?.oraclePrice;
-            const quoteOraclePrice =
-              quoteProductId === QUOTE_PRODUCT_ID
-                ? BigNumbers.ONE
-                : latestOraclePricesRef.current?.[quoteProductId]?.oraclePrice;
-
-            if (
-              !baseOraclePrice ||
-              !quoteOraclePrice ||
-              baseOraclePrice.isZero() ||
-              quoteOraclePrice.isZero()
-            ) {
+            // Backend trigger service uses oracle price to determine when to
+            // send the order to engine, so derive the same direction here
+            // (also shared with NadoBroker on the chart placement path).
+            // The helper handles xStocks conversion internally — oracle
+            // prices are raw (wQQQx) and the user-entered trigger price is
+            // display (QQQx).
+            const priceTriggerRequirementType = getOraclePriceTriggerType({
+              triggerPrice,
+              productId: currentMarket.productId,
+              quoteProductId,
+              latestOraclePrices: latestOraclePricesRef.current,
+              exchangeRate,
+            });
+            if (!priceTriggerRequirementType) {
               console.warn(
-                '[useOrderFormSubmitHandler] Skipping stop order placement, missing/invalid price data.',
+                '[useOrderFormSubmitHandler] Skipping stop order placement, missing/invalid oracle price data.',
                 toPrintableObject({
                   triggerPrice,
-                  baseOraclePrice,
-                  quoteOraclePrice,
+                  productId: currentMarket.productId,
+                  quoteProductId,
                 }),
               );
               return;
             }
-
-            const oracleConversionPrice =
-              calcMarketConversionPriceFromOraclePrice(
-                baseOraclePrice,
-                quoteOraclePrice,
-              );
-
-            // Backend trigger service uses oracle price to determine when to send orders to engine, so do the same check here
-            // If trigger > oracle, then we want the order to trigger when oracle rises above the trigger price, and vice versa
-            const priceTriggerRequirementType: PriceTriggerRequirementType =
-              triggerPrice.gt(oracleConversionPrice)
-                ? 'oracle_price_above'
-                : 'oracle_price_below';
 
             // Create a new const for IDE autocompletion
             const triggerParams: ExecutePlacePriceTriggerOrderParams = {
@@ -321,20 +312,22 @@ export function useOrderFormSubmitHandler({
 
             const amounts = getTwapOrderAmounts({
               numberOfOrders,
-              // We need to use orderAmountWithSign as roundAssetAmount only works with input amounts, not decimal adjusted amounts
+              // roundAssetAmount only works with input amounts (not amounts with decimals)
               orderAssetAmount: orderAmountWithSign,
               roundAssetAmount,
               randomnessFraction: isRandomOrder ? TWAP_RANDOMNESS_FRACTION : 0,
-              sizeIncrement: currentMarket.sizeIncrement,
+              // No size increment for x-stocks as rounding is done at submit-time
+              sizeIncrement: isXStocksMarket
+                ? undefined
+                : currentMarket.sizeIncrement,
             }).map((amt) => addDecimals(amt));
 
             const twapParams: ExecutePlaceTimeTriggerOrderParams = {
               orderType: formValues.orderType,
+              // NOTE: backend validates that the sum(amounts) is the order's total amount
+              // We do not need to make that adjustment here because `usePlaceOrderMutationFn` will handle this internally
               ...commonOrderParams,
-              // Use the sum of the rounded suborder amounts as the total.
-              // This ensures the total matches the actual suborders to avoid backend rejections.
-              amount: sumBigNumberBy(amounts, (amt) => amt),
-              // For TWAP orders, use an high price to ensure execution:
+              // For TWAP orders, use a high price to ensure execution:
               // - Long: set price very high (upper bound)
               // - Short: set price to 0 (lower bound)
               price:
@@ -378,7 +371,7 @@ export function useOrderFormSubmitHandler({
           const orders = buildScaledOrders({
             startPrice,
             endPrice,
-            // We need to use orderAmountWithSign as roundAssetAmount only works with input amounts, not decimal adjusted amounts
+            // roundAssetAmount only works with input amounts (not decimal-adjusted)
             orderAssetAmount: orderAmountWithSign,
             numberOfOrders,
             priceDistributionType,
@@ -476,6 +469,11 @@ export function useOrderFormSubmitHandler({
             marketName: currentMarket.metadata.marketName,
             priceIncrement: currentMarket.priceIncrement,
             sizeIncrement: currentMarket.sizeIncrement,
+            displayOraclePrice: toXStocksDisplayPrice(
+              latestOraclePricesRef.current?.[currentMarket.productId]
+                ?.oraclePrice,
+              exchangeRate,
+            ),
           },
           orderMarketType: currentMarket.type,
           orderType: formValues.orderType,
@@ -490,6 +488,8 @@ export function useOrderFormSubmitHandler({
       roundAssetAmount,
       mutateAsync,
       dispatchNotification,
+      getExchangeRate,
+      getIsXStocksProduct,
       spotLeverageEnabled,
       marginModeType,
       marginModeLeverage,

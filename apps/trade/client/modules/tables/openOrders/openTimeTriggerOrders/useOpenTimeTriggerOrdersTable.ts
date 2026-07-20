@@ -1,5 +1,9 @@
 import { removeDecimals, toBigNumber } from '@nadohq/client';
-import { calcOrderFillPrice } from '@nadohq/react-client';
+import {
+  calcOrderFillPrice,
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
 import { nonNullFilter } from '@nadohq/web-common';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { useFilteredProductIds } from 'client/hooks/markets/useFilteredProductIds';
@@ -11,6 +15,7 @@ import { calculateTwapRuntimeInMillis } from 'client/modules/trading/components/
 import { requireTimeTriggerCriteria } from 'client/modules/trading/utils/trigger/getTimeTriggerCriteria';
 import { getTriggerOrderDisplayType } from 'client/modules/trading/utils/trigger/getTriggerOrderDisplayType';
 import { getTriggerOrderStatusInfo } from 'client/modules/trading/utils/trigger/getTriggerOrderStatusInfo';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { QueryState } from 'client/types/QueryState';
 import { secondsToMilliseconds } from 'date-fns';
 import { useMemo } from 'react';
@@ -32,6 +37,7 @@ export function useOpenTimeTriggerOrdersTable({
   const { filteredProductIds, isLoading: marketsAreLoading } =
     useFilteredProductIds({ productIds });
   const { data: allMarketsStaticData } = useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
   const {
     isLoading: ordersAreLoading,
     isError: ordersIsError,
@@ -45,9 +51,11 @@ export function useOpenTimeTriggerOrdersTable({
 
     return filteredProductIds.flatMap((productId) => {
       const ordersForProduct = ordersData?.[productId];
+      const exchangeRate = getExchangeRate(productId);
       const productTableItem = getProductTableItem({
         productId,
         allMarketsStaticData,
+        exchangeRate,
       });
 
       if (!ordersForProduct?.length || !productTableItem) {
@@ -64,6 +72,7 @@ export function useOpenTimeTriggerOrdersTable({
 
           const orderTableItem = getOrderTableItem({
             triggerOrderInfo: openTriggerOrder,
+            exchangeRate,
           });
 
           // Only allow time trigger orders
@@ -75,17 +84,23 @@ export function useOpenTimeTriggerOrdersTable({
           const totalAmount = openTriggerOrder.order.amount;
           const decimalAdjustedTotalAmount = removeDecimals(totalAmount);
 
-          const filledAvgPrice = triggeredEngineOrder
-            ? calcOrderFillPrice(
-                triggeredEngineOrder.quoteFilled,
-                triggeredEngineOrder.totalFee,
-                triggeredEngineOrder.baseFilled,
-              )
-            : undefined;
+          const filledAvgPrice = toXStocksDisplayPrice(
+            triggeredEngineOrder
+              ? calcOrderFillPrice(
+                  triggeredEngineOrder.quoteFilled,
+                  triggeredEngineOrder.totalFee,
+                  triggeredEngineOrder.baseFilled,
+                )
+              : undefined,
+            exchangeRate,
+          );
 
-          const filledBaseSize = triggeredEngineOrder
-            ? removeDecimals(triggeredEngineOrder.baseFilled).abs()
-            : undefined;
+          const filledBaseSize = toXStocksDisplayAmount(
+            triggeredEngineOrder
+              ? removeDecimals(triggeredEngineOrder.baseFilled).abs()
+              : undefined,
+            exchangeRate,
+          );
 
           const frequencyInSeconds = toBigNumber(
             timeTriggerCriteria.interval,
@@ -104,7 +119,7 @@ export function useOpenTimeTriggerOrdersTable({
             ),
             filledAvgPrice,
             filledBaseSize,
-            totalBaseSize: decimalAdjustedTotalAmount.abs(),
+            totalBaseSize: orderTableItem.totalBaseSize,
             status: getTriggerOrderStatusInfo(t, openTriggerOrder),
             frequencyInMillis: secondsToMilliseconds(frequencyInSeconds),
             totalRuntimeInMillis,
@@ -119,7 +134,13 @@ export function useOpenTimeTriggerOrdersTable({
         })
         .filter(nonNullFilter);
     });
-  }, [allMarketsStaticData, filteredProductIds, ordersData, t]);
+  }, [
+    allMarketsStaticData,
+    filteredProductIds,
+    ordersData,
+    t,
+    getExchangeRate,
+  ]);
 
   return {
     data: timeTriggerOrders,

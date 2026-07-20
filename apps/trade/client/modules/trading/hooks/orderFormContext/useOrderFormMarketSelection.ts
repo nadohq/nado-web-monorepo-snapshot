@@ -5,10 +5,10 @@ import {
   SpotStaticMarketData,
   StaticMarketQuoteData,
 } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
+import { useMarketNameFromSearchParams } from 'client/hooks/ui/navigation/useMarketNameFromSearchParams';
 import { usePushTradePage } from 'client/hooks/ui/navigation/usePushTradePage';
 import { useSavedUserState } from 'client/modules/localstorage/userState/useSavedUserState';
 import { first } from 'lodash';
-import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 
 interface UseOrderFormMarketSelection<TMarketType extends ProductEngineType> {
@@ -136,11 +136,4 @@ export function useOrderFormMarketSelection<
     currentMarket,
     quoteMetadata,
   };
-}
-
-function useMarketNameFromSearchParams() {
-  const searchParams = useSearchParams();
-  const marketName = searchParams.get('market');
-
-  return marketName?.toLowerCase();
 }

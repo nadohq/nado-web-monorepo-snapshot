@@ -1,4 +1,3 @@
-import { KNOWN_PRODUCT_IDS } from '@nadohq/react-client';
 import {
   DepositInfoCardType,
   DepositProductSelectValue,
@@ -7,23 +6,18 @@ import { useMemo } from 'react';
 
 interface Params {
   selectedProduct: DepositProductSelectValue | undefined;
-  hasLoadedDepositableBalances: boolean;
 }
 
 export function useDepositFormDisplayedInfoCardType({
   selectedProduct,
-  hasLoadedDepositableBalances,
 }: Params) {
   return useMemo((): DepositInfoCardType | undefined => {
     if (!selectedProduct) {
       return;
     }
 
-    if (
-      selectedProduct.productId === KNOWN_PRODUCT_IDS.weth &&
-      hasLoadedDepositableBalances
-    ) {
-      return 'wrap_weth';
+    if (selectedProduct.isXStocksProduct) {
+      return 'xstocks';
     }
-  }, [selectedProduct, hasLoadedDepositableBalances]);
+  }, [selectedProduct]);
 }

@@ -8,16 +8,18 @@ import {
   ValidExecuteContext,
 } from 'client/hooks/execute/util/useExecuteInValidContext';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
+import { getExportHistoryAggregatedTradesData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryAggregatedTradesData';
 import { getExportHistoryDepositsData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryDepositsData';
 import { getExportHistoryEngineOrdersData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryEngineOrdersData';
 import { getExportHistoryFundingData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryFundingData';
+import { getExportHistoryIndividualTradesData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryIndividualTradesData';
 import { getExportHistoryInterestData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryInterestData';
 import { getExportHistoryLiquidationsData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryLiquidationsData';
 import { getExportHistoryNlpData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryNlpData';
 import { getExportHistoryPriceTriggerOrdersData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryPriceTriggerOrdersData';
 import { getExportHistorySettlementsData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistorySettlementsData';
 import { getExportHistoryTimeTriggerOrdersData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryTimeTriggerOrdersData';
-import { getExportHistoryTradesData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryTradesData';
 import { getExportHistoryTransfersData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryTransfersData';
 import { getExportHistoryWithdrawalsData } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/getExportHistoryWithdrawalsData';
 import { GetExportHistoryDataContext } from 'client/pages/Portfolio/subpages/History/exportHistory/hooks/useExecuteExportHistory/types';
@@ -36,6 +38,7 @@ export function useExecuteExportHistory(
 
   const { getSubaccountProfile } = useSubaccountContext();
   const { data: allMarketsStaticData } = useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const mutationFn = useExecuteInValidContext(
     useCallback(
@@ -56,6 +59,7 @@ export function useExecuteExportHistory(
           nadoClient: context.nadoClient,
           subaccount: context.subaccount,
           getSubaccountProfile,
+          getExchangeRate,
           setProgressFrac,
           t,
         };
@@ -68,8 +72,16 @@ export function useExecuteExportHistory(
               return getExportHistoryWithdrawalsData(params, getDataContext);
             case 'transfers':
               return getExportHistoryTransfersData(params, getDataContext);
-            case 'trades':
-              return getExportHistoryTradesData(params, getDataContext);
+            case 'individual_trades':
+              return getExportHistoryIndividualTradesData(
+                params,
+                getDataContext,
+              );
+            case 'aggregated_trades':
+              return getExportHistoryAggregatedTradesData(
+                params,
+                getDataContext,
+              );
             case 'nlp':
               return getExportHistoryNlpData(params, getDataContext);
             case 'settlements':
@@ -115,7 +127,13 @@ export function useExecuteExportHistory(
 
         return data;
       },
-      [allMarketsStaticData, getSubaccountProfile, setProgressFrac, t],
+      [
+        allMarketsStaticData,
+        getSubaccountProfile,
+        getExchangeRate,
+        setProgressFrac,
+        t,
+      ],
     ),
   );
 

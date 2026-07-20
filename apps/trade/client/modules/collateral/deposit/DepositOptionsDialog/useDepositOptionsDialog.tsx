@@ -60,9 +60,9 @@ export function useDepositOptionsDialog({
     ).filter((product) => product.productId !== NLP_PRODUCT_ID);
 
     return spotProducts.map((product) =>
-      toAssetOption(product.productId, product.metadata),
+      toAssetOption(product.productId, product.metadata, selectedChainId),
     );
-  }, [allMarketsStaticData, selectedChainConfig]);
+  }, [allMarketsStaticData, selectedChainConfig, selectedChainId]);
 
   const chainOptions = useMemo(() => SOURCE_CHAINS.map(toChainOption), []);
 
@@ -191,12 +191,36 @@ export function useDepositOptionsDialog({
 function toAssetOption(
   productId: number,
   metadata: SpotProductMetadata,
+  selectedChainId: number | undefined,
 ): DepositAssetOption {
+  // The USDT0 product's metadata symbol is always "USDT0", but on Ethereum
+  // mainnet the underlying token is native USDT (locked via an OFT Adapter),
+  // so the bridge config carries the correct per-chain display symbol. Use it
+  // here so the asset selector matches what the bridge dialog shows.
+  const { label, icon } = (() => {
+    if (
+      productId === QUOTE_PRODUCT_ID &&
+      selectedChainId != null &&
+      selectedChainId in USDT0_SOURCE_CHAIN_CONFIGS
+    ) {
+      const config =
+        USDT0_SOURCE_CHAIN_CONFIGS[selectedChainId as Usdt0SourceChainId]!;
+      return {
+        label: config.tokenSymbol,
+        icon: config.tokenIcon.asset,
+      };
+    }
+    return {
+      label: metadata.token.symbol,
+      icon: metadata.token.icon.asset,
+    };
+  })();
+
   return {
     selectId: productId,
     productId,
-    label: metadata.token.symbol,
-    icon: metadata.token.icon.asset,
+    label,
+    icon,
   };
 }
 

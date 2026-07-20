@@ -16,7 +16,7 @@ export function TermsOfUseDialog() {
   const { t } = useTranslation();
 
   const { disconnect } = useEVMContext();
-  const { hide, show } = useDialog();
+  const { hide } = useDialog();
   const { setSavedUserState } = useSavedUserState();
 
   const onClose = () => {
@@ -30,10 +30,7 @@ export function TermsOfUseDialog() {
       prev.onboardingComplete = true;
       return prev;
     });
-    show({
-      type: 'key_features',
-      params: {},
-    });
+    hide();
   };
 
   const termsOfUseContent = [

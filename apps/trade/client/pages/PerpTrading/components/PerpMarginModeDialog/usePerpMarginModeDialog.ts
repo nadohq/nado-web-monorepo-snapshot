@@ -1,4 +1,3 @@
-import { useMarketRestrictions } from '@nadohq/react-client';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { useTabs } from 'client/hooks/ui/tabs/useTabs';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
@@ -12,13 +11,12 @@ export function usePerpMarginModeDialog({ productId }: { productId: number }) {
   const {
     selectedMarginMode: savedMarginMode,
     setSelectedMarginMode: setSavedMarginMode,
+    isIsolatedOnly,
   } = useSelectedPerpMarginMode(productId);
   const { data: allMarketsStaticData } = useAllMarketsStaticData();
-  const { data: marketRestrictions } = useMarketRestrictions();
   const { t } = useTranslation();
 
   const currentMarket = allMarketsStaticData?.perpMarkets[productId];
-  const isIsolatedOnly = Boolean(marketRestrictions?.[productId]?.isolatedOnly);
 
   const maxLeverage = currentMarket?.maxLeverage ?? 1;
 

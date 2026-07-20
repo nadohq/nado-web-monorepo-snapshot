@@ -19,7 +19,7 @@ export function OrderFormSliderLabels({
   quoteMetadata,
   decimalAdjustedSizeIncrement,
   maxAssetOrderSize,
-  getMarketSizeFormatSpecifier,
+  exchangeRate,
 }: UseOrderFormSliderLabelsParams) {
   const { t } = useTranslation();
 
@@ -34,7 +34,7 @@ export function OrderFormSliderLabels({
       quoteMetadata,
       decimalAdjustedSizeIncrement,
       maxAssetOrderSize,
-      getMarketSizeFormatSpecifier,
+      exchangeRate,
     });
 
   const formattedAmountFraction = `${formatNumber(amountFraction, {

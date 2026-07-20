@@ -115,17 +115,35 @@ export function useTpSlOrderForm({
     savedUserState.trading.tpSlTriggerPriceType.takeProfit;
   const savedSlTriggerPriceType =
     savedUserState.trading.tpSlTriggerPriceType.stopLoss;
+  const savedTpGainOrLossInputType =
+    savedUserState.trading.tpSlGainOrLossInputType.takeProfit;
+  const savedSlGainOrLossInputType =
+    savedUserState.trading.tpSlGainOrLossInputType.stopLoss;
 
-  const savedTriggerPriceTypeDefaults: TpSlOrderFormInitialValues = {
-    tp: { triggerReferencePriceType: savedTpTriggerPriceType },
-    sl: { triggerReferencePriceType: savedSlTriggerPriceType },
-  };
+  const savedPreferenceDefaults = useMemo<TpSlOrderFormInitialValues>(
+    () => ({
+      tp: {
+        triggerReferencePriceType: savedTpTriggerPriceType,
+        gainOrLossInputType: savedTpGainOrLossInputType,
+      },
+      sl: {
+        triggerReferencePriceType: savedSlTriggerPriceType,
+        gainOrLossInputType: savedSlGainOrLossInputType,
+      },
+    }),
+    [
+      savedTpTriggerPriceType,
+      savedSlTriggerPriceType,
+      savedTpGainOrLossInputType,
+      savedSlGainOrLossInputType,
+    ],
+  );
 
   const form = useForm<TpSlOrderFormValues>({
     defaultValues: merge(
       {},
       DEFAULT_FORM_VALUES,
-      savedTriggerPriceTypeDefaults,
+      savedPreferenceDefaults,
       initialValues,
     ),
     mode: 'onTouched',
@@ -304,9 +322,17 @@ export function useTpSlOrderForm({
       await asyncResult(
         Promise.all([tpSubmitHandler(values), slSubmitHandler(values)]),
       );
-      resetForm();
+      resetForm(
+        merge({}, DEFAULT_FORM_VALUES, savedPreferenceDefaults, initialValues),
+      );
     },
-    [resetForm, slSubmitHandler, tpSubmitHandler],
+    [
+      initialValues,
+      resetForm,
+      savedPreferenceDefaults,
+      slSubmitHandler,
+      tpSubmitHandler,
+    ],
   );
 
   const onFractionChange = useCallback(

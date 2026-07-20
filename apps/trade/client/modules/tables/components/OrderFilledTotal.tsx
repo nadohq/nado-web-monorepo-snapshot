@@ -1,4 +1,4 @@
-import { formatNumber } from '@nadohq/react-client';
+import { formatNumber, NumberFormatSpecifier } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import { AmountWithSymbol } from 'client/components/AmountWithSymbol';
 import { StackedValues } from 'client/modules/tables/components/StackedValues';
@@ -8,7 +8,7 @@ interface Props {
   filledBaseSize: BigNumber | undefined;
   totalBaseSize: BigNumber;
   baseSymbol: string;
-  formatSpecifier: string;
+  formatSpecifier: NumberFormatSpecifier;
   isCloseEntirePosition: boolean;
 }
 

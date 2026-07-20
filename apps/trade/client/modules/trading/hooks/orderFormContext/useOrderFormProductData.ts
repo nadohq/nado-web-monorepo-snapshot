@@ -1,8 +1,14 @@
 import { removeDecimals } from '@nadohq/client';
+import {
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import { StaticMarketData } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
 import { LatestMarketPrice } from 'client/hooks/query/markets/useQueryAllMarketsLatestPrices';
 import { OrderFormValues } from 'client/modules/trading/types/orderFormTypes';
+import { useGetIsXStocksProduct } from 'client/modules/xStocks/hooks/useGetIsXStocksProduct';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { roundToIncrement } from 'client/utils/rounding';
 import { useCallback, useMemo } from 'react';
 import { UseFormReturn, useWatch } from 'react-hook-form';
@@ -29,6 +35,17 @@ export function useOrderFormProductData({
     name: ['side', 'orderType'],
   });
 
+  const { getExchangeRate } = useGetXStocksExchangeRate();
+  const exchangeRate = useMemo(
+    () => getExchangeRate(currentMarket?.productId),
+    [getExchangeRate, currentMarket?.productId],
+  );
+
+  const getIsXStocksProduct = useGetIsXStocksProduct();
+  // xStocks markets use display-space values in the form; all rounding/validation
+  // against raw increments is skipped here and handled in usePlaceOrderMutationFn.
+  const isXStocksMarket = getIsXStocksProduct(currentMarket?.productId);
+
   const {
     decimalAdjustedMinSize,
     decimalAdjustedSizeIncrement,
@@ -49,53 +66,78 @@ export function useOrderFormProductData({
 
   const roundPrice = useCallback(
     (price: BigNumber) => {
+      if (isXStocksMarket) {
+        // Prevent super-precise numbers on the UI
+        return price.sd(8, BigNumber.ROUND_DOWN);
+      }
       return roundToIncrement(price, priceIncrement);
     },
-    [priceIncrement],
+    [priceIncrement, isXStocksMarket],
   );
 
   const roundAssetAmount = useCallback(
     (size: BigNumber) => {
+      // Prevent super-precise numbers on the UI (ex. in the asset input when dragging the slider)
+      if (isXStocksMarket) {
+        return size.sd(8, BigNumber.ROUND_DOWN);
+      }
       return roundToIncrement(
         size,
         decimalAdjustedSizeIncrement,
         BigNumber.ROUND_DOWN,
       );
     },
-    [decimalAdjustedSizeIncrement],
+    [decimalAdjustedSizeIncrement, isXStocksMarket],
   );
 
   const { firstExecutionPrice, topOfBookPrice } = useMemo(() => {
     if (latestMarketPrices == null) {
       return {};
     }
-    const firstExecutionPrice =
+    // Oracle prices from the backend are in raw (wQQQx) space — convert to display before use in form context
+    const rawFirstExecutionPrice =
       orderSide === 'long'
         ? latestMarketPrices.safeAsk
         : latestMarketPrices.safeBid;
-    const topOfBookPrice =
+    const rawTopOfBookPrice =
       orderSide === 'long'
         ? latestMarketPrices.safeBid
         : latestMarketPrices.safeAsk;
 
+    const displayFirstExecutionPrice = toXStocksDisplayPrice(
+      rawFirstExecutionPrice,
+      exchangeRate,
+    );
+    const displayTopOfBookPrice = toXStocksDisplayPrice(
+      rawTopOfBookPrice,
+      exchangeRate,
+    );
+
     return {
-      firstExecutionPrice: firstExecutionPrice
-        ? roundPrice(firstExecutionPrice)
+      firstExecutionPrice: displayFirstExecutionPrice
+        ? roundPrice(displayFirstExecutionPrice)
         : undefined,
-      topOfBookPrice: topOfBookPrice ? roundPrice(topOfBookPrice) : undefined,
+      topOfBookPrice: displayTopOfBookPrice
+        ? roundPrice(displayTopOfBookPrice)
+        : undefined,
     };
-  }, [latestMarketPrices, orderSide, roundPrice]);
+  }, [latestMarketPrices, orderSide, exchangeRate, roundPrice]);
 
   const minAssetOrderSize = useMemo(() => {
     if (!decimalAdjustedMinSize) {
       return;
     }
 
+    const displaySizeIncrement = toXStocksDisplayAmount(
+      decimalAdjustedSizeIncrement,
+      exchangeRate,
+    );
+
     switch (orderType) {
       case 'market':
       case 'twap':
       case 'stop_market':
-        return decimalAdjustedSizeIncrement;
+        return displaySizeIncrement;
       case 'multi_limit': {
         // For minimum notional validation, we must ensure EVERY suborder meets the requirement.
         // The smallest suborder (by asset amount) can be paired with ANY price in the range,
@@ -108,6 +150,10 @@ export function useOrderFormProductData({
         //
         // This is conservative - some valid orders may be rejected when the smallest suborder
         // would actually execute at a higher price, but no invalid orders will pass through.
+        //
+        // Note: decimalAdjustedMinSize is in USDT0 (notional), lowestPrice is in display space.
+        // dividing notional by displayPrice gives the correct display asset size:
+        // notional / displayPrice = notional / (rawPrice / R) = notional * R / rawPrice = displayAmount
         if (
           !validatedScaledOrderStartPriceInput ||
           !validatedScaledOrderEndPriceInput
@@ -122,7 +168,7 @@ export function useOrderFormProductData({
 
         return roundToIncrement(
           decimalAdjustedMinSize.div(lowestPrice),
-          decimalAdjustedSizeIncrement,
+          displaySizeIncrement,
           BigNumber.ROUND_UP,
         );
       }
@@ -131,7 +177,7 @@ export function useOrderFormProductData({
         return validatedLimitPriceInput
           ? roundToIncrement(
               decimalAdjustedMinSize.div(validatedLimitPriceInput),
-              decimalAdjustedSizeIncrement,
+              displaySizeIncrement,
               BigNumber.ROUND_UP,
             )
           : undefined;
@@ -139,8 +185,9 @@ export function useOrderFormProductData({
     }
   }, [
     decimalAdjustedMinSize,
-    orderType,
     decimalAdjustedSizeIncrement,
+    exchangeRate,
+    orderType,
     validatedScaledOrderStartPriceInput,
     validatedScaledOrderEndPriceInput,
     validatedLimitPriceInput,
@@ -154,6 +201,7 @@ export function useOrderFormProductData({
     priceIncrement,
     decimalAdjustedSizeIncrement,
     minAssetOrderSize,
+    isXStocksMarket,
     roundPrice,
     roundAssetAmount,
   };

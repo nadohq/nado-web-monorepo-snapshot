@@ -1,8 +1,11 @@
-import { CandlestickPeriod, ProductEngineType } from '@nadohq/client';
-import { AnnotatedMarket } from '@nadohq/react-client';
+import { CandlestickPeriod } from '@nadohq/client';
+import {
+  getRoundedIncrement,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
+import { StaticMarketData } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
 import { BRAND_METADATA } from 'common/brandMetadata/brandMetadata';
-import { precisionFixed } from 'd3-format';
 import {
   DatafeedConfiguration,
   LibrarySymbolInfo,
@@ -87,45 +90,56 @@ export interface TradingViewSymbolInfo extends Omit<
 > {
   // Makes ticker a required property
   ticker: string;
-  productId: number;
-  productType: ProductEngineType;
-  priceIncrement: BigNumber;
-  sizeIncrement: BigNumber;
+  // Full static market data — co-located here so consumers (datafeed, broker)
+  // can read everything they need from a single per-product entry without
+  // touching the broader allMarketsStaticData map. productId / type /
+  // priceIncrement / sizeIncrement are reachable as `marketData.*` instead
+  // of being mirrored at the top level. Note priceIncrement / sizeIncrement
+  // are in raw (wQQQx) space; convert via toXStocksDisplay* before showing
+  // them or comparing to TV-supplied values.
+  marketData: StaticMarketData;
+  // Quote-asset symbol for this market (e.g. "USDT0"). Resolved from
+  // allMarketsStaticData.quotes at construction time.
+  quoteSymbol: string;
+  // Exchange rate for converting between raw (wQQQx) and display (QQQx)
+  // space; 1 for non-xStocks markets so the toXStocks* helpers become
+  // no-ops.
+  exchangeRate: BigNumber;
 }
 
 export function getTradingViewSymbolInfo(
-  market: AnnotatedMarket,
+  marketData: StaticMarketData,
+  quoteSymbol: string,
+  exchangeRate: BigNumber,
 ): TradingViewSymbolInfo {
-  const symbolInfo = ((): TradingViewSymbolInfo => {
-    // https://www.tradingview.com/charting-library-docs/latest/connecting_data/Symbology#decimal-format
-    // Price scale = 10 ^ (number of decimal places in price)
-    // Price increment = tick size = minmove / pricescale
-    const priceNumDecimalPlaces = precisionFixed(
-      market.priceIncrement.toNumber(),
-    );
-    const priceScale = 10 ** priceNumDecimalPlaces;
-    const minMov = market.priceIncrement.multipliedBy(priceScale).toNumber();
+  // https://www.tradingview.com/charting-library-docs/latest/connecting_data/Symbology#decimal-format
+  // Price scale = 10 ^ (number of decimal places in price)
+  // Price increment = tick size = minmove / pricescale
+  // For xStocks markets we round to a single significant digit because the
+  // raw priceIncrement, after conversion to display space, can land on
+  // many decimals (e.g. 0.0000123) and TV's pricescale is integer-only.
+  const roundedDisplayPriceIncrement = getRoundedIncrement(
+    toXStocksDisplayPrice(marketData.priceIncrement, exchangeRate),
+  );
 
-    return {
-      // This needs to be set to enable volume by default: https://github.com/tradingview/charting_library/issues/8306#issuecomment-1955174388
-      visible_plots_set: 'ohlcv',
-      productType: market.type,
-      name: market.metadata.marketName,
-      description: market.metadata.marketName,
-      productId: market.productId,
-      ticker: market.productId.toFixed(0),
-      minmov: minMov,
-      pricescale: priceScale,
-      priceIncrement: market.priceIncrement,
-      sizeIncrement: market.sizeIncrement,
-      ...COMMON_SYMBOL_INFO,
-    };
-  })();
+  const priceNumDecimalPlaces =
+    roundedDisplayPriceIncrement.decimalPlaces() ?? 0;
+  const priceScale = 10 ** priceNumDecimalPlaces;
+  const minMov = roundedDisplayPriceIncrement
+    .multipliedBy(priceScale)
+    .toNumber();
 
-  const decimalPlaces = market.priceIncrement.decimalPlaces();
-  if (decimalPlaces != null) {
-    symbolInfo.pricescale = 10 ** decimalPlaces;
-  }
-
-  return symbolInfo;
+  return {
+    // This needs to be set to enable volume by default: https://github.com/tradingview/charting_library/issues/8306#issuecomment-1955174388
+    visible_plots_set: 'ohlcv',
+    name: marketData.metadata.marketName,
+    description: marketData.metadata.marketName,
+    ticker: marketData.productId.toFixed(0),
+    minmov: minMov,
+    pricescale: priceScale,
+    marketData,
+    quoteSymbol,
+    exchangeRate,
+    ...COMMON_SYMBOL_INFO,
+  };
 }

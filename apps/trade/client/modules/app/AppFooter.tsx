@@ -7,6 +7,7 @@ import { LatencyMonitor } from 'client/modules/app/components/LatencyMonitor';
 import { StatusButton } from 'client/modules/app/components/StatusButton';
 import { UpcomingMaintenanceAlert } from 'client/modules/app/components/UpcomingMaintenanceAlert';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
+import { TrollboxPopover } from 'client/modules/trollbox/TrollboxPopover';
 import { TutorialFlowPopover } from 'client/modules/tutorial/components/TutorialFlowPopover';
 import { LINKS } from 'common/brandMetadata/links';
 import Link from 'next/link';
@@ -43,6 +44,7 @@ export function AppFooter({ className }: WithClassnames) {
         >
           {t(($) => $.buttons.feedback)}
         </TextButton>
+        <TrollboxPopover />
       </div>
       <div className="flex items-center gap-x-2 text-xs">
         <AppVersion />

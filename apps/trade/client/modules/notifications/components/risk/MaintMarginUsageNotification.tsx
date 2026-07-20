@@ -53,7 +53,7 @@ export function MaintMarginUsageNotification({
       <SecondaryButton
         size="xs"
         onClick={() => {
-          show({ type: 'deposit_options', params: {} });
+          show({ type: 'deposit_entrypoint', params: {} });
           onDismiss();
         }}
         className="text-text-secondary"
@@ -70,7 +70,7 @@ export function MaintMarginUsageNotification({
         ttl={ttl}
         className="from-positive via-warning to-negative bg-gradient-to-r"
       />
-      <Toast.Body className="flex flex-col items-start gap-y-2">
+      <Toast.Body className="flex flex-col items-start gap-y-3">
         {bodyContent}
       </Toast.Body>
     </Toast.Container>

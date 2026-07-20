@@ -51,7 +51,7 @@ export function useQueryAllMarketsByChainEnv() {
 
     startProfiling();
     const baseResponse =
-      await primaryChainNadoClient.client.market.getEdgeAllMarkets();
+      await primaryChainNadoClient.client.market.getCachedEdgeAllMarkets();
     endProfiling();
 
     const allMarketsByChainEnv: Data = {};

@@ -10,10 +10,14 @@ import { useSanitizedNumericOnChange } from 'client/hooks/ui/form/useSanitizedNu
 import { useNumericInputPlaceholder } from 'client/hooks/ui/useNumericInputPlaceholder';
 import { BaseAppDialog } from 'client/modules/app/dialogs/BaseAppDialog';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
+import { BridgeDisclosureCard } from 'client/modules/collateral/components/BridgeDisclosureCard';
 import { MinimumDepositAmount } from 'client/modules/collateral/components/MinimumDepositAmount';
 import { CctpBridgeSubmitButton } from 'client/modules/collateral/deposit/CctpBridgeDialog/components/CctpBridgeSubmitButton';
 import { CctpBridgeSummaryDisclosure } from 'client/modules/collateral/deposit/CctpBridgeDialog/components/CctpBridgeSummaryDisclosure';
-import { USDC_TOKEN_INFO } from 'client/modules/collateral/deposit/CctpBridgeDialog/config';
+import {
+  USDC_BRIDGE_EXPLORER_BASE_URL,
+  USDC_TOKEN_INFO,
+} from 'client/modules/collateral/deposit/CctpBridgeDialog/config';
 import { useCctpBridgeAmountErrorTooltipContent } from 'client/modules/collateral/deposit/CctpBridgeDialog/hooks/useCctpBridgeAmountErrorTooltipContent';
 import { useCctpBridgeForm } from 'client/modules/collateral/deposit/CctpBridgeDialog/hooks/useCctpBridgeForm';
 import type { CctpBridgeDialogParams } from 'client/modules/collateral/deposit/CctpBridgeDialog/types';
@@ -71,6 +75,7 @@ export function CctpBridgeDialog({
       <BaseAppDialog.Body asChild>
         <Form onSubmit={onSubmit}>
           <div className="flex flex-col gap-y-3">
+            <BridgeDisclosureCard explorerUrl={USDC_BRIDGE_EXPLORER_BASE_URL} />
             <CompactInput
               {...amountInputRegister}
               placeholder={amountPlaceholder}

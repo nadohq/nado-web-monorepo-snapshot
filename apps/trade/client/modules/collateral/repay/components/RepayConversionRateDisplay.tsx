@@ -7,6 +7,7 @@ import {
 import { WithClassnames, joinClassNames } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
 import { DefinitionTooltip } from 'client/modules/tooltips/DefinitionTooltip/DefinitionTooltip';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
@@ -21,13 +22,17 @@ export function RepayConversionRateDisplay({
 }: WithClassnames<Props>) {
   const { t } = useTranslation();
   const { primaryQuoteToken } = useNadoMetadataContext();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   if (!market || !repayConversionPrice) {
     return null;
   }
 
   const formattedConversionPrice = formatNumber(repayConversionPrice, {
-    formatSpecifier: getMarketPriceFormatSpecifier(market.priceIncrement),
+    formatSpecifier: getMarketPriceFormatSpecifier({
+      priceIncrement: market.priceIncrement,
+      exchangeRate: getExchangeRate(market.productId),
+    }),
   });
 
   return (

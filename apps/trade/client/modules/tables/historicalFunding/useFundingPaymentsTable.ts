@@ -9,6 +9,7 @@ import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStati
 import { usePaginatedSubaccountPaymentEvents } from 'client/hooks/query/subaccount/usePaginatedSubaccountPaymentEvents';
 import { FundingPaymentsTableItem } from 'client/modules/tables/types/FundingPaymentsTableItem';
 import { getProductTableItem } from 'client/modules/tables/utils/getProductTableItem';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { createRowId } from 'client/utils/createRowId';
 import { secondsToMilliseconds } from 'date-fns';
 import { useMemo } from 'react';
@@ -24,6 +25,7 @@ function extractItems(data: GetIndexerInterestFundingPaymentsResponse) {
 
 export function useFundingPaymentsTable({ pageSize, productIds }: Params) {
   const { data: allMarketsStaticData } = useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const { currentPageData, isLoading, isFetchingCurrPage, pagination } =
     useDataTablePaginatedQuery({
@@ -46,6 +48,7 @@ export function useFundingPaymentsTable({ pageSize, productIds }: Params) {
           const productTableItem = getProductTableItem({
             productId: item.productId,
             allMarketsStaticData,
+            exchangeRate: getExchangeRate(item.productId),
           });
 
           const positionAmount = removeDecimals(item.balanceAmount);
@@ -77,7 +80,7 @@ export function useFundingPaymentsTable({ pageSize, productIds }: Params) {
       .filter(nonNullFilter);
 
     return mappedData;
-  }, [currentPageData, allMarketsStaticData]);
+  }, [currentPageData, allMarketsStaticData, getExchangeRate]);
 
   return {
     mappedData,

@@ -1,4 +1,8 @@
-import { formatNumber, NumberFormatValue } from '@nadohq/react-client';
+import {
+  formatNumber,
+  NumberFormatSpecifier,
+  NumberFormatValue,
+} from '@nadohq/react-client';
 import { Pill } from '@nadohq/web-ui';
 
 interface Props {
@@ -7,7 +11,7 @@ interface Props {
   outflows: NumberFormatValue | undefined;
   outflowsLabel: string;
   symbol?: string;
-  formatSpecifier: string;
+  formatSpecifier: NumberFormatSpecifier;
 }
 
 export function StatsFlowsValueContent({

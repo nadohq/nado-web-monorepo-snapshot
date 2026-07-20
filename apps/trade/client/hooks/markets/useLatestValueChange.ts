@@ -27,7 +27,6 @@ export function useLatestValueChange(
     }
 
     // Calculate the change between this (latest) value and the cached previous value.
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- Tracking value changes over time requires setState in effect; this is a time-based side effect that cannot be derived during render
     setLatestValueChange(latestValue?.minus(latestValueRef.current));
     latestValueRef.current = latestValue;
   }, [latestValue]);

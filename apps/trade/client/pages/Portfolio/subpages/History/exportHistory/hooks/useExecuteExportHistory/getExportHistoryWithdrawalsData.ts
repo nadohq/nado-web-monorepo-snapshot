@@ -31,7 +31,7 @@ export async function getExportHistoryWithdrawalsData(
       maxTimestampInclusive: millisecondsToSeconds(params.endTimeMillis),
       limit: EXPORT_HISTORY_QUERY_PAGE_SIZE,
       startCursor,
-      eventTypes: ['withdraw_collateral'],
+      eventTypes: ['withdraw_collateral', 'withdraw_collateral_v2'],
     };
 
     const collateralEventsResponse =
@@ -57,6 +57,7 @@ export async function getExportHistoryWithdrawalsData(
         time: new Date(event.timestampMillis),
         asset: event.token.symbol,
         balanceChange: event.amount.toString(),
+        recipientAddress: event.recipientAddress,
       });
     }
 

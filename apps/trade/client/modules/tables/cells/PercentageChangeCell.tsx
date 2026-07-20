@@ -9,16 +9,18 @@ import { getSignDependentColorClassName } from 'client/utils/ui/getSignDependent
 
 interface Props extends BaseTestProps {
   value: BigNumber | undefined;
+  noColor?: boolean;
   /** Defaults to `SIGNED_PERCENTAGE_2DP` */
   formatSpecifier?: PresetNumberFormatSpecifier;
 }
 
 export function PercentageChangeCell({
   value,
+  noColor,
   formatSpecifier = PresetNumberFormatSpecifier.SIGNED_PERCENTAGE_2DP,
   dataTestId,
 }: Props) {
-  const color = getSignDependentColorClassName(value);
+  const color = noColor ? undefined : getSignDependentColorClassName(value);
 
   return (
     <TableCell className={color} dataTestId={dataTestId}>

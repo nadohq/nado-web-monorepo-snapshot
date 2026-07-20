@@ -14,12 +14,9 @@ import { SignatureModeInfo } from 'client/modules/singleSignatureSessions/compon
 
 interface Props {
   isSmartContractWalletConnected: boolean | undefined;
-
-  onDisableSuccess(): void;
 }
 
 export function SignatureModeDisable1CTDialogContent({
-  onDisableSuccess,
   isSmartContractWalletConnected,
 }: Props) {
   const {
@@ -28,9 +25,7 @@ export function SignatureModeDisable1CTDialogContent({
     numSwitchesRemaining,
     totalTxLimit,
     onSubmit: onSubmitDisable1CT,
-  } = useSignatureModeDisable1CTDialogContent({
-    onDisableSuccess,
-  });
+  } = useSignatureModeDisable1CTDialogContent();
 
   const {
     buttonState: rememberApprovalButtonState,

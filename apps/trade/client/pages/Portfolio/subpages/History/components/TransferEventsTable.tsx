@@ -1,10 +1,10 @@
 import { CustomNumberFormatSpecifier } from '@nadohq/react-client';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HeaderCell } from 'client/components/DataTable/cells/HeaderCell';
-import { MarketProductInfoCell } from 'client/components/DataTable/cells/MarketProductInfoCell';
 import { TableCell } from 'client/components/DataTable/cells/TableCell';
 import { DataTable } from 'client/components/DataTable/DataTable';
 import { bigNumberSortFn } from 'client/components/DataTable/utils/sortingFns';
+import { ProductLabel } from 'client/components/ProductLabel';
 import { TransferCollateralEvent } from 'client/modules/events/collateral/types';
 import { AmountWithSymbolCell } from 'client/modules/tables/cells/AmountWithSymbolCell';
 import { CurrencyCell } from 'client/modules/tables/cells/CurrencyCell';
@@ -50,10 +50,9 @@ export function TransferEventsTable({ pageSize, showPagination }: Props) {
         cell: (context) => {
           const token = context.getValue<TransferCollateralEvent['token']>();
           return (
-            <MarketProductInfoCell
-              symbol={token.symbol}
-              iconSrc={token.icon.asset}
-            />
+            <TableCell>
+              <ProductLabel symbol={token.symbol} iconSrc={token.icon.asset} />
+            </TableCell>
           );
         },
         enableSorting: false,

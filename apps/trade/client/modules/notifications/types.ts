@@ -9,6 +9,7 @@ import { SizeClass } from '@nadohq/web-ui';
 import { BigNumber } from 'bignumber.js';
 import { ExecutePlaceOrderParams } from 'client/hooks/execute/placeOrder/types';
 import { useGetConfirmedTx } from 'client/hooks/util/useGetConfirmedTx';
+import { GTMDataLayerEvent } from 'client/modules/analytics/types';
 import { FeatureNotificationDisclosureKey } from 'client/modules/localstorage/userState/types/userDisclosureTypes';
 import { OrderDisplayType } from 'client/modules/trading/types/orderDisplayTypes';
 import { PlaceOrderType } from 'client/modules/trading/types/placeOrderTypes';
@@ -20,6 +21,7 @@ import type { TFunction } from 'i18next';
 export interface NotificationDispatchContext {
   t: TFunction;
   getConfirmedTx: ReturnType<typeof useGetConfirmedTx>;
+  sendGTMEvent: (event: GTMDataLayerEvent) => void;
   sizeClass: SizeClass;
   enableTradingNotifications: boolean;
 }
@@ -38,6 +40,10 @@ export interface OrderNotificationMetadata {
   marketName: string;
   priceIncrement: BigNumber | undefined;
   sizeIncrement: BigNumber | undefined;
+  /**
+   * Oracle price in the display space
+   */
+  displayOraclePrice?: BigNumber;
 }
 
 interface OrderActionData {
@@ -76,6 +82,9 @@ export interface ClosePositionNotificationData extends OrderActionData {
 }
 
 export interface PlaceOrderNotificationData extends OrderActionData {
+  /**
+   * For x-stocks, params should be in the display space, not already converted to the raw space
+   */
   placeOrderParams: ExecutePlaceOrderParams;
   orderMarketType: ProductEngineType;
   orderType: PlaceOrderType;
@@ -103,10 +112,6 @@ export interface MaintMarginUsageNotificationData {
 
 export interface CloseMultiPositionsNotificationData extends OrderActionData {}
 
-export interface AcceptFuulReferralNotificationData {
-  referralCode: string;
-}
-
 export interface DepositNotificationData {
   amount: BigNumber;
   symbol: string;
@@ -123,6 +128,8 @@ export interface CctpBridgeNotificationData {
 export interface Usdt0BridgeNotificationData {
   txHashPromise: Promise<string>;
 }
+
+export interface TradingCompEnrollNotificationData extends ServerExecutionData {}
 
 /**
  * All possible notification types
@@ -187,6 +194,16 @@ export type DispatchNotificationParams =
   | {
       type: 'cctp_bridge';
       data: CctpBridgeNotificationData;
+    }
+  | {
+      type: 'trading_competition_enroll';
+      data: TradingCompEnrollNotificationData;
+    }
+  | {
+      type: 'stale_data';
+    }
+  | {
+      type: 'classic_deposit_ui_notification';
     };
 
 export type NotificationType = DispatchNotificationParams['type'];

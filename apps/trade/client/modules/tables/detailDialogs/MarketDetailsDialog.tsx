@@ -97,22 +97,10 @@ function PerpMarketDetailItems() {
   const { t } = useTranslation();
 
   return (
-    <>
-      <ValueWithLabel.Horizontal
-        sizeVariant="xs"
-        label={t(($) => $.funding)}
-        valueContent={t(($) => $.hourly)}
-      />
-      <ValueWithLabel.Horizontal
-        sizeVariant="xs"
-        label={t(($) => $.oraclePrice)}
-        valueContent={t(($) => $.chaosLabsAggregate)}
-      />
-      <ValueWithLabel.Horizontal
-        sizeVariant="xs"
-        label={t(($) => $.oracleSpotIndexPrice)}
-        valueContent={t(($) => $.chaosLabsAggregate)}
-      />
-    </>
+    <ValueWithLabel.Horizontal
+      sizeVariant="xs"
+      label={t(($) => $.funding)}
+      valueContent={t(($) => $.hourly)}
+    />
   );
 }

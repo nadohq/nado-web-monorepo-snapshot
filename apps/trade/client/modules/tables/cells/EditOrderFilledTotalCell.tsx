@@ -1,4 +1,4 @@
-import { formatNumber } from '@nadohq/react-client';
+import { formatNumber, NumberFormatSpecifier } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import { AmountWithSymbol } from 'client/components/AmountWithSymbol';
 import {
@@ -15,7 +15,7 @@ interface Props extends TableCellProps {
   /** Signed total amount (negative for shorts) */
   totalBaseAmount: BigNumber;
   symbol: string;
-  formatSpecifier: string;
+  formatSpecifier: NumberFormatSpecifier;
   productId: number;
   digest: string;
   /** Whether this is a trigger order (stop market, stop limit, TP/SL) */

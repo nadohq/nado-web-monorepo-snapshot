@@ -4,10 +4,6 @@ import {
   useSubaccountContext,
 } from '@nadohq/react-client';
 import { useExecuteUpdateLinkedSigner } from 'client/hooks/execute/useExecuteUpdateLinkedSigner';
-import {
-  RUN_WITH_DELAY_DURATIONS,
-  useRunWithDelayOnCondition,
-} from 'client/hooks/util/useRunWithDelayOnCondition';
 import { useNotificationManagerContext } from 'client/modules/notifications/NotificationManagerContext';
 import { BaseActionButtonState } from 'client/types/BaseActionButtonState';
 import { useCallback, useMemo } from 'react';
@@ -19,26 +15,11 @@ export type SignatureModeSettingsUserStateWarning =
   // Users are rate limited for configuring single signatures, we warn on the last switch
   | 'last_allowed_switch';
 
-interface Params {
-  onDisableSuccess(): void;
-}
-
-export function useSignatureModeDisable1CTDialogContent({
-  onDisableSuccess,
-}: Params) {
+export function useSignatureModeDisable1CTDialogContent() {
   const { t } = useTranslation();
   const { dispatchNotification } = useNotificationManagerContext();
   const { signingPreference } = useSubaccountContext();
   const executeUpdateLinkedSigner = useExecuteUpdateLinkedSigner();
-
-  useRunWithDelayOnCondition({
-    condition: executeUpdateLinkedSigner.isSuccess,
-    fn: () => {
-      executeUpdateLinkedSigner.reset();
-      onDisableSuccess();
-    },
-    delay: RUN_WITH_DELAY_DURATIONS.SHORT,
-  });
 
   const { data: currentServerLinkedSigner } = useQuerySubaccountLinkedSigner();
 

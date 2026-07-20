@@ -54,6 +54,13 @@ export function useMoreLinks(): {
         icon: Icons.ChartBar,
       },
       {
+        label: t(($) => $.ecosystem),
+        description: t(($) => $.ecosystemDescription),
+        href: LINKS.ecosystem,
+        external: true,
+        icon: Icons.GlobeSimple,
+      },
+      {
         label: t(($) => $.termsOfUse),
         description: t(($) => $.termsOfUseDescription),
         href: LINKS.termsOfUse,
@@ -72,17 +79,17 @@ export function useMoreLinks(): {
         icon: Icons.GlobeSimple,
         external: true,
       },
-      // {
-      //   label: 'Discord',
-      //   href: LINKS.discord,
-      //   icon: Icons.DiscordLogo,
-      //   external: true,
-      // },
       {
         label: t(($) => $.buttons.xSocial),
         href: LINKS.x,
         external: true,
         icon: Icons.XLogo,
+      },
+      {
+        label: t(($) => $.buttons.discord),
+        href: LINKS.discord,
+        icon: Icons.DiscordLogo,
+        external: true,
       },
     ],
     [t],

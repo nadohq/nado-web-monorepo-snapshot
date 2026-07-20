@@ -11,6 +11,7 @@ import { DefinitionTooltipID } from 'client/modules/tooltips/DefinitionTooltip/d
 export interface HeaderCellProps<T> extends TableCellProps {
   header: Header<T, any>;
   definitionTooltipId?: DefinitionTooltipID;
+  sortingIconFirst?: boolean;
 }
 
 export function HeaderCell<T>({
@@ -18,6 +19,7 @@ export function HeaderCell<T>({
   children,
   header,
   definitionTooltipId,
+  sortingIconFirst,
   ...rest
 }: HeaderCellProps<T>) {
   const sortingIcon = (() => {
@@ -47,6 +49,7 @@ export function HeaderCell<T>({
         header?.column.getCanSort()
           ? 'hover:text-text-primary cursor-pointer select-none'
           : undefined,
+        sortingIconFirst && 'flex-row-reverse',
         className,
       )}
       onClick={header?.column.getToggleSortingHandler()}

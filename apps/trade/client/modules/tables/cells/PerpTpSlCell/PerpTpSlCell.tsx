@@ -1,3 +1,4 @@
+import { NumberFormatSpecifier } from '@nadohq/react-client';
 import { Icons, SecondaryButton, TextButton } from '@nadohq/web-ui';
 import { BigNumber } from 'bignumber.js';
 import {
@@ -16,7 +17,7 @@ interface Props extends TableCellProps {
   productId: number;
   isIso: boolean;
   tpSlData: PerpPositionsTableItem['tpSl'] | undefined;
-  priceFormatSpecifier: string;
+  priceFormatSpecifier: NumberFormatSpecifier;
   averageEntryPrice: BigNumber | undefined;
   positionAmount: BigNumber | undefined;
 }

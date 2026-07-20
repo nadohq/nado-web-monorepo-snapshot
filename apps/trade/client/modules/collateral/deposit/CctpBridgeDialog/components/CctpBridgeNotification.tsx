@@ -1,10 +1,10 @@
 import { ActionToast } from 'client/components/Toast/ActionToast/ActionToast';
 import { Toast } from 'client/components/Toast/Toast';
 import { ToastProps } from 'client/components/Toast/types';
+import { USDC_BRIDGE_EXPLORER_BASE_URL } from 'client/modules/collateral/deposit/CctpBridgeDialog/config';
 import { useTranslation } from 'react-i18next';
 
 /** USDC Explorer base URL for tracking cross-chain transfers. */
-const USDC_EXPLORER_BASE_URL = 'https://usdc.range.org';
 
 interface Props extends ToastProps {
   /** Connected wallet address of the user. */
@@ -27,7 +27,7 @@ export function CctpBridgeNotification({ address, ttl, onDismiss }: Props) {
       <ActionToast.Body variant="success" className="flex flex-col gap-y-2">
         <p>{t(($) => $.notifications.bridgeInitiated.description)}</p>
         <Toast.FooterLink
-          href={`${USDC_EXPLORER_BASE_URL}/transactions?s=${address}`}
+          href={`${USDC_BRIDGE_EXPLORER_BASE_URL}/transactions?s=${address}`}
           external
         >
           {t(($) => $.notifications.bridgeInitiated.trackOnExplorer)}

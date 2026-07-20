@@ -1,10 +1,12 @@
 import { CustomNumberFormatSpecifier } from '@nadohq/react-client';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HeaderCell } from 'client/components/DataTable/cells/HeaderCell';
-import { MarketProductInfoCell } from 'client/components/DataTable/cells/MarketProductInfoCell';
+import { TableCell } from 'client/components/DataTable/cells/TableCell';
 import { DataTable } from 'client/components/DataTable/DataTable';
 import { bigNumberSortFn } from 'client/components/DataTable/utils/sortingFns';
+import { ProductLabel } from 'client/components/ProductLabel';
 import { WithdrawCollateralEvent } from 'client/modules/events/collateral/types';
+import { AddressCell } from 'client/modules/tables/cells/AddressCell';
 import { AmountWithSymbolCell } from 'client/modules/tables/cells/AmountWithSymbolCell';
 import { CurrencyCell } from 'client/modules/tables/cells/CurrencyCell';
 import { DateTimeCell } from 'client/modules/tables/cells/DateTimeCell';
@@ -53,11 +55,12 @@ export function WithdrawalEventsTable({ pageSize, showPagination }: Props) {
         cell: (context) => {
           const metadata = context.getValue<WithdrawCollateralEvent['token']>();
           return (
-            <MarketProductInfoCell
-              symbol={metadata.symbol}
-              iconSrc={metadata.icon.asset}
-              dataTestId="withdrawal-history-table-asset"
-            />
+            <TableCell dataTestId="withdrawal-history-table-asset">
+              <ProductLabel
+                symbol={metadata.symbol}
+                iconSrc={metadata.icon.asset}
+              />
+            </TableCell>
           );
         },
         enableSorting: false,
@@ -95,6 +98,21 @@ export function WithdrawalEventsTable({ pageSize, showPagination }: Props) {
         sortingFn: bigNumberSortFn,
         meta: {
           cellContainerClassName: TABLE_CELL_CONTAINER_CLASSNAME.amount,
+        },
+      }),
+      columnHelper.accessor('recipientAddress', {
+        header: ({ header }) => (
+          <HeaderCell header={header}>{t(($) => $.recipient)}</HeaderCell>
+        ),
+        cell: (context) => (
+          <AddressCell
+            address={context.getValue()}
+            dataTestId="withdrawal-history-table-recipient"
+          />
+        ),
+        enableSorting: false,
+        meta: {
+          cellContainerClassName: 'w-36',
         },
       }),
       columnHelper.accessor('isProcessing', {

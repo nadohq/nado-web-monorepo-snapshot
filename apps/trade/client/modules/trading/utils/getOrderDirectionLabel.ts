@@ -31,6 +31,7 @@ export function getOrderDirectionLabel({
     }
     return orderSide === 'long';
   })();
+
   const orderSideLabel = getOrderSideLabel({
     t,
     isPerp,

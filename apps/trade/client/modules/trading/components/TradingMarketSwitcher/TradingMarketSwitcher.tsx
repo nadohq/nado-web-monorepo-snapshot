@@ -1,23 +1,32 @@
-import { MarketCategory } from '@nadohq/react-client';
 import { joinClassNames } from '@nadohq/web-common';
-import { DropdownUi, SearchBox, useIsMobile } from '@nadohq/web-ui';
+import {
+  Divider,
+  DropdownUi,
+  PillTabs,
+  ScrollShadowsContainer,
+  SearchBox,
+  TextButton,
+  UnderlinedTabs,
+  useIsMobile,
+} from '@nadohq/web-ui';
 import * as Popover from '@radix-ui/react-popover';
-import { MarketCategoryFilter } from 'client/components/MarketCategoryFilter/MarketCategoryFilter';
+import * as RadioGroup from '@radix-ui/react-radio-group';
+import { TabsList, Root as TabsRoot, TabsTrigger } from '@radix-ui/react-tabs';
+import { FavoriteButton } from 'client/components/ActionButtons/FavoriteButton';
 import { DesktopTradingMarketSwitcherTable } from 'client/modules/trading/components/TradingMarketSwitcher/DesktopTradingMarketSwitcherTable';
 import { useTradingMarketSwitcher } from 'client/modules/trading/components/TradingMarketSwitcher/hooks/useTradingMarketSwitcher';
 import { MobileTradingMarketSwitcherTable } from 'client/modules/trading/components/TradingMarketSwitcher/MobileTradingMarketSwitcherTable';
 import { TradingMarketSwitcherPopoverTrigger } from 'client/modules/trading/components/TradingMarketSwitcher/TradingMarketSwitcherPopoverTrigger';
 import { MarketSwitcherProps } from 'client/modules/trading/layout/types';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface TradingMarketSwitcherProps extends MarketSwitcherProps {
   productId: number | undefined;
-  defaultMarketCategory: MarketCategory;
 }
 
 export function TradingMarketSwitcher({
   productId,
-  defaultMarketCategory,
   triggerClassName,
 }: TradingMarketSwitcherProps) {
   const { t } = useTranslation();
@@ -27,15 +36,35 @@ export function TradingMarketSwitcher({
     displayedMarkets,
     isLoading,
     disableMarketSwitcherButton,
-    selectedMarketCategory,
-    setSelectedMarketCategory,
     toggleIsFavoritedMarket,
     isMarketSwitcherOpen,
     setIsMarketSwitcherOpen,
     query,
     setQuery,
     disableFavoriteButton,
-  } = useTradingMarketSwitcher(productId, defaultMarketCategory);
+    showFavoritesOnly,
+    setShowFavoritesOnly,
+    selectedProductTypeFilterId,
+    setSelectedProductTypeFilterId,
+    productTypeFilterOptions,
+    selectedMarketCategoryFilterId,
+    setSelectedMarketCategoryFilterId,
+    marketCategoryFilterOptions,
+    resetFilters,
+  } = useTradingMarketSwitcher(productId);
+
+  const emptyState = useMemo(() => {
+    return (
+      <div className="flex flex-col items-center justify-center gap-y-1.5 py-12 text-sm">
+        <p className="text-text-tertiary">
+          {t(($) => $.emptyPlaceholders.noMarketsFound)}
+        </p>
+        <TextButton colorVariant="primary" onClick={resetFilters}>
+          {t(($) => $.buttons.reset)}
+        </TextButton>
+      </div>
+    );
+  }, [t, resetFilters]);
 
   const isMobile = useIsMobile();
 
@@ -71,32 +100,89 @@ export function TradingMarketSwitcher({
       >
         <DropdownUi.Content
           className={joinClassNames(
-            'bg-surface-card shadow-elevation-strong border-stroke border p-3',
+            'flex flex-col gap-y-1.5 pb-1.5',
+            'bg-surface-card shadow-elevation-strong border-stroke border',
             // See: https://www.radix-ui.com/primitives/docs/components/popover
             // Subtracting "8px" from available height to have a little padding from the screen's edge
             // Cap at 70vh to prevent taking up too much screen space on smaller viewports
             'h-[calc(var(--radix-popover-content-available-height)-8px)] w-(--radix-popover-trigger-width) sm:h-134 sm:max-h-[70vh] sm:w-max',
           )}
         >
-          <div className="flex flex-col gap-y-3">
-            <SearchBox
-              dataTestId="trading-market-switcher-search-box"
-              sizeVariant="xs"
-              placeholder={t(($) => $.inputPlaceholders.search)}
-              query={query}
-              setQuery={setQuery}
-            />
-            <MarketCategoryFilter
-              marketCategory={selectedMarketCategory}
-              setMarketCategory={setSelectedMarketCategory}
-            />
+          <div className="flex flex-col py-3">
+            <div className="px-3">
+              <SearchBox
+                dataTestId="trading-market-switcher-search-box"
+                placeholder={t(($) => $.inputPlaceholders.search)}
+                query={query}
+                setQuery={setQuery}
+              />
+            </div>
+            <div className="flex items-center gap-x-3 p-3 text-sm">
+              <FavoriteButton
+                className="p-1.5"
+                isFavorited={showFavoritesOnly}
+                size={14}
+                onClick={() => setShowFavoritesOnly((prev) => !prev)}
+              />
+              <Divider vertical />
+              <RadioGroup.Root
+                className="flex gap-x-1.5"
+                onValueChange={setSelectedProductTypeFilterId}
+                value={selectedProductTypeFilterId as string}
+              >
+                {productTypeFilterOptions.map(({ value, label }) => {
+                  return (
+                    <RadioGroup.Item
+                      key={value}
+                      value={value as string}
+                      asChild
+                    >
+                      <PillTabs.Button
+                        sizeVariant="sm"
+                        dataTestId={`trading-market-switcher-product-type-filter-${value}`}
+                        active={selectedProductTypeFilterId === value}
+                      >
+                        {label}
+                      </PillTabs.Button>
+                    </RadioGroup.Item>
+                  );
+                })}
+              </RadioGroup.Root>
+            </div>
+            <TabsRoot
+              asChild
+              value={selectedMarketCategoryFilterId}
+              onValueChange={setSelectedMarketCategoryFilterId}
+            >
+              <TabsList asChild>
+                <ScrollShadowsContainer
+                  orientation="horizontal"
+                  className="border-overlay-divider flex items-center gap-x-3 border-y px-3 whitespace-nowrap"
+                >
+                  {marketCategoryFilterOptions.map(({ value, label }) => {
+                    return (
+                      <TabsTrigger asChild key={value} value={value as string}>
+                        <UnderlinedTabs.Button
+                          dataTestId={`trading-market-switcher-category-filter-${value}`}
+                          // Using min-w to ensure sensible touch target for 'All' in all languages
+                          className="min-w-8 text-xs"
+                          active={selectedMarketCategoryFilterId === value}
+                        >
+                          {label}
+                        </UnderlinedTabs.Button>
+                      </TabsTrigger>
+                    );
+                  })}
+                </ScrollShadowsContainer>
+              </TabsList>
+            </TabsRoot>
           </div>
           <MarketSwitcherTable
-            // Remount the table on category change so we reset the scroll shadow
-            // class rather than keeping the one used for the previous category.
-            key={selectedMarketCategory}
+            // Remount the table on filter change so we reset the scroll shadow class
+            key={`${showFavoritesOnly}-${selectedProductTypeFilterId}-${selectedMarketCategoryFilterId}`}
             disableFavoriteButton={disableFavoriteButton}
             toggleIsFavoritedMarket={toggleIsFavoritedMarket}
+            emptyState={emptyState}
             markets={displayedMarkets}
             isLoading={isLoading}
             onRowClick={() => {

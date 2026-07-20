@@ -1,4 +1,3 @@
-import { MarketCategory } from '@nadohq/react-client';
 import { joinClassNames, WithClassnames } from '@nadohq/web-common';
 import { TabTextButton } from '@nadohq/web-ui';
 import {
@@ -14,21 +13,18 @@ import { ElementType } from 'react';
 interface Props {
   productId: number | undefined;
   OrderPlacement: ElementType<WithClassnames>;
-  marketSwitcherDefaultCategory: MarketCategory;
   InfoCards: ElementType<WithClassnames>;
 }
 
 export function MobileTradingBottomNavigationTabs({
   productId,
   OrderPlacement,
-  marketSwitcherDefaultCategory,
   InfoCards,
 }: Props) {
   const mobileTradingBottomNavigationTabs =
     useMobileTradingBottomNavigationTabs({
       productId,
       OrderPlacement,
-      marketSwitcherDefaultCategory,
       InfoCards,
     });
   const { selectedTabId, tabs, setSelectedTabId } = useTabs(

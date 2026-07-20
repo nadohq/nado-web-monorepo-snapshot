@@ -2,6 +2,7 @@ import { joinClassNames, WithClassnames } from '@nadohq/web-common';
 import { Divider, Icons, PrimaryButton, TextButton } from '@nadohq/web-ui';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import * as Popover from '@radix-ui/react-popover';
+import { useShowConnectWalletUI } from 'client/context/wagmi/useShowConnectWalletUI';
 import { useIsConnected } from 'client/hooks/util/useIsConnected';
 import { AppVersion } from 'client/modules/app/components/AppVersion';
 import { LatencyMonitor } from 'client/modules/app/components/LatencyMonitor';
@@ -23,26 +24,25 @@ import { useTranslation } from 'react-i18next';
 
 export function MobileNavBarContent() {
   const { t } = useTranslation();
-  const { show } = useDialog();
+  const { onConnectWalletClick } = useShowConnectWalletUI();
   const [openMobileNav, setOpenMobileNav] = useAtom(openMobileNavAtom);
 
   const isConnected = useIsConnected();
 
   const NavDrawerIcon = openMobileNav ? Icons.X : Icons.List;
 
-  const onWalletButtonClick = () => {
-    setOpenMobileNav(false);
-    show({
-      type: 'connect',
-      params: {},
-    });
-  };
-
   const accountContent = isConnected ? (
     <NavbarAccountDropdown />
   ) : (
-    <PrimaryButton onClick={onWalletButtonClick}>
-      {t(($) => $.buttons.connectWallet)}
+    <PrimaryButton
+      onClick={(ev) => {
+        setOpenMobileNav(false);
+        onConnectWalletClick(ev);
+      }}
+      /* disable gestures (eg. double-tap-to-zoom) and selection to better accommodate for triple-click */
+      className="touch-none select-none"
+    >
+      {t(($) => $.buttons.signIn)}
     </PrimaryButton>
   );
 

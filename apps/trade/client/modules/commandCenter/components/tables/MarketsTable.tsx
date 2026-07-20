@@ -6,16 +6,17 @@ import {
 import { Icons } from '@nadohq/web-ui';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HeaderCell } from 'client/components/DataTable/cells/HeaderCell';
-import { MarketProductInfoCell } from 'client/components/DataTable/cells/MarketProductInfoCell';
-import { StackedTableCell } from 'client/components/DataTable/cells/StackedTableCell';
+import { TableCell } from 'client/components/DataTable/cells/TableCell';
 import {
   bigNumberSortFn,
   getKeyedBigNumberSortFn,
 } from 'client/components/DataTable/utils/sortingFns';
+import { ProductLabel } from 'client/components/ProductLabel';
 import { ActionName } from 'client/modules/commandCenter/components/cells/ActionName';
 import { BaseTable } from 'client/modules/commandCenter/components/tables/BaseTable/BaseTable';
 import { MarketTableItem } from 'client/modules/commandCenter/hooks/useCommandCenterMarketItems';
 import { NumberCell } from 'client/modules/tables/cells/NumberCell';
+import { StackedValues } from 'client/modules/tables/components/StackedValues';
 import { getSharedProductMetadata } from 'client/utils/getSharedProductMetadata';
 import { getSignDependentColorClassName } from 'client/utils/ui/getSignDependentColorClassName';
 import { useMemo } from 'react';
@@ -44,10 +45,9 @@ export function MarketsTable({ markets }: Props) {
           const { icon } = getSharedProductMetadata(value);
 
           return (
-            <MarketProductInfoCell
-              symbol={value.marketName}
-              iconSrc={icon.asset}
-            />
+            <TableCell>
+              <ProductLabel symbol={value.marketName} iconSrc={icon.asset} />
+            </TableCell>
           );
         },
         enableSorting: false,
@@ -69,19 +69,21 @@ export function MarketsTable({ markets }: Props) {
           const color = getSignDependentColorClassName(priceChangeFrac24h);
 
           return (
-            <StackedTableCell
-              top={formatNumber(currentPrice, {
-                formatSpecifier: marketPriceFormatSpecifier,
-              })}
-              bottom={
-                <span className={color}>
-                  {formatNumber(priceChangeFrac24h, {
-                    formatSpecifier:
-                      PresetNumberFormatSpecifier.SIGNED_PERCENTAGE_2DP,
-                  })}
-                </span>
-              }
-            />
+            <TableCell>
+              <StackedValues
+                top={formatNumber(currentPrice, {
+                  formatSpecifier: marketPriceFormatSpecifier,
+                })}
+                bottom={
+                  <span className={color}>
+                    {formatNumber(priceChangeFrac24h, {
+                      formatSpecifier:
+                        PresetNumberFormatSpecifier.SIGNED_PERCENTAGE_2DP,
+                    })}
+                  </span>
+                }
+              />
+            </TableCell>
           );
         },
         sortingFn: getKeyedBigNumberSortFn('priceChangeFrac24h'),

@@ -21,7 +21,7 @@ export function DesktopMoreLinksPopover() {
         <div className="flex flex-col gap-y-2">
           {moreLinks.map(({ label, href, icon, external, description }) => {
             return (
-              <NavigationMenu.Link key={label} asChild>
+              <NavigationMenu.Link key={href} asChild>
                 <NavCardButton
                   as={Link}
                   href={href}

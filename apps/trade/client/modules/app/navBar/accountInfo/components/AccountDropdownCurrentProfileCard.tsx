@@ -5,21 +5,28 @@ import {
   PresetNumberFormatSpecifier,
   useSubaccountContext,
 } from '@nadohq/react-client';
-import { Icons, Value } from '@nadohq/web-ui';
+import { joinClassNames } from '@nadohq/web-common';
+import { Button, Icons, useIsMobile, Value } from '@nadohq/web-ui';
 import { SwitcherDropdownItemButton } from 'client/components/SwitcherDropdownItemButton';
 import { useSubaccountOverview } from 'client/hooks/subaccount/useSubaccountOverview/useSubaccountOverview';
 import { useSubaccountTimespanMetrics } from 'client/hooks/subaccount/useSubaccountTimespanMetrics';
+import { ROUTES } from 'client/modules/app/consts/routes';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { ACCOUNT_BUTTON_ICON_SIZE } from 'client/modules/app/navBar/accountInfo/consts';
 import { ProfileAvatarIcon } from 'client/modules/subaccounts/components/ProfileAvatarIcon';
 import { getSignDependentColorClassName } from 'client/utils/ui/getSignDependentColorClassName';
+import { useRouter } from 'next/navigation';
 
 export function AccountDropdownCurrentProfileCard() {
+  const router = useRouter();
+  const isMobile = useIsMobile();
   const { push } = useDialog();
   const {
     currentSubaccountProfile: { avatar, username },
     currentSubaccount: { name },
   } = useSubaccountContext();
+
+  const onViewPortfolio = () => router.push(ROUTES.portfolio.overview);
 
   const onEditProfile = () => {
     push({
@@ -39,10 +46,10 @@ export function AccountDropdownCurrentProfileCard() {
     timespanMetrics && !timespanMetrics.deltas.portfolioValueUsd.isZero();
 
   return (
-    // pr-3 is added here to offset the end icon to align it with the disconnect button above
+    // pr-1 + the icon's p-2 align the end icon with the disconnect button above
     <SwitcherDropdownItemButton
-      className="group gap-3 pr-3"
-      onClick={onEditProfile}
+      className="group gap-3 pr-1"
+      onClick={onViewPortfolio}
       startIcon={
         <ProfileAvatarIcon avatar={avatar} size={ACCOUNT_BUTTON_ICON_SIZE} />
       }
@@ -68,7 +75,21 @@ export function AccountDropdownCurrentProfileCard() {
         </div>
       }
       endIcon={
-        <Icons.PencilSimpleFill className="text-text-secondary hidden size-3 group-hover:block" />
+        <Button
+          as="div"
+          className="p-2"
+          onClick={(e) => {
+            e.stopPropagation();
+            onEditProfile();
+          }}
+        >
+          <Icons.PencilSimpleFill
+            className={joinClassNames(
+              'text-text-secondary size-3',
+              isMobile ? 'block' : 'hidden group-hover:block',
+            )}
+          />
+        </Button>
       }
     />
   );

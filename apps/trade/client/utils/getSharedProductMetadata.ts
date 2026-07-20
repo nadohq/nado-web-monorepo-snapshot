@@ -15,6 +15,8 @@ export function getSharedProductMetadata(
   if ('token' in metadata) {
     return {
       marketName: metadata.marketName,
+      fullMarketName: metadata.fullMarketName,
+      marketDescription: metadata.marketDescription,
       symbol: metadata.token.symbol,
       icon: metadata.token.icon,
       altSearchTerms: metadata.altSearchTerms,
@@ -22,6 +24,8 @@ export function getSharedProductMetadata(
   }
   return {
     marketName: metadata.marketName,
+    fullMarketName: metadata.fullMarketName,
+    marketDescription: metadata.marketDescription,
     symbol: metadata.symbol,
     icon: metadata.icon,
     altSearchTerms: metadata.altSearchTerms,

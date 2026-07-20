@@ -1,6 +1,6 @@
-import { PortfolioOverviewBalanceRow } from '@/components/tables/portfolio/PortfolioOverviewBalanceRow';
 import { Page } from '@playwright/test';
 import { BaseTable } from 'src/components/tables/BaseTable';
+import { PortfolioOverviewBalanceRow } from 'src/components/tables/portfolio/PortfolioOverviewBalanceRow';
 import { SpotBalance } from 'src/types/spotBalanceTypes';
 
 export class PortfolioOverviewTable extends BaseTable<

@@ -19,7 +19,7 @@ export function useShowDialogForProduct() {
         case 'borrow':
         case 'repay':
         case 'withdraw':
-        case 'deposit_options':
+        case 'deposit_entrypoint':
           navFn({
             type: dialogType,
             params: {

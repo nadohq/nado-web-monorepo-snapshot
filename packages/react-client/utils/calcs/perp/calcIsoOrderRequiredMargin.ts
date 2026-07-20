@@ -1,5 +1,6 @@
 import { BigNumbers } from '@nadohq/client';
 import { BigNumber } from 'bignumber.js';
+import { getSafeIsoMaxLeverage } from './getSafeIsoMaxLeverage';
 
 interface Params {
   isMarketOrder: boolean;
@@ -28,8 +29,10 @@ export function calcIsoOrderRequiredMargin({
   if (isReducingIsoPosition) {
     return BigNumbers.ZERO;
   }
-  // Stale data / rounding issues can make calculation at max leverage tricky, so max out at 0.2 below max leverage
-  const leverage = Math.min(userDefinedLeverage, marketMaxLeverage - 0.2);
+  const leverage = Math.min(
+    userDefinedLeverage,
+    getSafeIsoMaxLeverage(marketMaxLeverage),
+  );
 
   // Use est. execution price to get the est. notional
   const marginWithoutInitialPnl = assetAmountWithSign

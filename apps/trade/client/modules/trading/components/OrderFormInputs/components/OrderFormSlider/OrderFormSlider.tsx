@@ -15,7 +15,7 @@ export function OrderFormSlider({
   roundAssetAmount,
   decimalAdjustedSizeIncrement,
   maxAssetOrderSize,
-  getMarketSizeFormatSpecifier,
+  exchangeRate,
   sizeDenom,
   baseSymbol,
   quoteMetadata,
@@ -38,7 +38,7 @@ export function OrderFormSlider({
         quoteMetadata={quoteMetadata}
         decimalAdjustedSizeIncrement={decimalAdjustedSizeIncrement}
         maxAssetOrderSize={maxAssetOrderSize}
-        getMarketSizeFormatSpecifier={getMarketSizeFormatSpecifier}
+        exchangeRate={exchangeRate}
       />
     </div>
   );

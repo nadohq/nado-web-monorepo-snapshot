@@ -4,13 +4,12 @@ import { GenerateDesktopWalletLinkQRCodeDialog } from 'client/modules/app/dialog
 import { HelpCenterDialog } from 'client/modules/app/dialogs/HelpCenterDialog';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { LocationRestrictedDialog } from 'client/modules/app/dialogs/LocationRestrictedDialog';
-import { ConnectWalletDialog } from 'client/modules/app/dialogs/onboarding/connect/ConnectWalletDialog';
 import { ConnectCustomWalletDialog } from 'client/modules/app/dialogs/onboarding/connectCustomWallet/ConnectCustomWalletDialog';
 import { ConnectDesktopWalletLinkDialog } from 'client/modules/app/dialogs/onboarding/ConnectDesktopWalletLinkDialog';
-import { KeyFeaturesDialog } from 'client/modules/app/dialogs/onboarding/keyFeatures/KeyFeaturesDialog';
 import { TermsOfUseDialog } from 'client/modules/app/dialogs/onboarding/TermsOfUseDialog';
 import { NotifiContextProviderWrapper } from 'client/modules/notifi/NotifiContextProviderWrapper';
 import { NotifiDialog } from 'client/modules/notifi/NotifiDialog';
+import { EnterReferralCodeDialog } from 'client/modules/referrals/EnterReferralCodeDialog';
 import { SettingsDialog } from 'client/modules/settings/SettingsDialog';
 import { SignatureModeSettingsDialog } from 'client/modules/singleSignatureSessions/components/SignatureModeSettingsDialog/SignatureModeSettingsDialog';
 import { SignatureModeSlowModeSettingsDialog } from 'client/modules/singleSignatureSessions/components/SignatureModeSlowModeSettingsDialog/SignatureModeSlowModeSettingsDialog';
@@ -29,7 +28,6 @@ export function AccountDialogs() {
       {currentDialog?.type === 'location_restricted' && (
         <LocationRestrictedDialog />
       )}
-      {currentDialog?.type === 'connect' && <ConnectWalletDialog />}
       {currentDialog?.type === 'connect_custom_wallet' && (
         <ConnectCustomWalletDialog />
       )}
@@ -37,7 +35,6 @@ export function AccountDialogs() {
         <ConnectDesktopWalletLinkDialog />
       )}
       {currentDialog?.type === 'terms_of_use' && <TermsOfUseDialog />}
-      {currentDialog?.type === 'key_features' && <KeyFeaturesDialog />}
       {currentDialog?.type === 'manage_subaccounts' && (
         <ManageSubaccountsDialog />
       )}
@@ -74,6 +71,9 @@ export function AccountDialogs() {
       )}
       {currentDialog?.type === 'generate_desktop_wallet_link_qr_code' && (
         <GenerateDesktopWalletLinkQRCodeDialog />
+      )}
+      {currentDialog?.type === 'enter_referral_code' && (
+        <EnterReferralCodeDialog />
       )}
     </>
   );

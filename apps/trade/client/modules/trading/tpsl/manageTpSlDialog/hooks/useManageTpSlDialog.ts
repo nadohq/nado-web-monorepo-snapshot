@@ -1,7 +1,7 @@
 import { useExecuteCancelAllOrders } from 'client/hooks/execute/cancelOrder/useExecuteCancelAllOrders';
 import { useTpSlOrders } from 'client/hooks/subaccount/useTpSlOrders';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
-import { ORDER_DISPLAY_TYPES } from 'client/modules/trading/consts/orderDisplayTypes';
+import { ORDER_DISPLAY_TYPES_BY_CATEGORY } from 'client/modules/trading/consts/orderDisplayTypesByCategory';
 import { useTpSlPositionData } from 'client/modules/trading/tpsl/hooks/useTpSlPositionData';
 import { useMemo } from 'react';
 
@@ -33,7 +33,7 @@ export function useManageTpSlDialog({ productId, isIso }: Params) {
     canCancelAll: canCancelAllOrders,
   } = useExecuteCancelAllOrders({
     productIds: [productId],
-    orderDisplayTypes: ORDER_DISPLAY_TYPES.tpSl,
+    orderDisplayTypes: ORDER_DISPLAY_TYPES_BY_CATEGORY.tpSl,
     iso: isIso,
   });
 

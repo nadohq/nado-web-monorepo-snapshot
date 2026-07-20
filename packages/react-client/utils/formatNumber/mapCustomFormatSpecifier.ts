@@ -4,11 +4,11 @@ import {
   PresetNumberFormatSpecifier,
 } from './NumberFormatSpecifier';
 
-// If a custom specifier is used, map it to a d3 format specifier
+// If a custom specifier is used, map it to a preset format specifier
 export function mapCustomFormatSpecifier(
   value: BigNumber,
-  formatSpecifier: string,
-): string | undefined {
+  formatSpecifier: CustomNumberFormatSpecifier,
+): PresetNumberFormatSpecifier | undefined {
   const absValue = value.abs();
   const valueSizeClass = getValueSizeClass(absValue);
   const isLargeSizeClassOrGreater =
@@ -16,7 +16,7 @@ export function mapCustomFormatSpecifier(
   // For signed variants, we don't want to show a sign if the value is zero
   const isZero = absValue.isZero();
 
-  switch (formatSpecifier as CustomNumberFormatSpecifier) {
+  switch (formatSpecifier) {
     case CustomNumberFormatSpecifier.NUMBER_PRECISE:
       switch (valueSizeClass) {
         case 'xl':

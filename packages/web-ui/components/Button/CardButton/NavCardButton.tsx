@@ -11,6 +11,11 @@ export type NavCardButtonProps = NavCardBaseProps & {
   stateClassNameOverrides?: string;
   titleClassName?: string;
   iconClassName?: string;
+  /**
+   * When enabled, renders a pulsing status indicator next to the title to call
+   * attention to the item (e.g. a "live" page).
+   */
+  showLiveIndicator?: boolean;
 };
 
 export function NavCardButton({
@@ -20,6 +25,7 @@ export function NavCardButton({
   icon,
   iconClassName,
   active,
+  showLiveIndicator,
   className,
   contentClassName,
   stateClassNameOverrides,
@@ -49,6 +55,7 @@ export function NavCardButton({
         title={title}
         titleClassName={titleClassName}
         description={description}
+        showLiveIndicator={showLiveIndicator}
         className={joinClassNames('flex-1', contentClassName)}
       />
     </Button>

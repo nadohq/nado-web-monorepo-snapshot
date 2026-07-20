@@ -1,4 +1,5 @@
 import { ProductEngineType } from '@nadohq/client';
+import { NumberFormatSpecifier } from '@nadohq/react-client';
 import { joinClassNames, WithClassnames } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
 import { LiquidationProductInfo } from 'client/modules/tables/liquidations/LiquidationEventsTable/cells/LiquidationAmountInfoCell/components/LiquidationProductInfo';
@@ -9,7 +10,7 @@ interface LiquidationInfoProps extends WithClassnames {
   productId: number;
   productType: ProductEngineType;
   productLabel: string;
-  sizeFormatSpecifier: string;
+  sizeFormatSpecifier: NumberFormatSpecifier;
   isIsolated: boolean | undefined;
   amountLiquidated: BigNumber;
   amountLiquidatedValueUsd: BigNumber;

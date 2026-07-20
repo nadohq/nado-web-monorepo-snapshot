@@ -7,64 +7,71 @@ import {
   TriggerOrderInfo,
   unpackOrderAppendix,
 } from '@nadohq/client';
+import {
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
+import { BigNumber } from 'bignumber.js';
 import { OrderTableItem } from 'client/modules/tables/types/OrderTableItem';
 import { MARKET_ORDER_EXECUTION_TYPE } from 'client/modules/trading/consts/marketOrderExecutionType';
 import { isTpSlMaxOrderSize } from 'client/modules/trading/tpsl/utils/isTpSlMaxOrderSize';
 
-type Params =
-  | {
-      indexerOrder: IndexerOrder;
-    }
-  | {
-      indexerMatchEvent: IndexerMatchEvent;
-    }
-  | {
-      engineOrder: EngineOrder;
-    }
-  | {
-      triggerOrderInfo: TriggerOrderInfo;
-    };
+type OrderSource =
+  | { indexerOrder: IndexerOrder }
+  | { indexerMatchEvent: IndexerMatchEvent }
+  | { engineOrder: EngineOrder }
+  | { triggerOrderInfo: TriggerOrderInfo };
 
-export function getOrderTableItem(order: Params): OrderTableItem {
+type Params = OrderSource & { exchangeRate: BigNumber };
+
+export function getOrderTableItem(params: Params): OrderTableItem {
   const { digest, orderAppendix, orderPrice, orderAmount } = (() => {
-    if ('indexerOrder' in order) {
+    if ('indexerOrder' in params) {
       return {
-        digest: order.indexerOrder.digest,
-        orderAppendix: order.indexerOrder.appendix,
-        orderPrice: order.indexerOrder.price,
-        orderAmount: removeDecimals(order.indexerOrder.amount),
+        digest: params.indexerOrder.digest,
+        orderAppendix: params.indexerOrder.appendix,
+        orderPrice: params.indexerOrder.price,
+        orderAmount: removeDecimals(params.indexerOrder.amount),
       };
-    } else if ('indexerMatchEvent' in order) {
+    } else if ('indexerMatchEvent' in params) {
       return {
-        digest: order.indexerMatchEvent.digest,
+        digest: params.indexerMatchEvent.digest,
         orderAppendix: unpackOrderAppendix(
-          order.indexerMatchEvent.order.appendix,
+          params.indexerMatchEvent.order.appendix,
         ),
         orderPrice: removeDecimals(
-          toBigNumber(order.indexerMatchEvent.order.priceX18),
+          toBigNumber(params.indexerMatchEvent.order.priceX18),
         ),
         orderAmount: removeDecimals(
-          toBigNumber(order.indexerMatchEvent.order.amount),
+          toBigNumber(params.indexerMatchEvent.order.amount),
         ),
       };
-    } else if ('engineOrder' in order) {
+    } else if ('engineOrder' in params) {
       return {
-        digest: order.engineOrder.digest,
-        orderAppendix: order.engineOrder.appendix,
-        orderPrice: order.engineOrder.price,
-        orderAmount: removeDecimals(order.engineOrder.totalAmount),
+        digest: params.engineOrder.digest,
+        orderAppendix: params.engineOrder.appendix,
+        orderPrice: params.engineOrder.price,
+        orderAmount: removeDecimals(params.engineOrder.totalAmount),
       };
     } else {
       return {
-        digest: order.triggerOrderInfo.order.digest,
-        orderAppendix: order.triggerOrderInfo.order.appendix,
-        orderPrice: order.triggerOrderInfo.order.price,
-        orderAmount: removeDecimals(order.triggerOrderInfo.order.amount),
+        digest: params.triggerOrderInfo.order.digest,
+        orderAppendix: params.triggerOrderInfo.order.appendix,
+        orderPrice: params.triggerOrderInfo.order.price,
+        orderAmount: removeDecimals(params.triggerOrderInfo.order.amount),
       };
     }
   })();
 
-  const totalBaseSize = orderAmount.abs();
+  const rawTotalBaseSize = orderAmount.abs();
+  const { exchangeRate } = params;
+
+  const displayOrderPrice = toXStocksDisplayPrice(orderPrice, exchangeRate);
+  const displayTotalBaseAmount = toXStocksDisplayAmount(
+    orderAmount,
+    exchangeRate,
+  );
+  const displayTotalBaseSize = displayTotalBaseAmount.abs();
 
   return {
     digest,
@@ -73,11 +80,12 @@ export function getOrderTableItem(order: Params): OrderTableItem {
     isMarket: orderAppendix.orderExecutionType === MARKET_ORDER_EXECUTION_TYPE,
     isReduceOnly: !!orderAppendix.reduceOnly,
     isIsolated: !!orderAppendix.isolated,
-    isCloseEntirePosition: isTpSlMaxOrderSize(totalBaseSize),
-    orderPrice,
-    totalBaseAmount: orderAmount,
-    totalBaseSize,
-    totalQuoteSize: totalBaseSize.multipliedBy(orderPrice),
+    // Use raw size for the sentinel value check — the "entire position" flag must reflect the original order
+    isCloseEntirePosition: isTpSlMaxOrderSize(rawTotalBaseSize),
+    orderPrice: displayOrderPrice,
+    totalBaseAmount: displayTotalBaseAmount,
+    totalBaseSize: displayTotalBaseSize,
+    totalQuoteSize: displayTotalBaseSize.multipliedBy(displayOrderPrice),
     rowId: digest,
   };
 }

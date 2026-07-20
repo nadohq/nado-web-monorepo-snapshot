@@ -1,7 +1,7 @@
 import type { ActionSuccessDialogParams } from 'client/modules/app/dialogs/ActionSuccessDialog';
 import type { EditOrderViaChartDialogProps } from 'client/modules/app/dialogs/EditOrderViaChartDialog';
 import type { CctpBridgeDialogParams } from 'client/modules/collateral/deposit/CctpBridgeDialog/types';
-import type { DepositOptionsDialogParams } from 'client/modules/collateral/deposit/DepositOptionsDialog/types';
+import type { DepositDialogEntrypointParams } from 'client/modules/collateral/deposit/DepositDialogEntrypoint';
 import type { DirectDepositReceiveDialogParams } from 'client/modules/collateral/deposit/DirectDepositReceiveDialog/types';
 import type { LiFiWidgetDialogParams } from 'client/modules/collateral/deposit/LiFiWidgetDialog/types';
 import type { Usdt0BridgeDialogParams } from 'client/modules/collateral/deposit/Usdt0BridgeDialog/types';
@@ -26,7 +26,6 @@ import type { ReversePositionDialogParams } from 'client/modules/trading/reverse
 import type { AddTpSlDialogParams } from 'client/modules/trading/tpsl/addTpSlDialog/AddTpSlDialog';
 import type { ManageTpSlDialogParams } from 'client/modules/trading/tpsl/manageTpSlDialog/types';
 import type { ModifyTpSlDialogParams } from 'client/modules/trading/tpsl/modifyTpSlDialog/types';
-import type { UtmCampaignDialogParams } from 'client/modules/utm/dialogs/UtmCampaignDialog/UtmCampaignDialog';
 import type { PerpLeverageDialogParams } from 'client/pages/PerpTrading/components/PerpLeverageDialog/PerpLeverageDialog';
 import type { PerpMarginModeDialogParams } from 'client/pages/PerpTrading/components/PerpMarginModeDialog/PerpMarginModeDialog';
 import type { ExportHistoryDialogParams } from 'client/pages/Portfolio/subpages/History/exportHistory/types';
@@ -37,21 +36,12 @@ export type DialogParams =
       type: 'location_restricted';
       params: EmptyObject;
     }
-  // Connection flow is: Connect -> Terms of Use -> Key Features
-  | {
-      type: 'connect';
-      params: EmptyObject;
-    }
   | {
       type: 'connect_custom_wallet';
       params: EmptyObject;
     }
   | {
       type: 'terms_of_use';
-      params: EmptyObject;
-    }
-  | {
-      type: 'key_features';
       params: EmptyObject;
     }
   | {
@@ -91,8 +81,8 @@ export type DialogParams =
       params: WalletDepositDialogParams;
     }
   | {
-      type: 'deposit_options';
-      params: DepositOptionsDialogParams;
+      type: 'deposit_entrypoint';
+      params: DepositDialogEntrypointParams;
     }
   | {
       type: 'withdraw';
@@ -157,10 +147,6 @@ export type DialogParams =
   | {
       type: 'action_success';
       params: ActionSuccessDialogParams;
-    }
-  | {
-      type: 'utm_campaign_connect';
-      params: UtmCampaignDialogParams;
     }
   | {
       type: 'epoch_breakdown';
@@ -249,11 +235,15 @@ export type DialogParams =
   | {
       type: 'cctp_bridge';
       params: CctpBridgeDialogParams;
+    }
+  | {
+      type: 'enter_referral_code';
+      params: EmptyObject;
     };
 
 export type DialogType = DialogParams['type'];
 
 export type CollateralDialogType = Extract<
   DialogType,
-  'deposit_options' | 'withdraw' | 'borrow' | 'repay'
+  'deposit_entrypoint' | 'withdraw' | 'borrow' | 'repay'
 >;

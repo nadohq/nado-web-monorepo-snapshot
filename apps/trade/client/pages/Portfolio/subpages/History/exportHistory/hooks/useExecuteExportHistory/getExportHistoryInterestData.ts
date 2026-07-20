@@ -1,4 +1,5 @@
 import { removeDecimals } from '@nadohq/client';
+import { toXStocksDisplayAmount } from '@nadohq/react-client';
 import {
   EXPORT_HISTORY_QUERY_DELAY_MILLIS,
   EXPORT_HISTORY_QUERY_PAGE_SIZE,
@@ -17,7 +18,8 @@ export async function getExportHistoryInterestData(
   params: GetExportHistoryDataParams,
   context: GetExportHistoryDataContext,
 ) {
-  const { subaccount, nadoClient, allMarketsStaticData } = context;
+  const { subaccount, nadoClient, allMarketsStaticData, getExchangeRate } =
+    context;
   const items: ExportHistoryInterestItem[] = [];
 
   let startCursor: string | undefined = undefined;
@@ -47,7 +49,11 @@ export async function getExportHistoryInterestData(
       const asset =
         allMarketsStaticData.spotProducts[event.productId]?.metadata.token
           .symbol;
-      const interestPaymentAmount = removeDecimals(event.paymentAmount);
+      const exchangeRate = getExchangeRate(event.productId);
+      const interestPaymentAmount = toXStocksDisplayAmount(
+        removeDecimals(event.paymentAmount),
+        exchangeRate,
+      );
 
       items.push({
         time: new Date(timestampMillis),

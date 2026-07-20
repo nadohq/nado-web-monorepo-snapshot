@@ -10,6 +10,7 @@ import {
   EditOrderFieldErrorType,
   useEditOrderFieldValidator,
 } from 'client/modules/tables/components/EditOrderFieldPopover/useEditOrderFieldValidator';
+import { useGetIsXStocksProduct } from 'client/modules/xStocks/hooks/useGetIsXStocksProduct';
 import { watchFormError } from 'client/utils/form/watchFormError';
 import { positiveBigNumberValidator } from 'client/utils/inputValidators';
 import { roundToIncrement } from 'client/utils/rounding';
@@ -48,8 +49,10 @@ export function useEditOrderFieldPopover({
   const { mutateAsync: modifyOrderAsync, isPending } = useExecuteModifyOrder();
   const { dispatchNotification } = useNotificationManagerContext();
   const { data: marketsStaticData } = useAllMarketsStaticData();
+  const getIsXStocksProduct = useGetIsXStocksProduct();
 
   const marketData = marketsStaticData?.allMarkets[productId];
+  const isXStocksMarket = getIsXStocksProduct(productId);
 
   const label = (() => {
     switch (field) {
@@ -121,11 +124,12 @@ export function useEditOrderFieldPopover({
   }, [value]);
 
   // Use absolute value for validation so the "value_unchanged" check works correctly
-  const validateField = useEditOrderFieldValidator(
+  const validateField = useEditOrderFieldValidator({
     increment,
-    absValue,
+    currentValue: absValue,
     minValue,
-  );
+    isXStocksMarket,
+  });
 
   const [isOpen, setIsOpen] = useState(false);
 

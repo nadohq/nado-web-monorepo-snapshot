@@ -2,6 +2,8 @@ export const LINKS = {
   alphaSignUp: 'https://feedback.nado.xyz/alpha-sign-up',
   appStatus: 'https://nado-xyz.betteruptime.com',
   cookiePolicy: 'https://app.nado.xyz/docs/cookie-policy.pdf',
+  depositHelp: 'https://intercom.help/funxyz/en/articles/10732578-contact-us',
+  discord: 'https://discord.com/invite/nado',
   docs: 'https://docs.nado.xyz',
   ethWallets: 'https://ethereum.org/en/wallets/find-wallet/',
   faq: 'https://docs.nado.xyz/faqs',
@@ -17,15 +19,17 @@ export const LINKS = {
   pointsDocs: 'https://docs.nado.xyz/points',
   privacyPolicy: 'https://app.nado.xyz/docs/privacy-policy.pdf',
   spotTradingLearnMore: 'https://docs.nado.xyz/products#spot-trading',
-  statsDashboard: 'https://stats.nado.xyz/',
   spreadDocs: 'https://docs.nado.xyz/subaccounts-and-health#spreads',
+  statsDashboard: 'https://www.nuanze.co/',
   termsOfUse: 'https://app.nado.xyz/docs/terms-of-use.pdf',
   tutorialAddInk:
     'https://docs.nado.xyz/onboarding-tutorial#step-2.-add-the-ink-network-to-your-wallet',
   tutorialBridge:
     'https://docs.nado.xyz/onboarding-tutorial/bridging-usdt0-to-ink',
   x: 'https://x.com/nadohq',
+  xStocksDocs: 'https://docs.nado.xyz/markets/tokenized-equities',
   zendesk: 'https://support.nado.xyz',
   zendeskAlphaFeedback:
     'http://support.nado.xyz/hc/en-us/requests/new?ticket_form_id=52275013155481',
+  ecosystem: 'https://ecosystem.nado.xyz/',
 };

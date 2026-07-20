@@ -80,7 +80,7 @@ export function useUserTutorialFlow(): UseUserTutorialFlow {
         break;
       case 'deposit':
         show({
-          type: 'deposit_options',
+          type: 'deposit_entrypoint',
           params: {},
         });
         break;

@@ -25,7 +25,7 @@ export function useExportHistoryDialog({
   const [endDate, setEndDateState] = useState<Date>();
   const [progressFrac, setProgressFrac] = useState<number>(0);
   const [selectedExportType, setSelectedExportType] =
-    useState<HistoryExportType>(initialExportType ?? 'trades');
+    useState<HistoryExportType>(initialExportType ?? 'aggregated_trades');
 
   const { mutateAsync, isSuccess, isPending, reset } =
     useExecuteExportHistory(setProgressFrac);

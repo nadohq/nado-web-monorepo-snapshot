@@ -42,5 +42,7 @@ export function getResolvedColorValue(colorVarName: ColorVar) {
   const varName = getTradeAppColorVar(colorVarName, { as: 'variable' });
   const tailwindStyles = getComputedStyle(document.documentElement);
 
-  return tailwindStyles.getPropertyValue(varName);
+  // getPropertyValue returns the raw declaration value, which may include
+  // surrounding whitespace. Trim so consumers (e.g. TV canvas calls) get a clean string.
+  return tailwindStyles.getPropertyValue(varName).trim();
 }

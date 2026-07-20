@@ -237,11 +237,12 @@ export function useIsolatedAdjustMarginSummary({
       : currentIsoPosition?.baseBalance.oraclePrice;
   })();
 
-  const marketPriceFormatSpecifier = getMarketPriceFormatSpecifier(
-    currentProductId
+  const marketPriceFormatSpecifier = getMarketPriceFormatSpecifier({
+    priceIncrement: currentProductId
       ? allMarketsStaticData?.perpMarkets[currentProductId]?.priceIncrement
       : undefined,
-  );
+    exchangeRate: undefined,
+  });
 
   return {
     currentSummary,

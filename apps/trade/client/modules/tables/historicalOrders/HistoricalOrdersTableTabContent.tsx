@@ -5,7 +5,7 @@ import { MobileHistoricalPriceTriggerOrdersTab } from 'client/modules/tables/his
 import { HistoricalTimeTriggerOrdersTable } from 'client/modules/tables/historicalOrders/historicalTimeTriggerOrders/HistoricalTimeTriggerOrdersTable';
 import { MobileHistoricalTimeTriggerOrdersTab } from 'client/modules/tables/historicalOrders/historicalTimeTriggerOrders/MobileHistoricalTimeTriggerOrdersTab';
 import { TableTabWithSubTabs } from 'client/modules/tables/tabs/TableTabWithSubTabs';
-import { HistoricalTableTabProps } from 'client/modules/tables/tabs/types';
+import { HistoricalTableTabWithSubTabsProps } from 'client/modules/tables/tabs/types';
 import { TradingSubTab } from 'client/modules/trading/layout/types';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,9 +19,7 @@ export function HistoricalOrdersTableTabContent<TTabID extends string>({
   productIds,
   isMobile,
   onSelectedSubTabIdChange,
-}: HistoricalTableTabProps & {
-  onSelectedSubTabIdChange?: (id: TTabID) => void;
-}) {
+}: HistoricalTableTabWithSubTabsProps<TTabID>) {
   const { t } = useTranslation();
 
   const orderHistorySubTabs = useMemo(() => {

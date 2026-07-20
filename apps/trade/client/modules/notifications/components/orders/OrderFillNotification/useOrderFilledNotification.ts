@@ -1,15 +1,19 @@
 import { BigNumbers, removeDecimals } from '@nadohq/client';
+import {
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import {
   OrderFillNotificationData,
   OrderNotificationMetadata,
 } from 'client/modules/notifications/types';
 import { isTpSlMaxOrderSize } from 'client/modules/trading/tpsl/utils/isTpSlMaxOrderSize';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { getSharedProductMetadata } from 'client/utils/getSharedProductMetadata';
 import { useMemo } from 'react';
 
 export function useOrderFilledNotification(data: OrderFillNotificationData) {
-  const { data: marketsStaticData } = useAllMarketsStaticData();
   const {
     productId,
     fillPrice,
@@ -19,7 +23,14 @@ export function useOrderFilledNotification(data: OrderFillNotificationData) {
     orderAppendix,
   } = data;
 
+  const { data: marketsStaticData } = useAllMarketsStaticData();
   const market = marketsStaticData?.allMarkets[productId];
+
+  const { getExchangeRate } = useGetXStocksExchangeRate();
+  const exchangeRate = useMemo(
+    () => getExchangeRate(productId),
+    [getExchangeRate, productId],
+  );
 
   return useMemo(() => {
     if (!market) {
@@ -48,14 +59,19 @@ export function useOrderFilledNotification(data: OrderFillNotificationData) {
       ? BigNumbers.ONE
       : newOrderFilledAmount.div(totalAmount).precision(2);
 
+    const decimalAdjustedFilledAmount = toXStocksDisplayAmount(
+      removeDecimals(newOrderFilledAmount),
+      exchangeRate,
+    );
+
     return {
       market,
       metadata,
-      fillPrice,
+      exchangeRate,
+      fillPrice: toXStocksDisplayPrice(fillPrice, exchangeRate),
       orderDisplayType,
       orderAppendix,
-      currentFilledAmount: newOrderFilledAmount,
-      decimalAdjustedFilledAmount: removeDecimals(newOrderFilledAmount),
+      decimalAdjustedFilledAmount,
       fractionFilled,
       fillStatus: fractionFilled.eq(1) ? 'full' : 'partial',
     };
@@ -64,6 +80,7 @@ export function useOrderFilledNotification(data: OrderFillNotificationData) {
     totalAmount,
     newOrderFilledAmount,
     fillPrice,
+    exchangeRate,
     orderAppendix,
     orderDisplayType,
   ]);

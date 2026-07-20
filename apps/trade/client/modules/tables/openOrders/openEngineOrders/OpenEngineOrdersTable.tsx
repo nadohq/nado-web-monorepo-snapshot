@@ -18,7 +18,7 @@ import { TABLE_CELL_CONTAINER_CLASSNAME } from 'client/modules/tables/consts';
 import { EmptyTablePlaceholder } from 'client/modules/tables/EmptyTablePlaceholder';
 import { useOpenEngineOrdersTable } from 'client/modules/tables/openOrders/openEngineOrders/useOpenEngineOrdersTable';
 import { OpenEngineOrderTableItem } from 'client/modules/tables/types/OpenEngineOrderTableItem';
-import { ORDER_DISPLAY_TYPES } from 'client/modules/trading/consts/orderDisplayTypes';
+import { ORDER_DISPLAY_TYPES_BY_CATEGORY } from 'client/modules/trading/consts/orderDisplayTypesByCategory';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -199,7 +199,7 @@ export function OpenEngineOrdersTable({
             header={header}
             cancelOrdersFilter={{
               productIds,
-              orderDisplayTypes: ORDER_DISPLAY_TYPES.engine,
+              orderDisplayTypes: ORDER_DISPLAY_TYPES_BY_CATEGORY.engine,
             }}
           />
         ),

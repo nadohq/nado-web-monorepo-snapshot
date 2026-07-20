@@ -32,7 +32,7 @@ export function DesktopCollateralButtons({ disabled }: { disabled?: boolean }) {
         size="sm"
         disabled={disabled}
         onClick={() => {
-          show({ type: 'deposit_options', params: {} });
+          show({ type: 'deposit_entrypoint', params: {} });
         }}
         dataTestId="portfolio-collateral-buttons-deposit"
       >

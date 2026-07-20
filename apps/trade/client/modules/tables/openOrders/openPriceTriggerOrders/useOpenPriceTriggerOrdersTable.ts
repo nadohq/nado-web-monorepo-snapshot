@@ -1,3 +1,5 @@
+import { toBigNumber } from '@nadohq/client';
+import { toXStocksDisplayPrice } from '@nadohq/react-client';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { useFilteredProductIds } from 'client/hooks/markets/useFilteredProductIds';
 import { useQuerySubaccountOpenTriggerOrders } from 'client/hooks/query/subaccount/useQuerySubaccountOpenTriggerOrders';
@@ -10,6 +12,7 @@ import {
   requirePriceTriggerCriteria,
 } from 'client/modules/trading/utils/trigger/getPriceTriggerCriteria';
 import { getTriggerOrderDisplayType } from 'client/modules/trading/utils/trigger/getTriggerOrderDisplayType';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { QueryState } from 'client/types/QueryState';
 import { secondsToMilliseconds } from 'date-fns';
 import { includes } from 'lodash';
@@ -25,6 +28,7 @@ export function useOpenPriceTriggerOrdersTable({
   const { filteredProductIds, isLoading: marketsAreLoading } =
     useFilteredProductIds({ productIds });
   const { data: allMarketsStaticData } = useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const {
     isLoading: ordersAreLoading,
@@ -39,9 +43,11 @@ export function useOpenPriceTriggerOrdersTable({
 
     return filteredProductIds.flatMap((productId) => {
       const ordersForProduct = ordersData?.[productId];
+      const exchangeRate = getExchangeRate(productId);
       const productTableItem = getProductTableItem({
         productId,
         allMarketsStaticData,
+        exchangeRate,
       });
 
       if (!ordersForProduct?.length || !productTableItem) {
@@ -68,13 +74,14 @@ export function useOpenPriceTriggerOrdersTable({
         .map((openTriggerOrder): OpenPriceTriggerOrderTableItem => {
           const orderTableItem = getOrderTableItem({
             triggerOrderInfo: openTriggerOrder,
+            exchangeRate,
           });
 
           const priceTriggerCriteria = requirePriceTriggerCriteria(
             openTriggerOrder.order.triggerCriteria,
           );
 
-          const { productId, digest } = openTriggerOrder.order;
+          const { digest } = openTriggerOrder.order;
           const orderDisplayType = getTriggerOrderDisplayType(openTriggerOrder);
 
           return {
@@ -84,6 +91,10 @@ export function useOpenPriceTriggerOrdersTable({
               openTriggerOrder.placementTime,
             ),
             priceTriggerCriteria,
+            displayTriggerPrice: toXStocksDisplayPrice(
+              toBigNumber(priceTriggerCriteria.triggerPrice),
+              exchangeRate,
+            ),
             orderForCancellation: {
               productId,
               digest,
@@ -99,6 +110,7 @@ export function useOpenPriceTriggerOrdersTable({
     filteredProductIds,
     triggerOrderDisplayTypes,
     ordersData,
+    getExchangeRate,
   ]);
 
   return {

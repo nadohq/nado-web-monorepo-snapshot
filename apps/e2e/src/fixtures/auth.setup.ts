@@ -21,9 +21,8 @@ setup('authenticate and accept terms', async ({ page, context }) => {
 
   await page.waitForTimeout(500);
 
-  // 3. Accept terms of service and start trading
+  // 3. Accept terms of service
   await tradePage.onboardingDialog.agreeToTerms();
-  await tradePage.onboardingDialog.startTrading();
 
   // 4. Dismiss marketing dialogs
   await tradePage.marketingDialog.dismissIfVisible();

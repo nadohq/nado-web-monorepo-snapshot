@@ -20,7 +20,7 @@ import { EmptyTablePlaceholder } from 'client/modules/tables/EmptyTablePlacehold
 import { useOpenTimeTriggerOrdersTable } from 'client/modules/tables/openOrders/openTimeTriggerOrders/useOpenTimeTriggerOrdersTable';
 import { OpenTimeTriggerOrderTableItem } from 'client/modules/tables/types/OpenTimeTriggerOrderTableItem';
 import { TwapOrderRuntimeDisplay } from 'client/modules/trading/components/twap/TwapOrderRuntimeDisplay';
-import { ORDER_DISPLAY_TYPES } from 'client/modules/trading/consts/orderDisplayTypes';
+import { ORDER_DISPLAY_TYPES_BY_CATEGORY } from 'client/modules/trading/consts/orderDisplayTypesByCategory';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -210,7 +210,7 @@ export function OpenTimeTriggerOrdersTable({
               header={header}
               cancelOrdersFilter={{
                 productIds,
-                orderDisplayTypes: ORDER_DISPLAY_TYPES.twap,
+                orderDisplayTypes: ORDER_DISPLAY_TYPES_BY_CATEGORY.twap,
               }}
             />
           ),

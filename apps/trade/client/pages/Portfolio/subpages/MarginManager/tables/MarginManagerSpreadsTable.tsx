@@ -3,12 +3,13 @@
 import { WithClassnames } from '@nadohq/web-common';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HeaderCell } from 'client/components/DataTable/cells/HeaderCell';
-import { MarketProductInfoCell } from 'client/components/DataTable/cells/MarketProductInfoCell';
+import { TableCell } from 'client/components/DataTable/cells/TableCell';
 import { DataTable } from 'client/components/DataTable/DataTable';
 import {
   bigNumberSortFn,
   getKeyedBigNumberSortFn,
 } from 'client/components/DataTable/utils/sortingFns';
+import { ProductLabel } from 'client/components/ProductLabel';
 import { AmountWithSymbolCell } from 'client/modules/tables/cells/AmountWithSymbolCell';
 import { TitleHeaderCell } from 'client/modules/tables/cells/TitleHeaderCell';
 import { EmptyTablePlaceholder } from 'client/modules/tables/EmptyTablePlaceholder';
@@ -45,10 +46,12 @@ export function MarginManagerSpreadsTable({ className }: WithClassnames) {
             const spotMetadata =
               getValue<MarginManagerSpreadTableItem['metadata']>();
             return (
-              <MarketProductInfoCell
-                symbol={spotMetadata.symbol}
-                iconSrc={spotMetadata.icon.asset}
-              />
+              <TableCell>
+                <ProductLabel
+                  symbol={spotMetadata.symbol}
+                  iconSrc={spotMetadata.icon.asset}
+                />
+              </TableCell>
             );
           },
           enableSorting: false,

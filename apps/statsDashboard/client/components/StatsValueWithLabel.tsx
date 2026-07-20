@@ -1,11 +1,15 @@
-import { formatNumber, NumberFormatValue } from '@nadohq/react-client';
+import {
+  formatNumber,
+  NumberFormatSpecifier,
+  NumberFormatValue,
+} from '@nadohq/react-client';
 import { joinClassNames } from '@nadohq/web-common';
 import { Label, Value } from '@nadohq/web-ui';
 import { ReactNode } from 'react';
 
 interface WithFormatValue {
   value: NumberFormatValue | undefined;
-  formatSpecifier: string;
+  formatSpecifier: NumberFormatSpecifier;
 }
 
 interface WithValueContent {

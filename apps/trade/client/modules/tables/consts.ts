@@ -4,6 +4,11 @@
  */
 export const TABLE_CELL_CONTAINER_CLASSNAME = {
   /**
+   * Width for the leading "Favorite" toggle column
+   */
+  favorite: 'w-14',
+
+  /**
    * Width for "Market" / "Asset" / "Product" columns
    */
   product: 'w-37',

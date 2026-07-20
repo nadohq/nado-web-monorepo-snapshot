@@ -1,6 +1,7 @@
 import { WithChildren } from '@nadohq/web-common';
 import { useSizeClass } from '@nadohq/web-ui';
 import { useGetConfirmedTx } from 'client/hooks/util/useGetConfirmedTx';
+import { useAnalyticsContext } from 'client/modules/analytics/AnalyticsContext';
 import { NotificationPosition } from 'client/modules/localstorage/userState/types/tradingSettings';
 import { FeatureNotificationsEmitter } from 'client/modules/notifications/emitters/FeatureNotificationsEmitter';
 import { SmartContractWalletHelperEventEmitter } from 'client/modules/notifications/emitters/SmartContractWalletHelperEventEmitter';
@@ -9,6 +10,7 @@ import { handleActionErrorHandlerNotificationDispatch } from 'client/modules/not
 import { handleCancelMultiOrdersNotificationDispatch } from 'client/modules/notifications/handlers/handleCancelMultiOrdersNotificationDispatch';
 import { handleCancelOrderNotificationDispatch } from 'client/modules/notifications/handlers/handleCancelOrderNotificationDispatch';
 import { handleCctpBridgeNotificationDispatch } from 'client/modules/notifications/handlers/handleCctpBridgeNotificationDispatch';
+import { handleClassicDepositUiNotificationDispatch } from 'client/modules/notifications/handlers/handleClassicDepositUiNotificationDispatch';
 import { handleCloseMultiPositionsNotificationDispatch } from 'client/modules/notifications/handlers/handleCloseMultiPositionsNotificationDispatch';
 import { handleClosePositionNotificationDispatch } from 'client/modules/notifications/handlers/handleClosePositionNotificationDispatch';
 import { handleDepositSuccessNotificationDispatch } from 'client/modules/notifications/handlers/handleDepositSuccessNotificationDispatch';
@@ -19,6 +21,8 @@ import { handleMarginUsageWarningNotificationDispatch } from 'client/modules/not
 import { handleOrderFillNotificationDispatch } from 'client/modules/notifications/handlers/handleOrderFillNotificationDispatch';
 import { handlePlaceOrderNotificationDispatch } from 'client/modules/notifications/handlers/handlePlaceOrderNotificationDispatch';
 import { handleSmartContractWalletHelperNotificationDispatch } from 'client/modules/notifications/handlers/handleSmartContractWalletHelperNotificationDispatch';
+import { handleStaleDataNotificationDispatch } from 'client/modules/notifications/handlers/handleStaleDataNotificationDispatch';
+import { handleTradingCompEnrollNotificationDispatch } from 'client/modules/notifications/handlers/handleTradingCompEnrollNotificationDispatch';
 import { handleUsdt0BridgeNotificationDispatch } from 'client/modules/notifications/handlers/handleUsdt0BridgeNotificationDispatch';
 import { useNotificationPosition } from 'client/modules/notifications/hooks/useNotificationPosition';
 import {
@@ -55,14 +59,17 @@ export function NotificationManagerContextProvider({ children }: WithChildren) {
   const toasterPosition =
     NOTIFICATION_TO_TOASTER_POSITION_MAP[notificationPosition];
 
+  const { sendGTMEvent } = useAnalyticsContext();
+
   const dispatchContext: NotificationDispatchContext = useMemo(() => {
     return {
       t,
       getConfirmedTx,
       sizeClass,
       enableTradingNotifications,
+      sendGTMEvent,
     };
-  }, [t, getConfirmedTx, sizeClass, enableTradingNotifications]);
+  }, [t, getConfirmedTx, sendGTMEvent, sizeClass, enableTradingNotifications]);
 
   const dispatchNotification = useCallback(
     (params: DispatchNotificationParams) => {
@@ -98,28 +105,46 @@ export function NotificationManagerContextProvider({ children }: WithChildren) {
           handleOrderFillNotificationDispatch(params.data, dispatchContext);
           break;
         case 'maint_margin_usage_warning':
-          handleMaintMarginUsageNotificationDispatch(params.data);
+          handleMaintMarginUsageNotificationDispatch(
+            params.data,
+            dispatchContext,
+          );
           break;
         case 'margin_usage_warning':
-          handleMarginUsageWarningNotificationDispatch();
+          handleMarginUsageWarningNotificationDispatch(dispatchContext);
           break;
         case 'smart_contract_wallet_helper':
           handleSmartContractWalletHelperNotificationDispatch();
           break;
         case 'liquidation':
-          handleLiquidationNotificationDispatch(params.data);
+          handleLiquidationNotificationDispatch(params.data, dispatchContext);
           break;
         case 'new_feature':
           handleFeatureNotificationDispatch(params.data);
           break;
         case 'deposit_success':
-          handleDepositSuccessNotificationDispatch(params.data);
+          handleDepositSuccessNotificationDispatch(
+            params.data,
+            dispatchContext,
+          );
           break;
         case 'cctp_bridge':
           handleCctpBridgeNotificationDispatch(params.data);
           break;
+        case 'trading_competition_enroll':
+          handleTradingCompEnrollNotificationDispatch(
+            params.data,
+            dispatchContext,
+          );
+          break;
         case 'usdt0_bridge':
           handleUsdt0BridgeNotificationDispatch(params.data, dispatchContext);
+          break;
+        case 'stale_data':
+          handleStaleDataNotificationDispatch();
+          break;
+        case 'classic_deposit_ui_notification':
+          handleClassicDepositUiNotificationDispatch();
           break;
       }
     },

@@ -6,7 +6,6 @@ export const KNOWN_CONNECTOR_IDS = {
   walletConnect: 'walletConnect',
   // App managed wallet connectors
   customWallet: 'customWallet',
-  xrpl: 'xrpl',
   desktopWalletLink: 'desktopWalletLink',
 } as const;
 

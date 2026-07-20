@@ -1,6 +1,5 @@
 {
   "about": "Acerca de",
-  "accessLimitedJoinWaitlistGetYourSpot": "El acceso está limitado a usuarios invitados. Únete a la lista de espera y sigue a Nado en X para obtener tu lugar.",
   "account": "Cuenta",
   "accountDetails": "Detalles de la cuenta",
   "accountEquity": "Capital de la cuenta",
@@ -50,20 +49,25 @@
   "availableMaintMargin": "Margen de mant. disponible",
   "availableMargin": "Margen disponible",
   "avatar": "Avatar",
+  "avgDailyVol7d": "Vol. diario prom. 7d",
   "avgEntryPrice": "Precio medio de entrada",
   "avgFilledPrice": "Precio medio ejecutado",
   "avgOrderPrice": "Precio medio/orden",
+  "avgPrice": "Precio medio",
   "balance": "Saldo",
   "balanceChange": "Cambio de saldo",
   "balances": "Saldos",
   "balanceValue": "Saldo/Valor",
-  "beholderByKraken": "Beholder by Kraken",
   "borrow": "Préstamo",
   "borrowApy": "APY de préstamo",
   "borrowing": "Prestando",
   "borrowRate": "Tasa de préstamo",
   "borrowRiskWarningDescription": "Puedes prestar activos contra tu colateral existente. Prestar aumenta tu uso de margen y riesgo de cuenta.",
   "bought": "Comprado",
+  "bridgeDepositDisclosure": {
+    "description": "Estás transfiriendo fondos a tu cuenta de Nado. Puedes monitorear el estado de tus depósitos <action>aquí</action>.",
+    "title": "Depósito por Bridge"
+  },
   "bridgeUsdcApprovalInfo": "Es posible que se te pida firmar una transacción de aprobación antes de la transacción de depósito.",
   "bridgeUsdcNative": "Bridge USDC (Nativo)",
   "bridgeUsdcNativeDescription": "Bridge USDC nativamente vía Circle CCTP",
@@ -111,7 +115,6 @@
     "confirm": "Confirmar",
     "confirmDeposit": "Confirmar depósito",
     "confirmingReferral": "Confirmando referido",
-    "confirmReferral": "Confirmar referido",
     "confirmTransaction": "Confirmar transacción",
     "confirmTransfer": "Confirmar transferencia",
     "connect": "Conectar",
@@ -176,6 +179,7 @@
     "marketDetails": "Detalles del mercado",
     "maxRepay": "Reembolso máximo",
     "mintTokens": "Mintear tokens",
+    "nextSlide": "Diapositiva siguiente",
     "ok": "OK",
     "openDialog": "Abrir diálogo",
     "orderSubmitted": "Orden enviada",
@@ -183,6 +187,7 @@
     "placingOrder": "Colocando orden",
     "post": "Publicar",
     "previewOrders": "Previsualizar órdenes",
+    "previousSlide": "Diapositiva anterior",
     "privateKeyCopied": "Clave privada copiada",
     "referralConfirmed": "Referido confirmado",
     "rejectAll": "Rechazar todo",
@@ -235,7 +240,6 @@
     "viewHistory": "Ver historial",
     "viewTutorial": "Ver tutorial",
     "waitingForWallet": "Esperando wallet",
-    "waitlist": "Lista de espera",
     "withdraw": "Retirar",
     "withdrawalSuccessful": "Retiro exitoso",
     "withdrawingLiquidity": "Retirando liquidez",
@@ -260,7 +264,6 @@
   "changeInBalances": "Cambio en saldos",
   "changeOneClickTradingPreferencesInSettings": "Puedes cambiar tus preferencias de 1CT en Configuración.",
   "changesApplied": "Cambios aplicados",
-  "chaosLabsAggregate": "Agregado Chaos Labs",
   "chart": "Gráfico",
   "chartBuySellMarks": "Marcas de compra/venta en gráfico",
   "chartOrderLines": "Líneas de orden en gráfico",
@@ -721,6 +724,30 @@
       "content": "El saldo combinado total de todas las cuentas mostradas. No incluye cuentas creadas vía API.",
       "title": "Saldo total"
     },
+    "tradingCompMinAccountValue": {
+      "content": "El valor mínimo de cuenta necesario para ser elegible en esta categoría.",
+      "title": "Valor mínimo de cuenta"
+    },
+    "tradingCompMinTradingVolume": {
+      "content": "El volumen mínimo de operaciones necesario para ser elegible en esta categoría.",
+      "title": "Volumen mínimo de operaciones"
+    },
+    "tradingCompRoi": {
+      "content": "Tu retorno de la inversión durante el periodo de la competencia. Determina tu puesto en la clasificación de ROI.",
+      "title": "ROI"
+    },
+    "tradingCompRoiTrackEligibility": {
+      "content": "Para ser elegible en la categoría ROI, debes cumplir los requisitos mínimos indicados arriba. El estado se actualiza cada hora.",
+      "title": "Estado"
+    },
+    "tradingCompVolume": {
+      "content": "Tu volumen total de operaciones durante el periodo de la competencia. Determina tu puesto en la clasificación de volumen.",
+      "title": "Volumen"
+    },
+    "tradingCompVolumeTrackEligibility": {
+      "content": "Para ser elegible en la categoría Volumen, debes cumplir los requisitos mínimos indicados arriba. El estado se actualiza cada hora.",
+      "title": "Estado"
+    },
     "tradingOrderbookOpenOrder": {
       "content": "Tienes una orden en este nivel de precio.",
       "title": "Tu orden"
@@ -792,6 +819,7 @@
     "editColumns": "Editar columnas",
     "editOrderViaChart": "Modificando precio de orden",
     "enableOneClickTrading": "Activar trading en un clic",
+    "enterReferralCode": "Ingresar código de referido",
     "exportHistory": "Exportar historial",
     "externalWalletDeposit": "Depósito desde wallet externa",
     "fastWithdraw": "Retiro rápido",
@@ -934,7 +962,6 @@
     "noAvailableBalancesToConvert": "No hay saldos disponibles para convertir.",
     "noConnectedAddress": "No se encontró dirección conectada",
     "noEnsConnected": "Sin ENS conectado",
-    "noInvitesRemaining": "Sin invitaciones restantes",
     "notBorrowingThisAsset": "No estás prestando este activo.",
     "oneClickTradingApprovalRequired": "Se requiere aprobación de trading en un clic.",
     "oneClickTradingNotEnabled": "El trading en un clic no está activado.",
@@ -1108,6 +1135,10 @@
   "getStartedDescription": "Aprende cómo configurarte en {{primaryChainName}} y depositar activos para empezar a operar.",
   "getStartedOnChain": "Comenzar en {{primaryChainName}}",
   "helpCenter": {
+    "depositHelp": {
+      "description": "Obtén ayuda con tu depósito",
+      "title": "Ayuda con depósitos"
+    },
     "faq": {
       "description": "Respuestas a preguntas frecuentes",
       "title": "FAQ"
@@ -1130,7 +1161,6 @@
   "imageAltText": {
     "actionSymbol": "{{label}} {{symbol}}",
     "assetIcon": "Icono de activo",
-    "brandLogo": "Nado",
     "chainIcon": "Icono de cadena",
     "depositAddressQRCode": "Código QR de dirección de depósito Nado",
     "editOrderField": "Editar orden {{label}}",
@@ -1176,6 +1206,11 @@
   "isolatedAbbrev": "Aislado",
   "isolatedLeverage": "Aislado {{leverage}}",
   "isolatedPositions": "Posiciones aisladas",
+  "isoOnlyMarketsCrossMarginOverride": {
+    "description": "Permitir el modo de margen cruzado en mercados aislados únicamente (p. ej., RWAs). Pensado para creadores de mercado: al habilitarlo, se ignora la restricción de aislamiento exclusivo en la interfaz y se puede seleccionar margen cruzado para estos mercados.",
+    "header": "Anulación de margen cruzado",
+    "toggleLabel": "Habilitar margen cruzado en mercados solo aislados"
+  },
   "isoUnrealizedPnl": "PnL no realizado aislado",
   "keyFeatures": {
     "collateralInterest": "Todo el colateral genera interés",
@@ -1255,6 +1290,31 @@
   "marketOpensIn": "El mercado abre en:",
   "marketOrder": "Orden de mercado",
   "markets": "Mercados",
+  "marketsPage": {
+    "allTimeVolume": "Volumen total",
+    "annualized": "Anualizado",
+    "avg24h": "Prom. 24h",
+    "avg30d": "Prom. 30d",
+    "avg3d": "Prom. 3d",
+    "avg7d": "Prom. 7d",
+    "fundingRates": "Tasas de funding",
+    "gainersAndLosers": "Ganadores y perdedores",
+    "hotMarkets": "🔥 Mercados populares",
+    "markPrice": "Precio de marca",
+    "moreDetails": "Más detalles",
+    "nextPayment": "Próximo pago",
+    "openInterestAbbrev": "Int. abierta {{symbol}}",
+    "predicted": "Predicho",
+    "recentlyAdded": "Añadidos recientemente",
+    "searchMarkets": "Buscar mercados",
+    "spotIndexPrice": "Precio índice spot",
+    "subtitle24hChange": "Cambio 24h",
+    "subtitle24hVolume": "Volumen 24h",
+    "topDepositRates": "Mejores tasas de depósito",
+    "topPredictedFunding": "Mejor funding predicho",
+    "trades24h": "Operaciones 24h",
+    "volume24hWithSymbol": "Volumen 24h {{symbol}}"
+  },
   "marketStatus": "Estado del mercado",
   "marketStatusLiveDescription": "El mercado está abierto para operar. Entrará en modo solo reducción a las {{reduceOnlyTime}}.",
   "marketStatusReduceOnlyDescription": "El mercado está en modo solo reducción. Puedes cerrar o reducir posiciones existentes, pero crear o aumentar posiciones no está disponible hasta que el mercado reabra a las {{reopenTime}}.",
@@ -1305,6 +1365,7 @@
     "withdraw": "Retirar"
   },
   "netBalance": "Saldo neto",
+  "netDelta": "Delta neto",
   "netPnl": "PnL neto",
   "newMarket": "Nuevo mercado",
   "newRewards": "Nuevas recompensas",
@@ -1315,10 +1376,6 @@
   "noBorrowsAtTheMoment": "No tienes préstamos en este momento.",
   "notificationPosition": "Posición de notificación",
   "notifications": {
-    "airdropSuccess": {
-      "description": "Las comisiones de gas corren por nuestra cuenta: se ha enviado un pequeño airdrop de ETH a tu wallet para cubrir las comisiones de gas.",
-      "title": "¡Recarga completada!"
-    },
     "bridgeInitiated": {
       "description": "Tu transferencia de USDC se está procesando. Puede tardar unos minutos en aparecer en el explorador.",
       "title": "Depósito iniciado",
@@ -1352,6 +1409,12 @@
       "description": "¡GM! Ahora puedes depositar y usar {{symbol}} como colateral. También puedes operar {{marketName}}.",
       "title": "Nuevo colateral y mercado spot"
     },
+    "newSpotMarkets": {
+      "content_one": "¡GM! Hemos añadido <highlight>un nuevo mercado spot</highlight>",
+      "content_other": "¡GM! Hemos añadido <highlight>{{count}} nuevos mercados spot</highlight>",
+      "title_one": "Nuevo colateral y mercado spot",
+      "title_other": "Nuevo colateral y mercados spot"
+    },
     "oneClickTradingRequired": "Se requiere trading en un clic",
     "orderPlaced": "Orden {{orderType}} colocada",
     "orderPriceRange": "{{startPrice}} - {{endPrice}}",
@@ -1366,6 +1429,10 @@
     "smartContractWalletRequirement": "Las wallets de smart contract requieren trading en un clic para interactuar con la app. Activa 1CT ahora.",
     "spotAndPerpLiquidated": "Tu saldo spot y posición perpetua fueron liquidados.",
     "spotLiquidated": "Tu saldo spot fue liquidado.",
+    "tradingCompEnrollSuccess": {
+      "body": "Ya estás dentro. Sigue tus clasificaciones de ROI y Volumen en las tablas de líderes.",
+      "title": "Inscripción exitosa"
+    },
     "updating": "Actualizando…",
     "usdt0BridgeSuccess": {
       "description": "Tu transacción de depósito USDT ha sido enviada. Sigue la entrega cross-chain en LayerZero Scan.",
@@ -1400,11 +1467,11 @@
   "operational": "Operativo",
   "oraclePrice": "Precio del oráculo",
   "oraclePriceAbbrev": "Oráculo",
-  "oracleSpotIndexPrice": "Oráculo (Precio índice spot)",
   "order": "Orden",
   "orderAmount": "Cantidad de la orden",
   "orderbookAbbrev": "Libro de órdenes",
   "orderbookAnimations": "Animaciones del libro",
+  "orderbookOpenOrderMessage": "Tienes una orden en este nivel de precio.",
   "orderCancelled": "Orden cancelada",
   "orderExpired": "Orden expirada",
   "orderHistory": "Historial de órdenes",
@@ -1461,6 +1528,7 @@
     "faucet": "Faucet",
     "history": "Historial",
     "marginManager": "Gestor de margen",
+    "markets": "Mercados",
     "overview": "Resumen",
     "perpetuals": "Perpetuos",
     "points": "Puntos",
@@ -1473,6 +1541,7 @@
   "partialOrder": "Orden parcial",
   "payingRate": "Pagando {{formattedEffectiveAPY}}",
   "payment": "Pago",
+  "pendingBridgeDeposits": "Depósitos puente pendientes",
   "period": "{{period}}",
   "perp": "Perpetuo",
   "perpetuals": "Perpetuos",
@@ -1528,7 +1597,6 @@
   "priceDistribution": "Distribución de precio",
   "priceRange": "Rango de precio",
   "priceRangeValue": "{{startPrice}} - {{endPrice}}",
-  "privateBeta": "Beta privada",
   "protocolFee": "Comisión del protocolo",
   "qrCodeLoginDescription": "El código QR te permite iniciar sesión en tu cuenta desde un dispositivo móvil.",
   "qrCodeTrustWarning": "Solo escanea el código QR con dispositivos de confianza.",
@@ -1547,9 +1615,8 @@
   "reducePriceType": "Reducir {{priceType}}",
   "referrals": {
     "cannotDeleteRefereeWithTradingVolume": "No se puede eliminar el referido con volumen de trading",
-    "invitesLeft": "Invitaciones restantes",
+    "enterReferralCodeDescription": "¿Tienes un código de referido? Ingrésalo abajo.",
     "joined": "Se unió",
-    "pageDescription": "Eres parte de la primera ola de Nado. Opera para desbloquear 1 invitación por cada $250k en volumen, hasta 100 en total.",
     "referralCode": "Tu código de referido",
     "referredTraders": "Traders referidos",
     "referredUsers": "Usuarios referidos",
@@ -1708,6 +1775,7 @@
   "totalEquity": "Capital total",
   "totalMarginInIsolatedPositions": "Margen total en posiciones aisladas",
   "totalPnl": "PnL total",
+  "totals": "Totales",
   "totalSize": "Tamaño total",
   "totalSizeWithSymbol": "{{formattedSize}} {{symbol}}",
   "totalSupplied": "Total suministrado",
@@ -1715,18 +1783,10 @@
   "totalVolume": "Volumen total",
   "tpSl": "TP/SL",
   "tpslAbbrev": "TP/SL",
-  "tpslEstimatedPnlBoth": "Est. <0/> y <1/>",
-  "tpslEstimatedPnlParts": {
-    "sl": {
-      "loss": "Pérdida SL de <0>{{usd}} (ROE: {{roe}})</0>",
-      "profit": "Ganancia SL de <0>{{usd}} (ROE: {{roe}})</0>"
-    },
-    "tp": {
-      "loss": "Pérdida TP de <0>{{usd}} (ROE: {{roe}})</0>",
-      "profit": "Ganancia TP de <0>{{usd}} (ROE: {{roe}})</0>"
-    }
+  "tpslEstimatedPnl": {
+    "loss": "Pérdida est. de <highlight>{{usd}} (ROE: {{roe}})</highlight>",
+    "profit": "Ganancia est. de <highlight>{{usd}} (ROE: {{roe}})</highlight>"
   },
-  "tpslEstimatedPnlSingle": "Est. <0/>",
   "trade": "Operar",
   "tradeHistory": "Historial de operaciones",
   "tradePerpContracts": "Operar contratos perpetuos",
@@ -1737,9 +1797,13 @@
   "tradingChart": {
     "backfillMark": "Relleno",
     "backfillMarkTooltip": "Las velas antes de esta hora están rellenadas con datos externos",
+    "broker": {
+      "notTradableReason": "Conecta tu billetera para empezar a operar",
+      "placeOrderFailed": "Error al colocar la orden",
+      "tradingAccount": "Cuenta de trading"
+    },
     "dragToAdjustPriceTooltip": "Arrastra para ajustar precio",
     "estLiquidationLabel": "Precio liq. est. ({{marginTypeLabel}})",
-    "orderLineLabel": "{{orderTypeLabel}} ({{marginTypeLabel}}) {{comparator}} {{formattedPrice}}",
     "pnlLabel": "PnL {{formattedPnl}} ({{marginTypeLabel}})",
     "tooltips": {
       "crossLiquidationPriceDesc": "Los precios de liquidación de margen cruzado son menos precisos ya que dependen del capital total de la cuenta.",
@@ -1750,8 +1814,44 @@
     },
     "tradeMarkTooltip": "{{formattedTime}}: {{formattedSize}}@{{formattedPrice}}"
   },
+  "tradingCompetition": {
+    "accountValueRequirementNotMet": "Requisito de valor de cuenta no cumplido",
+    "bothRequirementsNotMet": "Ambos requisitos no cumplidos",
+    "competitionEnded": "Competencia finalizada",
+    "competitionEndsIn": "La competencia termina en",
+    "competitionStartsIn": "La competencia comienza en",
+    "depositMoreForTrackEligibility": "Necesitas {{amount}} más para ser elegible para {{track}}",
+    "eligibility": "Elegibilidad",
+    "enrolled": "Inscrito",
+    "enrolling": "Inscribiendo",
+    "enrollNow": "Inscribirse ahora",
+    "initialDepositRequired": "Haz un depósito inicial para participar",
+    "lastUpdatedAt": "Última actualización a las {{time}}",
+    "leaderboard": "Clasificación",
+    "minAccountValue": "Valor mínimo de cuenta",
+    "minTradingVolume": "Volumen mínimo de operaciones",
+    "notEnrolled": "No inscrito",
+    "notificationDescription": "$100k en juego. 7 días para competir.<linebreak />Opera para entrar en cualquiera de los dos rankings: ROI y volumen. Se paga a los 10 mejores de cada uno.",
+    "notificationTitle": "Competencia de trading",
+    "prize": "Premio",
+    "qualified": "Clasificado",
+    "rankDisplay": "Puesto #<rank>{{rank}}</rank>",
+    "restrictedRegion": {
+      "description": "Estás intentando acceder a esta página desde una zona restringida. La competencia de trading no está disponible en tu región.",
+      "title": "Región restringida"
+    },
+    "status": "Estado",
+    "totalPrizePool": "Bolsa total de premios",
+    "totalPrizePoolDescription": "{{prizePoolAmount}} en premios repartidos entre dos clasificaciones. ROI recompensa la precisión, volumen recompensa la convicción. Ambas pagan en efectivo a los traders con mejor desempeño. Refiere a un amigo que quede en la competencia y gana un bono de referido en efectivo. Elige bien a quién traes. La clasificación y el estado se actualizan cada hora.",
+    "tracks": {
+      "roi": "ROI",
+      "volume": "Volumen"
+    },
+    "trackTitle": "Categoría {{track}}",
+    "trader": "Trader",
+    "volumeRequirementNotMet": "Requisito de volumen no cumplido"
+  },
   "tradingConsole": "Consola de trading",
-  "tradingConsoleLocation": "Ubicación de la consola",
   "tradingPageTitle": "{{price}} {{marketName}} | Nado",
   "transaction": "Transacción",
   "transactionCost": "Costo de transacción",
@@ -1822,9 +1922,9 @@
   "walletDeposit": "Depósito de wallet",
   "website": "Sitio web",
   "weeklyActivationsRemaining": "Activaciones semanales restantes",
-  "weeklyPoints": "Puntos semanales",
   "weeklyRank": "Ranking semanal",
   "withdraw": "Retirar",
+  "withdrawalDestinationDisclosure": "El retiro se enviará a <highlight>{{destinationLabel}}</highlight> en <highlight>{{chainName}}</highlight>.",
   "withdrawals": "Retiros",
   "withdrawalsSubmittedOnChainOnceGasThresholdReached": "Los retiros se enviarán on-chain una vez alcanzado el umbral de gas.",
   "withdrawalStatus": {

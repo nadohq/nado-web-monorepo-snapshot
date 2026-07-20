@@ -6,6 +6,7 @@ import {
   SubaccountProfile,
 } from '@nadohq/react-client';
 import { WithChildren } from '@nadohq/web-common';
+import { LinkedSignerAutoSetup } from 'client/context/subaccount/components/LinkedSignerAutoSetup';
 import { useSavedSelectedSubaccount } from 'client/context/subaccount/hooks/useSavedSelectedSubaccount';
 import { useSavedSubaccountProfile } from 'client/context/subaccount/hooks/useSavedSubaccountProfile';
 import { useSavedSubaccountSigningPreference } from 'client/context/subaccount/hooks/useSavedSubaccountSigningPreference';
@@ -49,6 +50,7 @@ export function WebSubaccountContextProvider({ children }: WithChildren) {
       didLoadSavedSigningPreference={didLoadSavedSigningPreference}
     >
       <LinkedSignerSync />
+      <LinkedSignerAutoSetup />
       {children}
     </BaseSubaccountContextProvider>
   );

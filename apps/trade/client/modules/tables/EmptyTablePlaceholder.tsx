@@ -20,18 +20,20 @@ export type EmptyTablePlaceholderType =
   | 'history_funding_payments'
   | 'history_nlp'
   | 'history_orders'
-  | 'spot_balances'
+  | 'markets'
   | 'perp_positions'
   | 'open_limit_orders'
   | 'open_price_trigger_orders'
   | 'open_time_trigger_orders'
   | 'margin_manager_quote_balance'
-  | 'referred_traders'
   | 'nlp_balances'
   | 'nlp_positions'
   | 'nlp_open_orders'
   | 'points_history'
-  | 'spreads';
+  | 'referred_traders'
+  | 'spot_balances'
+  | 'spreads'
+  | 'trading_competition_leaderboard';
 
 /**
  * Renders an appropriate empty state placeholder message for data tables based on the table type.
@@ -82,6 +84,8 @@ export function EmptyTablePlaceholder({
         return t(($) => $.emptyPlaceholders.orderHistory);
 
       // Current state placeholders
+      case 'markets':
+        return t(($) => $.emptyPlaceholders.noMarketsFound);
       case 'spot_balances':
         return t(($) => $.emptyPlaceholders.balances);
       case 'perp_positions':
@@ -116,6 +120,8 @@ export function EmptyTablePlaceholder({
         return t(($) => $.emptyPlaceholders.pointsHistory);
       case 'spreads':
         return t(($) => $.emptyPlaceholders.spreads);
+      case 'trading_competition_leaderboard':
+        return t(($) => $.emptyPlaceholders.tradingCompetitionLeaderboard);
     }
   })();
 

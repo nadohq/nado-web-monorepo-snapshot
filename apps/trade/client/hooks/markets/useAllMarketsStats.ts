@@ -40,10 +40,13 @@ interface MarketStats {
 }
 
 export function useAllMarketsStats() {
-  const { data: latestMarketsData } = useAllMarkets();
-  const { data: marketSnapshots } = useAllMarkets24hSnapshots();
+  const { data: latestMarketsData, isLoading: isLoadingMarkets } =
+    useAllMarkets();
+  const { data: marketSnapshots, isLoading: isLoadingMarketSnapshots } =
+    useAllMarkets24hSnapshots();
   const { data: latestMarketPrices } = useQueryAllMarketsLatestPrices();
-  const { data: productSnapshots } = useAllProducts24hHistoricalSnapshot();
+  const { data: productSnapshots, isLoading: isLoadingProductSnapshots } =
+    useAllProducts24hHistoricalSnapshot();
 
   const data = useMemo(() => {
     if (!latestMarketsData || !productSnapshots || !marketSnapshots) {
@@ -154,5 +157,9 @@ export function useAllMarketsStats() {
 
   return {
     data,
+    // `latestMarketPrices` is optional (the derivation falls back to oracle
+    // prices), so it's excluded from the loading state.
+    isLoading:
+      isLoadingMarkets || isLoadingMarketSnapshots || isLoadingProductSnapshots,
   };
 }

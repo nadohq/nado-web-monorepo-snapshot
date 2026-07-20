@@ -1,6 +1,11 @@
-import { removeDecimals } from '@nadohq/client';
-import { calcOrderFillPrice } from '@nadohq/react-client';
+import { removeDecimals, toBigNumber } from '@nadohq/client';
+import {
+  calcOrderFillPrice,
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
 import { nonNullFilter } from '@nadohq/web-common';
+import { BigNumber } from 'bignumber.js';
 import { useDataTablePaginatedQuery } from 'client/components/DataTable/hooks/useDataTablePaginatedQuery';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { AllMarketsStaticDataForChainEnv } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
@@ -11,6 +16,7 @@ import { getOrderTableItem } from 'client/modules/tables/utils/getOrderTableItem
 import { getProductTableItem } from 'client/modules/tables/utils/getProductTableItem';
 import { requirePriceTriggerCriteria } from 'client/modules/trading/utils/trigger/getPriceTriggerCriteria';
 import { getTriggerOrderStatusInfo } from 'client/modules/trading/utils/trigger/getTriggerOrderStatusInfo';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { secondsToMilliseconds } from 'date-fns';
 import type { TFunction } from 'i18next';
 import { useMemo } from 'react';
@@ -35,6 +41,7 @@ export function useHistoricalPriceTriggerOrdersTable({
 
   const { data: allMarketsStaticData, isLoading: marketsDataLoading } =
     useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const {
     isLoading,
@@ -63,10 +70,11 @@ export function useHistoricalPriceTriggerOrdersTable({
             t,
             triggerOrderInfo,
             allMarketsStaticData,
+            exchangeRate: getExchangeRate(triggerOrderInfo.order.productId),
           });
         })
         .filter(nonNullFilter);
-    }, [historicalOrders, allMarketsStaticData, t]);
+    }, [historicalOrders, allMarketsStaticData, t, getExchangeRate]);
 
   return {
     isLoading: isLoading || marketsDataLoading || isFetchingCurrPage,
@@ -75,41 +83,46 @@ export function useHistoricalPriceTriggerOrdersTable({
   };
 }
 
+interface GetHistoricalPriceTriggerOrderTableItemParams {
+  t: TFunction;
+  triggerOrderInfo: TriggerOrderInfoWithEngineOrder;
+  allMarketsStaticData: AllMarketsStaticDataForChainEnv;
+  exchangeRate: BigNumber;
+}
+
 export function getHistoricalPriceTriggerOrderTableItem({
   t,
   triggerOrderInfo,
   allMarketsStaticData,
-}: {
-  t: TFunction;
-  triggerOrderInfo: TriggerOrderInfoWithEngineOrder;
-  allMarketsStaticData: AllMarketsStaticDataForChainEnv;
-}): HistoricalPriceTriggerOrderTableItem {
+  exchangeRate,
+}: GetHistoricalPriceTriggerOrderTableItemParams): HistoricalPriceTriggerOrderTableItem {
   const order = triggerOrderInfo.order;
   const productTableItem = getProductTableItem({
     productId: order.productId,
     allMarketsStaticData,
+    exchangeRate,
   });
-  const orderTableItem = getOrderTableItem({ triggerOrderInfo });
+  const orderTableItem = getOrderTableItem({ triggerOrderInfo, exchangeRate });
 
   const priceTriggerCriteria = requirePriceTriggerCriteria(
     order.triggerCriteria,
   );
 
   const triggeredEngineOrder = triggerOrderInfo.triggeredEngineOrder;
-  const filledBaseSize = removeDecimals(
+  const rawFilledBaseSize = removeDecimals(
     triggeredEngineOrder?.baseFilled,
   )?.abs();
   const filledQuoteSize = removeDecimals(
     triggeredEngineOrder?.quoteFilled,
   )?.abs();
-  const filledAvgPrice = triggeredEngineOrder
+  const rawFilledAvgPrice = triggeredEngineOrder
     ? calcOrderFillPrice(
         triggeredEngineOrder.quoteFilled,
         triggeredEngineOrder.totalFee,
         triggeredEngineOrder.baseFilled,
       )
     : undefined;
-  const closedBaseSize = removeDecimals(
+  const rawClosedBaseSize = removeDecimals(
     triggeredEngineOrder?.closedAmount,
   )?.abs();
 
@@ -118,10 +131,14 @@ export function getHistoricalPriceTriggerOrderTableItem({
     ...orderTableItem,
     timeUpdatedMillis: secondsToMilliseconds(triggerOrderInfo.updatedAt),
     priceTriggerCriteria,
-    filledAvgPrice,
-    filledBaseSize,
+    displayTriggerPrice: toXStocksDisplayPrice(
+      toBigNumber(priceTriggerCriteria.triggerPrice),
+      exchangeRate,
+    ),
+    filledAvgPrice: toXStocksDisplayPrice(rawFilledAvgPrice, exchangeRate),
+    filledBaseSize: toXStocksDisplayAmount(rawFilledBaseSize, exchangeRate),
     filledQuoteSize,
-    closedBaseSize,
+    closedBaseSize: toXStocksDisplayAmount(rawClosedBaseSize, exchangeRate),
     status: getTriggerOrderStatusInfo(t, triggerOrderInfo),
   };
 }

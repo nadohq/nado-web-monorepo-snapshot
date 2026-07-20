@@ -3,6 +3,7 @@ import { useEVMContext, usePrimaryChainNadoClient } from '@nadohq/react-client';
 import { SendJsonMessage } from 'client/modules/webSockets/types';
 import { useMemo } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import safeStringify from 'safe-stable-stringify';
 
 interface Params {
   onMessage: (message: MessageEvent) => void;
@@ -32,11 +33,38 @@ export function useEngineSubscriptionsWebSocket({
 
   const isReady = !!nadoClient;
 
+  const heartbeatMessage = useMemo(() => {
+    if (!nadoClient) {
+      return undefined;
+    }
+    return safeStringify(
+      // Random ID
+      nadoClient.ws.subscription.buildSubscriptionMessage(10_001, 'ping', {}),
+    );
+  }, [nadoClient]);
+
   const { readyState, sendJsonMessage } = useWebSocket(
     wsEndpoint,
     {
       onMessage,
       share: true,
+      /**
+       * `readyState` only reflects a clean close, so it cannot detect "half-open"
+       * connections where the socket stays OPEN but no data flows. The heartbeat
+       * pings the engine periodically and closes it if no message arrives within `timeout`
+       */
+      heartbeat: heartbeatMessage
+        ? {
+            message: heartbeatMessage,
+            // `timeout` MUST be greater than `interval`: a ping is only sent
+            // after `interval` of silence, so the connection must be allowed to
+            // survive long enough for that ping to elicit a response before the
+            // `timeout` closes it. Otherwise the ping never fires in time and the
+            // connection closes on any brief lull in server messages.
+            interval: 10_000,
+            timeout: 20_000,
+          }
+        : undefined,
       shouldReconnect: () => {
         return true;
       },

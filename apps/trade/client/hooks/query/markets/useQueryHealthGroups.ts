@@ -32,7 +32,7 @@ export function useQueryHealthGroups() {
       if (disabled) {
         throw new QueryDisabledError();
       }
-      const healthGroups = (await nadoClient.market.getHealthGroups())
+      const healthGroups = (await nadoClient.market.getCachedHealthGroups())
         .healthGroups;
 
       const spotToPerpProductId: Record<number, number> = {};

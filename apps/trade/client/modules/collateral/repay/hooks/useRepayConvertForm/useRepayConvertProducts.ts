@@ -36,11 +36,11 @@ export function useRepayConvertProducts({
               balance.metadata.quoteProductId === QUOTE_PRODUCT_ID,
           )
           .map((balance) => {
-            return toRepayConvertProduct(
+            return toRepayConvertProduct({
               balance,
-              false,
-              allMarketPrices?.[balance.productId],
-            );
+              isSourceProduct: false,
+              marketPrices: allMarketPrices?.[balance.productId],
+            });
           }) ?? []
       ).sort(sortByDisplayedAssetValue);
     }, [allMarketPrices, balances]);
@@ -78,11 +78,11 @@ export function useRepayConvertProducts({
               : balance.productId === QUOTE_PRODUCT_ID;
           })
           .map((balance) => {
-            return toRepayConvertProduct(
+            return toRepayConvertProduct({
               balance,
-              true,
-              allMarketPrices?.[balance.productId],
-            );
+              isSourceProduct: true,
+              marketPrices: allMarketPrices?.[balance.productId],
+            });
           }) ?? []
       );
     }, [selectedRepayProduct, balances, getIsHiddenMarket, allMarketPrices]);
@@ -101,12 +101,19 @@ export function useRepayConvertProducts({
   };
 }
 
-function toRepayConvertProduct(
-  balance: SpotBalanceItem,
-  isSourceProduct: boolean,
-  marketPrices: LatestMarketPrice | undefined,
-): RepayConvertProductSelectValue {
+interface ToRepayConvertProductParams {
+  balance: SpotBalanceItem;
+  isSourceProduct: boolean;
+  marketPrices: LatestMarketPrice | undefined;
+}
+
+function toRepayConvertProduct({
+  balance,
+  isSourceProduct,
+  marketPrices,
+}: ToRepayConvertProductParams): RepayConvertProductSelectValue {
   const token = balance.metadata.token;
+  // These amounts are already converted in `useSpotProducts`
   const amountBorrowed = balance.amountBorrowed.abs();
   const amountDeposited = balance.amountDeposited;
   const displayedAssetAmount = isSourceProduct

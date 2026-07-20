@@ -1,4 +1,5 @@
-import { DisabledUI, HiddenUI, WidgetConfig, WidgetTheme } from '@lifi/widget';
+import { WidgetConfig, WidgetTheme } from '@lifi/widget';
+import { EthereumProvider } from '@lifi/widget-provider-ethereum';
 import { ChainEnv } from '@nadohq/client';
 import { MIN_INITIAL_DEPOSIT_VALUE } from 'client/hooks/subaccount/useMinInitialDepositAmountByProductId';
 import { getResolvedColorValue } from 'client/modules/theme/colorVars';
@@ -54,7 +55,6 @@ function getThemeConfig(): WidgetTheme {
     },
     shape: {
       borderRadius: 8,
-      borderRadiusSecondary: 8,
     },
     typography: {
       fontFamily: 'inherit',
@@ -72,6 +72,8 @@ function getThemeConfig(): WidgetTheme {
  * Documentation: https://docs.li.fi/widget/configure-widget
  */
 export const DEFAULT_LIFI_WIDGET_CONFIG: WidgetConfig = {
+  providers: [EthereumProvider()],
+
   // Theme configuration - dynamically resolved from app theme
   get theme() {
     return getThemeConfig();
@@ -80,29 +82,32 @@ export const DEFAULT_LIFI_WIDGET_CONFIG: WidgetConfig = {
   integrator: SENSITIVE_DATA.lifiIntegrator,
   // Widget appearance and behavior
   variant: 'compact',
-  subvariant: 'default',
+  mode: 'default',
   // Add 1 USD for some buffer above the minimum
   minFromAmountUSD: MIN_INITIAL_DEPOSIT_VALUE.toNumber() + 1,
+  // 1% default slippage
+  slippage: 0.01,
   // SDK configuration
   sdkConfig: {
     routeOptions: {
-      slippage: 0.01, // 1% default slippage
       // Prevent swaps on the destination chain, which increase probability of failed transfers
       allowDestinationCall: false,
     },
   },
 
   // Hide specific UI elements
-  hiddenUI: [
-    HiddenUI.WalletMenu,
-    HiddenUI.Appearance,
-    HiddenUI.AddressBookConnectedWallets,
-    HiddenUI.LowAddressActivityConfirmation,
-    HiddenUI.ReverseTokensButton,
-  ],
+  hiddenUI: {
+    walletMenu: true,
+    appearance: true,
+    addressBookConnectedWallets: true,
+    lowAddressActivityConfirmation: true,
+    reverseTokensButton: true,
+  },
 
   // Disable specific features
-  disabledUI: [DisabledUI.ToAddress],
+  disabledUI: {
+    toAddress: true,
+  },
 
   // Language configuration
   languages: {

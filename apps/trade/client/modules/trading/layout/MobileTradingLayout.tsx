@@ -3,7 +3,6 @@ import { TradingLayoutProps } from 'client/modules/trading/layout/types';
 
 export function MobileTradingLayout({
   productId,
-  marketSwitcherDefaultCategory,
   InfoCards,
   OrderPlacement,
 }: TradingLayoutProps) {
@@ -11,7 +10,6 @@ export function MobileTradingLayout({
     <MobileTradingBottomNavigationTabs
       productId={productId}
       OrderPlacement={OrderPlacement}
-      marketSwitcherDefaultCategory={marketSwitcherDefaultCategory}
       InfoCards={InfoCards}
     />
   );

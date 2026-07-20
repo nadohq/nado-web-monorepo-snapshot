@@ -1,10 +1,14 @@
 import { LiquidationNotification } from 'client/modules/notifications/components/risk/LiquidationNotification';
-import { LiquidationNotificationData } from 'client/modules/notifications/types';
+import {
+  LiquidationNotificationData,
+  NotificationDispatchContext,
+} from 'client/modules/notifications/types';
 import { createToastId } from 'client/utils/createToastId';
 import { toast } from 'sonner';
 
 export function handleLiquidationNotificationDispatch(
   liquidationNotificationData: LiquidationNotificationData,
+  { sendGTMEvent }: NotificationDispatchContext,
 ) {
   const toastId = createToastId('liquidationWarning');
 
@@ -25,4 +29,6 @@ export function handleLiquidationNotificationDispatch(
       duration: 10000,
     },
   );
+
+  sendGTMEvent({ event: 'liquidation' });
 }

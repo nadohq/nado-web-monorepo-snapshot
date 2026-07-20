@@ -4,6 +4,7 @@ import {
   CustomNumberFormatSpecifier,
   formatNumber,
   getMarketPriceFormatSpecifier,
+  NumberFormatSpecifier,
   NumberFormatValue,
   PresetNumberFormatSpecifier,
   signDependentValue,
@@ -21,7 +22,6 @@ import { useTranslation } from 'react-i18next';
 export type PerpPnlDisplayType = 'usd' | 'frac';
 
 interface Props extends WithClassnames {
-  onReady(): void;
   amountForSide: BigNumber;
   pnlFrac: BigNumber;
   pnlUsd: BigNumber;
@@ -35,6 +35,8 @@ interface Props extends WithClassnames {
   isoLeverage: number | null;
   productSymbol: string | undefined;
   priceIncrement: BigNumber | undefined;
+
+  onReady(): void;
 }
 
 export function PerpPnlSharingPreview({
@@ -54,7 +56,10 @@ export function PerpPnlSharingPreview({
   priceIncrement,
 }: Props) {
   const { t } = useTranslation();
-  const priceFormatSpecifier = getMarketPriceFormatSpecifier(priceIncrement);
+  const priceFormatSpecifier = getMarketPriceFormatSpecifier({
+    priceIncrement,
+    exchangeRate: undefined,
+  });
 
   const isPositivePnl = pnlFrac.isPositive();
   const backgroundImage = isPositivePnl ? perpPnlPositiveBg : perpPnlNegativeBg;
@@ -215,7 +220,7 @@ function ValueWithLabel({
 }: {
   label: string;
   value: NumberFormatValue;
-  formatSpecifier: string;
+  formatSpecifier: NumberFormatSpecifier;
 }) {
   const valueContent = formatNumber(value, {
     formatSpecifier,

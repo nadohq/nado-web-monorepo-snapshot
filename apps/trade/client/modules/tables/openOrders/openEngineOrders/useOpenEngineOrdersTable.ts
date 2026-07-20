@@ -1,10 +1,12 @@
 import { removeDecimals } from '@nadohq/client';
+import { toXStocksDisplayAmount } from '@nadohq/react-client';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { useFilteredProductIds } from 'client/hooks/markets/useFilteredProductIds';
 import { useQuerySubaccountOpenEngineOrders } from 'client/hooks/query/subaccount/useQuerySubaccountOpenEngineOrders';
 import { OpenEngineOrderTableItem } from 'client/modules/tables/types/OpenEngineOrderTableItem';
 import { getOrderTableItem } from 'client/modules/tables/utils/getOrderTableItem';
 import { getProductTableItem } from 'client/modules/tables/utils/getProductTableItem';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { QueryState } from 'client/types/QueryState';
 import { secondsToMilliseconds } from 'date-fns';
 import { useMemo } from 'react';
@@ -20,6 +22,7 @@ export function useOpenEngineOrdersTable(
     data: ordersData,
   } = useQuerySubaccountOpenEngineOrders();
   const { data: allMarketsStaticData } = useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const openEngineOrders = useMemo(() => {
     if (!ordersData || !allMarketsStaticData) {
@@ -28,9 +31,11 @@ export function useOpenEngineOrdersTable(
 
     return filteredProductIds.flatMap((productId) => {
       const ordersForProduct = ordersData?.[productId];
+      const exchangeRate = getExchangeRate(productId);
       const productTableItem = getProductTableItem({
         productId,
         allMarketsStaticData,
+        exchangeRate,
       });
 
       if (!ordersForProduct?.length || !productTableItem) {
@@ -41,15 +46,19 @@ export function useOpenEngineOrdersTable(
         (openEngineOrder): OpenEngineOrderTableItem => {
           const orderTableItem = getOrderTableItem({
             engineOrder: openEngineOrder,
+            exchangeRate,
           });
 
-          const decimalAdjustedUnfilledAmount = removeDecimals(
+          // Use raw amounts to compute the filled delta before applying the display conversion
+          const rawTotalBaseAmount = removeDecimals(
+            openEngineOrder.totalAmount,
+          );
+          const rawUnfilledAmount = removeDecimals(
             openEngineOrder.unfilledAmount,
           );
-          const decimalAdjustedFilledAmount =
-            orderTableItem.totalBaseAmount.minus(decimalAdjustedUnfilledAmount);
+          const rawFilledAmount = rawTotalBaseAmount.minus(rawUnfilledAmount);
 
-          const { productId, digest } = openEngineOrder;
+          const { digest } = openEngineOrder;
           const orderDisplayType = 'limit'; // open engine orders can only be limit
 
           return {
@@ -58,7 +67,10 @@ export function useOpenEngineOrdersTable(
             timePlacedMillis: secondsToMilliseconds(
               openEngineOrder.placementTime,
             ),
-            filledBaseSize: decimalAdjustedFilledAmount.abs(),
+            filledBaseSize: toXStocksDisplayAmount(
+              rawFilledAmount.abs(),
+              exchangeRate,
+            ),
             orderForCancellation: {
               productId,
               digest,
@@ -70,7 +82,7 @@ export function useOpenEngineOrdersTable(
         },
       );
     });
-  }, [allMarketsStaticData, filteredProductIds, ordersData]);
+  }, [allMarketsStaticData, filteredProductIds, ordersData, getExchangeRate]);
 
   return {
     data: openEngineOrders,

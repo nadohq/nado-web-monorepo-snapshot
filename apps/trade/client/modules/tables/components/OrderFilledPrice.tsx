@@ -1,4 +1,4 @@
-import { formatNumber } from '@nadohq/react-client';
+import { formatNumber, NumberFormatSpecifier } from '@nadohq/react-client';
 import { WithClassnames } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
 import { StackedValues } from 'client/modules/tables/components/StackedValues';
@@ -8,7 +8,7 @@ interface Props extends WithClassnames {
   filledAvgPrice: BigNumber | undefined;
   orderPrice: BigNumber;
   isMarket: boolean;
-  formatSpecifier: string;
+  formatSpecifier: NumberFormatSpecifier;
 }
 
 export function OrderFilledPrice({

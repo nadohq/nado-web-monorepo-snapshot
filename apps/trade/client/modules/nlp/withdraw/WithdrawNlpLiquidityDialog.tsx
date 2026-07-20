@@ -1,7 +1,6 @@
 import {
   NLP_TOKEN_INFO,
   PresetNumberFormatSpecifier,
-  SEQUENCER_FEE_AMOUNT_USDT,
 } from '@nadohq/react-client';
 import { CompactInput } from '@nadohq/web-ui';
 import { Form } from 'client/components/Form';
@@ -27,6 +26,7 @@ export function WithdrawNlpLiquidityDialog() {
     form,
     formError,
     estimatedPrimaryQuoteAmount,
+    primaryQuoteFeeAmount,
     buttonState,
     validateAmount,
     onFractionSelected,
@@ -92,7 +92,7 @@ export function WithdrawNlpLiquidityDialog() {
             <InputSummaryItem
               label={t(($) => $.gasFee)}
               formatSpecifier={PresetNumberFormatSpecifier.NUMBER_2DP}
-              currentValue={SEQUENCER_FEE_AMOUNT_USDT}
+              currentValue={primaryQuoteFeeAmount}
               definitionTooltipId="gasFee"
             />
             <InputSummaryItem

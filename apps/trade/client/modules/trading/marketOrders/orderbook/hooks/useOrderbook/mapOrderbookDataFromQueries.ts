@@ -3,7 +3,11 @@ import {
   EnginePriceTickLiquidity,
   removeDecimals,
 } from '@nadohq/client';
-import { AnnotatedMarket } from '@nadohq/react-client';
+import {
+  AnnotatedMarket,
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import { MarketLiquidityData } from 'client/hooks/query/markets/useQueryMarketLiquidity';
 import {
@@ -21,6 +25,7 @@ interface ProcessTicksParams {
   ticksData: EnginePriceTickLiquidity[];
   tickSpacing: number;
   depth: number;
+  exchangeRate: BigNumber;
 }
 
 /**
@@ -32,15 +37,27 @@ function processTicks({
   ticksData,
   tickSpacing,
   depth,
+  exchangeRate,
 }: ProcessTicksParams) {
-  let cumulativeAmount = BigNumbers.ZERO;
+  let cumulativeBaseAmount = BigNumbers.ZERO;
+  let cumulativeQuoteAmount = BigNumbers.ZERO;
   const ticks: OrderbookRowItem[] = [];
 
   for (const priceTickData of ticksData) {
-    const tickPrice = priceTickData.price;
+    // Convert to display space first so bucketing happens in display units.
+    // This ensures the depth limit and price comparisons are in the same space as what the UI renders.
+    const displayTickPrice = toXStocksDisplayPrice(
+      priceTickData.price,
+      exchangeRate,
+    );
+    const displayAssetLiquidity = toXStocksDisplayAmount(
+      removeDecimals(priceTickData.liquidity),
+      exchangeRate,
+    );
+
     const priceLevel = getTickPriceLevel({
       isAsk,
-      price: tickPrice,
+      price: displayTickPrice,
       tickSpacing,
     });
 
@@ -55,37 +72,45 @@ function processTicks({
         isAsk,
         price: priceLevel,
         assetAmount: BigNumbers.ZERO,
-        cumulativeAmount,
+        // Display total follows the user's base/quote toggle; derived from the
+        // always-on accumulators rather than tracked as a separate running total.
+        cumulativeAmount: showOrderbookTotalInQuote
+          ? cumulativeQuoteAmount
+          : cumulativeBaseAmount,
+        cumulativeBaseAmount,
+        cumulativeQuoteAmount,
       });
     }
 
-    const decimalAdjustedAssetLiquidity = removeDecimals(
-      priceTickData.liquidity,
-    );
+    // Quote-denominated cumulative: displayAmount × displayPrice = rawAmount × rawPrice (rate cancels)
+    const quoteLiquidity = displayAssetLiquidity.multipliedBy(displayTickPrice);
 
-    cumulativeAmount = cumulativeAmount.plus(
-      showOrderbookTotalInQuote
-        ? decimalAdjustedAssetLiquidity.multipliedBy(tickPrice)
-        : decimalAdjustedAssetLiquidity,
-    );
+    cumulativeBaseAmount = cumulativeBaseAmount.plus(displayAssetLiquidity);
+    cumulativeQuoteAmount = cumulativeQuoteAmount.plus(quoteLiquidity);
 
     // Add to existing level
     const currentTick = last(ticks);
     if (currentTick) {
       currentTick.assetAmount = currentTick.assetAmount?.plus(
-        decimalAdjustedAssetLiquidity,
+        displayAssetLiquidity,
       );
-      currentTick.cumulativeAmount = currentTick.cumulativeAmount.plus(
-        showOrderbookTotalInQuote
-          ? decimalAdjustedAssetLiquidity.multipliedBy(tickPrice)
-          : decimalAdjustedAssetLiquidity,
+      currentTick.cumulativeBaseAmount = currentTick.cumulativeBaseAmount.plus(
+        displayAssetLiquidity,
       );
+      currentTick.cumulativeQuoteAmount =
+        currentTick.cumulativeQuoteAmount.plus(quoteLiquidity);
+      currentTick.cumulativeAmount = showOrderbookTotalInQuote
+        ? currentTick.cumulativeQuoteAmount
+        : currentTick.cumulativeBaseAmount;
     }
   }
 
+  // Ticks are already in display space — no conversion needed.
   return {
     ticks,
-    cumulativeAmount,
+    cumulativeAmount: showOrderbookTotalInQuote
+      ? cumulativeQuoteAmount
+      : cumulativeBaseAmount,
   };
 }
 
@@ -102,6 +127,8 @@ interface MapOrderbookDataFromQueriesParams {
   tickSpacing: number;
   /** The market data */
   marketData: AnnotatedMarket;
+  /** xStocks exchange rate — 1 for non-xStocks markets, making conversions a no-op */
+  exchangeRate: BigNumber;
 }
 
 /**
@@ -116,15 +143,19 @@ export function mapOrderbookDataFromQueries({
   tickSpacing,
   marketData,
   liquidityQueryData,
+  exchangeRate,
 }: MapOrderbookDataFromQueriesParams): OrderbookData {
   const sharedProductMetadata = getSharedProductMetadata(marketData.metadata);
 
   const { bids: bidsData, asks: asksData } = liquidityQueryData;
 
-  const bidPrice = first(bidsData)?.price ?? BigNumbers.ZERO;
-  const askPrice = first(asksData)?.price ?? BigNumbers.ZERO;
-  const spreadAmount = askPrice.minus(bidPrice);
-  const bidAskAvg = bidPrice.div(2).plus(askPrice.div(2));
+  // Convert top-of-book prices to display space for spread calculation.
+  const rawBidPrice = first(bidsData)?.price ?? BigNumbers.ZERO;
+  const rawAskPrice = first(asksData)?.price ?? BigNumbers.ZERO;
+  const displayBidPrice = toXStocksDisplayPrice(rawBidPrice, exchangeRate);
+  const displayAskPrice = toXStocksDisplayPrice(rawAskPrice, exchangeRate);
+  const spreadAmount = displayAskPrice.minus(displayBidPrice);
+  const bidAskAvg = displayBidPrice.div(2).plus(displayAskPrice.div(2));
 
   // Process bids
   const { ticks: bids, cumulativeAmount: bidCumulativeAmount } = processTicks({
@@ -133,6 +164,7 @@ export function mapOrderbookDataFromQueries({
     ticksData: bidsData,
     tickSpacing,
     depth,
+    exchangeRate,
   });
 
   // Process asks
@@ -142,12 +174,14 @@ export function mapOrderbookDataFromQueries({
     ticksData: asksData,
     tickSpacing,
     depth,
+    exchangeRate,
   });
 
   const spreadFrac = bidAskAvg.eq(0)
     ? BigNumbers.ZERO
     : spreadAmount.div(bidAskAvg);
 
+  // Cumulative amounts are already in display space from processTicks
   const maxCumulativeTotalAmount = BigNumber.max(
     bidCumulativeAmount,
     askCumulativeAmount,
@@ -162,9 +196,9 @@ export function mapOrderbookDataFromQueries({
     spread: {
       amount: spreadAmount,
       frac: spreadFrac,
+      // frac is a ratio of prices, scale-invariant — same in raw or display space
       isHigh: getIsHighSpread(spreadFrac),
     },
     sizeIncrement: marketData.sizeIncrement,
-    priceIncrement: marketData.priceIncrement,
   };
 }

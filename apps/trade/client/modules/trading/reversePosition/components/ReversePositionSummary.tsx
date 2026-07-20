@@ -28,9 +28,13 @@ export function ReversePositionSummary({
   const { t } = useTranslation();
 
   const { push } = useDialog();
-  const priceFormatSpecifier = getMarketPriceFormatSpecifier(priceIncrement);
+  const priceFormatSpecifier = getMarketPriceFormatSpecifier({
+    priceIncrement,
+    exchangeRate: undefined,
+  });
   const sizeFormatSpecifier = getMarketSizeFormatSpecifier({
     sizeIncrement,
+    exchangeRate: undefined,
   });
 
   return (

@@ -1,4 +1,5 @@
 import { SubaccountProfile } from '@nadohq/react-client';
+import { BigNumber } from 'bignumber.js';
 import { ValidExecuteContext } from 'client/hooks/execute/util/useExecuteInValidContext';
 import { AllMarketsStaticDataForChainEnv } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
 import type { TFunction } from 'i18next';
@@ -12,6 +13,7 @@ export interface GetExportHistoryDataContext extends Pick<
 > {
   allMarketsStaticData: AllMarketsStaticDataForChainEnv;
   getSubaccountProfile: (subaccountName: string) => SubaccountProfile;
+  getExchangeRate: (productId: number) => BigNumber;
   setProgressFrac: (frac: number) => void;
   t: TFunction;
 }

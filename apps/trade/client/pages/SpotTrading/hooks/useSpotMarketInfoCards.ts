@@ -2,6 +2,8 @@ import { removeDecimals } from '@nadohq/client';
 import {
   AnnotatedSpotMarket,
   getMarketPriceFormatSpecifier,
+  NumberFormatSpecifier,
+  toXStocksDisplayPrice,
 } from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import { useAllMarketsStats } from 'client/hooks/markets/useAllMarketsStats';
@@ -9,12 +11,13 @@ import { useLatestOrderFill } from 'client/hooks/markets/useLatestOrderFill';
 import { useLatestValueChange } from 'client/hooks/markets/useLatestValueChange';
 import { useMarket } from 'client/hooks/markets/useMarket';
 import { useSpotInterestRates } from 'client/hooks/markets/useSpotInterestRates';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { useSpotOrderFormContext } from 'client/pages/SpotTrading/context/SpotOrderFormContext';
 import { useMemo } from 'react';
 
 export interface SpotMarketInfo {
-  priceFormatSpecifier: string;
-  signedPriceFormatSpecifier: string;
+  priceFormatSpecifier: NumberFormatSpecifier;
+  signedPriceFormatSpecifier: NumberFormatSpecifier;
   currentPrice: BigNumber | undefined;
   oraclePrice: BigNumber;
   priceChange24h: BigNumber | undefined;
@@ -38,29 +41,44 @@ export function useSpotMarketInfoCards(): UseSpotMarketInfoCards {
   const { data: marketStatsData } = useAllMarketsStats();
   const { data: latestOrderFillPrice } = useLatestOrderFill({ productId });
   const latestPriceChange = useLatestValueChange(latestOrderFillPrice?.price);
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const spotMarketInfo = useMemo<SpotMarketInfo | undefined>(() => {
     if (spotMarket == null || !productId) {
       return;
     }
 
+    const exchangeRate = getExchangeRate(productId);
     const marketStats = marketStatsData?.statsByMarket[productId];
-    const marketPriceChange = marketStats?.pastDayPriceChange;
+    const marketPriceChange = toXStocksDisplayPrice(
+      marketStats?.pastDayPriceChange,
+      exchangeRate,
+    );
 
     return {
-      priceFormatSpecifier: getMarketPriceFormatSpecifier(
-        spotMarket.priceIncrement,
+      priceFormatSpecifier: getMarketPriceFormatSpecifier({
+        priceIncrement: spotMarket.priceIncrement,
+        exchangeRate,
+      }),
+      signedPriceFormatSpecifier: getMarketPriceFormatSpecifier({
+        priceIncrement: spotMarket.priceIncrement,
+        isSigned: true,
+        exchangeRate,
+      }),
+      currentPrice: toXStocksDisplayPrice(
+        latestOrderFillPrice?.price,
+        exchangeRate,
       ),
-      signedPriceFormatSpecifier: getMarketPriceFormatSpecifier(
-        spotMarket.priceIncrement,
-        true,
-      ),
-      currentPrice: latestOrderFillPrice?.price,
       priceChange24h: marketPriceChange,
       priceChangeFrac24h: marketStats?.pastDayPriceChangeFrac,
-      oraclePrice: spotMarket.product.oraclePrice,
+      oraclePrice: toXStocksDisplayPrice(
+        spotMarket.product.oraclePrice,
+        exchangeRate,
+      ),
       quoteVolume24h: removeDecimals(marketStats?.pastDayVolumeInQuote),
-      latestPriceChange: latestPriceChange ?? marketPriceChange,
+      latestPriceChange:
+        toXStocksDisplayPrice(latestPriceChange, exchangeRate) ??
+        marketPriceChange,
       quoteSymbol: quoteMetadata?.symbol,
       borrowRate: spotInterestRates?.[productId]?.borrow,
     };
@@ -72,6 +90,7 @@ export function useSpotMarketInfoCards(): UseSpotMarketInfoCards {
     spotInterestRates,
     latestOrderFillPrice?.price,
     latestPriceChange,
+    getExchangeRate,
   ]);
 
   return {

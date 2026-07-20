@@ -7,7 +7,6 @@ import {
   booleanSortFn,
 } from 'client/components/DataTable/utils/sortingFns';
 import { CurrencyCell } from 'client/modules/tables/cells/CurrencyCell';
-import { FavoriteHeaderCell } from 'client/modules/tables/cells/FavoriteHeaderCell';
 import { FavoriteToggleCell } from 'client/modules/tables/cells/FavoriteToggleCell';
 import { MobileMarketSwitcherStackedPriceCell } from 'client/modules/trading/components/BaseMarketSwitcherTable/cells/MarketSwitcherStackedPriceCell';
 import { TradingMarketSwitcherProductInfoCell } from 'client/modules/trading/components/TradingMarketSwitcher/TradingMarketSwitcherProductInfoCell';
@@ -26,19 +25,14 @@ export function MobileTradingMarketSwitcherTable({
   markets,
   isLoading,
   onRowClick,
+  emptyState,
 }: TradingMarketSwitcherTableProps) {
   const { t } = useTranslation();
 
   const columns: ColumnDef<MarketSwitcherItem, any>[] = useMemo(
     () => [
       columnHelper.accessor('isFavorited', {
-        header: ({ header }) => (
-          <FavoriteHeaderCell
-            header={header}
-            favoriteButtonSize={14}
-            disableFavoriteButton={disableFavoriteButton}
-          />
-        ),
+        header: () => null,
         cell: (context) => (
           <FavoriteToggleCell
             favoriteButtonSize={14}
@@ -58,7 +52,14 @@ export function MobileTradingMarketSwitcherTable({
           <HeaderCell header={header}>{t(($) => $.market)}</HeaderCell>
         ),
         cell: (context) => {
-          const { market, isNew, maxLeverage } = context.row.original;
+          const {
+            market,
+            isNew,
+            isXStock,
+            isZeroFees,
+            maxLeverage,
+            pointsBoost,
+          } = context.row.original;
 
           return (
             <TradingMarketSwitcherProductInfoCell
@@ -67,7 +68,11 @@ export function MobileTradingMarketSwitcherTable({
               symbol={market.symbol}
               icon={market.icon}
               isNew={isNew}
+              isXStock={isXStock}
+              isZeroFees={isZeroFees}
               maxLeverage={maxLeverage}
+              pointsBoost={pointsBoost}
+              isMobile
             />
           );
         },
@@ -77,15 +82,17 @@ export function MobileTradingMarketSwitcherTable({
       }),
       columnHelper.accessor('priceChangeFrac', {
         header: ({ header }) => (
-          <HeaderCell header={header}>{t(($) => $.price24hChg)}</HeaderCell>
+          <HeaderCell sortingIconFirst header={header}>
+            {t(($) => $.price)}
+          </HeaderCell>
         ),
         cell: (context) => {
-          const { currentPrice, priceChangeFrac, priceIncrement } =
+          const { currentPrice, priceChangeFrac, priceFormatSpecifier } =
             context.row.original;
 
           return (
             <MobileMarketSwitcherStackedPriceCell
-              priceIncrement={priceIncrement}
+              priceFormatSpecifier={priceFormatSpecifier}
               priceChangeFrac={priceChangeFrac}
               currentPrice={currentPrice}
             />
@@ -93,12 +100,14 @@ export function MobileTradingMarketSwitcherTable({
         },
         sortingFn: bigNumberSortFn,
         meta: {
-          cellContainerClassName: 'w-28',
+          cellContainerClassName: 'w-22 flex justify-end',
         },
       }),
       columnHelper.accessor('volume24h', {
         header: ({ header }) => (
-          <HeaderCell header={header}>{t(($) => $.volume)}</HeaderCell>
+          <HeaderCell sortingIconFirst header={header}>
+            {t(($) => $.volume)}
+          </HeaderCell>
         ),
         cell: (context) => {
           const volume24h = context.getValue<MarketSwitcherItem['volume24h']>();
@@ -112,7 +121,7 @@ export function MobileTradingMarketSwitcherTable({
         },
         sortingFn: bigNumberSortFn,
         meta: {
-          cellContainerClassName: 'w-20',
+          cellContainerClassName: 'w-22 flex justify-end mr-1.5',
         },
       }),
     ],
@@ -124,14 +133,13 @@ export function MobileTradingMarketSwitcherTable({
       data={markets}
       isLoading={isLoading}
       columns={columns}
-      initialSortingState={[{ id: 'isFavorited', desc: false }]}
+      initialSortingState={[
+        { id: 'isFavorited', desc: false },
+        { id: 'volume24h', desc: true },
+      ]}
       rowAsLinkHref={(row) => row.original.href}
       onRowClick={onRowClick}
-      emptyState={
-        <p className="text-text-tertiary p-2 text-xs">
-          {t(($) => $.emptyPlaceholders.noMarketsFound)}
-        </p>
-      }
+      emptyState={emptyState}
       rowClassName="py-2"
       scrollContainerClassName="gap-y-1.5"
     />

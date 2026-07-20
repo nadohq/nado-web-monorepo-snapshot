@@ -12,9 +12,9 @@ import {
   Button,
   getStateOverlayClassNames,
   Icons,
+  StatusIndicator,
   Value,
 } from '@nadohq/web-ui';
-import { StatusIndicator } from 'client/components/StatusIndicator';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { ProfileAvatarIcon } from 'client/modules/subaccounts/components/ProfileAvatarIcon';
 import { SubaccountWithMetrics } from 'client/modules/subaccounts/hooks/useAllSubaccountsWithMetrics';

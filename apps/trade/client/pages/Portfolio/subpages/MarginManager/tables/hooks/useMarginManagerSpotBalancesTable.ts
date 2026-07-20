@@ -57,7 +57,7 @@ export function useMarginManagerSpotBalancesTable() {
             productId: balance.productId,
             metadata: balance.metadata,
             balanceAmount: balance.amount,
-            balanceValueUsd: balance.amount.multipliedBy(balance.oraclePrice),
+            balanceValueUsd: balance.valueUsd,
             initialHealth: {
               marginUsd: balance.healthMetrics.initial,
               weight: healthWeights.initial,

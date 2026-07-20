@@ -2,7 +2,7 @@
  * Disclosure keys for feature notifications
  */
 export const FEATURE_NOTIFICATION_DISCLOSURE_KEYS = [
-  'new_mkts_apr_23_2026',
+  'new_mkts_jul_09_2026',
 ] as const;
 
 export type FeatureNotificationDisclosureKey =
@@ -26,6 +26,8 @@ const USER_INFO_DISCLOSURE_KEYS = [
   'spot_leverage_on_risk',
   'nlp_deposit',
   'deposit_get_started',
+  'deposit_xstocks',
+  'classic_deposit_ui',
 ] as const;
 
 export const USER_DISCLOSURE_KEYS = [

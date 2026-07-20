@@ -1,3 +1,4 @@
+import { MakerMetricChartDataItem } from 'client/components/MakerStatisticsCharts/MakerMetricChart/types';
 import { getMMDashboardColorVar } from 'client/theme/colorVars';
 import { range } from 'lodash';
 import { ComponentPropsWithoutRef } from 'react';
@@ -60,19 +61,28 @@ export const CHART_GRID_DEFAULTS: ComponentPropsWithoutRef<
     range(props.offset?.left ?? 0, props.width, 10),
 };
 
-export const CHART_DOT_DEFAULTS: AreaProps['activeDot'] = {
+export const CHART_DOT_DEFAULTS: AreaProps<
+  MakerMetricChartDataItem,
+  ValueType
+>['activeDot'] = {
   strokeWidth: 0.5,
   fill: getMMDashboardColorVar('surface-card'),
   stroke: getMMDashboardColorVar('text-tertiary'),
 };
 
-export const AREA_CHART_DEFAULTS: Omit<AreaProps, 'dataKey' | 'ref'> = {
+export const AREA_CHART_DEFAULTS: Omit<
+  AreaProps<MakerMetricChartDataItem, ValueType>,
+  'dataKey' | 'ref'
+> = {
   strokeWidth: 2,
   type: 'linear',
   fillOpacity: 0.5,
 };
 
-export const LINE_CHART_DEFAULTS: Omit<LineProps, 'dataKey' | 'ref'> = {
+export const LINE_CHART_DEFAULTS: Omit<
+  LineProps<MakerMetricChartDataItem, ValueType>,
+  'dataKey' | 'ref'
+> = {
   strokeWidth: 2,
   type: 'linear',
   dot: false,

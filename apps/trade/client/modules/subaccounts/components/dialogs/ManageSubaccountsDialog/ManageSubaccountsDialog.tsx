@@ -26,7 +26,7 @@ export function ManageSubaccountsDialog() {
   // Hidden feature for MM's to access alternate subaccounts.
   const handleTitleClick = useRepeatedClickCountHandler({
     handler: (count) => {
-      if (count === 3) {
+      if (count >= 3) {
         push({ type: 'change_subaccount', params: {} });
       }
     },

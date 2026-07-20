@@ -181,6 +181,7 @@ export function OpenPriceTriggerOrdersTable({
               <OrderPriceTriggerCondition
                 formatSpecifier={context.row.original.formatSpecifier.price}
                 priceTriggerCriteria={context.getValue()}
+                displayTriggerPrice={context.row.original.displayTriggerPrice}
               />
             </TableCell>
           ),

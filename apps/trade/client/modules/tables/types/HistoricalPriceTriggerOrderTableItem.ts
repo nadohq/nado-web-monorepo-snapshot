@@ -8,6 +8,7 @@ export interface HistoricalPriceTriggerOrderTableItem
   extends ProductTableItem, OrderTableItem {
   timeUpdatedMillis: number;
   priceTriggerCriteria: PriceTriggerCriteria;
+  displayTriggerPrice: BigNumber;
   filledAvgPrice: BigNumber | undefined;
   filledBaseSize: BigNumber | undefined;
   filledQuoteSize: BigNumber | undefined;

@@ -51,7 +51,8 @@ export function useQueryAllMarketsLatestPrices() {
         throw new QueryDisabledError();
       }
 
-      const { marketPrices } = await nadoClient.market.getLatestMarketPrices({
+      // Fast gateway-cached prices for the initial snapshot / fallback poll.
+      const { marketPrices } = await nadoClient.market.getCachedMarketPrices({
         productIds: allProductIds,
       });
 
@@ -64,7 +65,9 @@ export function useQueryAllMarketsLatestPrices() {
       return productIdToLatestMarketPrice;
     },
     enabled: !disabled,
-    refetchInterval: 2000,
+    // Fallback poll for when the `all_bbo` stream isn't delivering. While the
+    // stream is live, MarketPricesWebSocketListener writes to this cache.
+    refetchInterval: 5000,
   });
 }
 

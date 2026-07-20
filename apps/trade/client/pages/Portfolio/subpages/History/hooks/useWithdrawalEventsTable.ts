@@ -36,7 +36,7 @@ export function useWithdrawalEventsTable({ pageSize }: Params) {
     queryHook: usePaginatedSubaccountCollateralEvents,
     queryParams: {
       pageSize,
-      eventTypes: ['withdraw_collateral'],
+      eventTypes: ['withdraw_collateral', 'withdraw_collateral_v2'],
     },
     extractItems,
   });

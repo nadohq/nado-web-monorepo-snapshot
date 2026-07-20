@@ -10,11 +10,19 @@ export type EditOrderFieldErrorType =
   | 'value_unchanged'
   | 'below_min';
 
-export function useEditOrderFieldValidator(
-  increment: BigNumber | undefined,
-  currentValue: BigNumber,
-  minSize: BigNumber | undefined,
-): InputValidatorFn<string, EditOrderFieldErrorType> {
+interface Params {
+  increment: BigNumber | undefined;
+  currentValue: BigNumber;
+  minValue: BigNumber | undefined;
+  isXStocksMarket: boolean;
+}
+
+export function useEditOrderFieldValidator({
+  increment,
+  currentValue,
+  minValue,
+  isXStocksMarket,
+}: Params): InputValidatorFn<string, EditOrderFieldErrorType> {
   return useCallback(
     (val) => {
       if (!val) {
@@ -26,11 +34,15 @@ export function useEditOrderFieldValidator(
         return 'invalid_input';
       }
 
-      if (increment && !isValidIncrementAmount(val, increment)) {
+      if (
+        !isXStocksMarket &&
+        increment &&
+        !isValidIncrementAmount(val, increment)
+      ) {
         return 'invalid_increment';
       }
 
-      if (minSize && parsedValue.lt(minSize)) {
+      if (minValue && parsedValue.lt(minValue)) {
         return 'below_min';
       }
 
@@ -38,6 +50,6 @@ export function useEditOrderFieldValidator(
         return 'value_unchanged';
       }
     },
-    [increment, currentValue, minSize],
+    [isXStocksMarket, increment, currentValue, minValue],
   );
 }

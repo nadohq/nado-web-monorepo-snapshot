@@ -1,5 +1,6 @@
 import { InputValidatorFn } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
+import { GainOrLossInputType } from 'client/modules/trading/types/GainOrLossInputType';
 import { TriggerReferencePriceType } from 'client/modules/trading/types/TriggerReferencePriceType';
 import { LinkedAmountFractionFormValues } from 'client/types/linkedAmountFractionFormTypes';
 import { FieldPathByValue, UseFormReturn } from 'react-hook-form';
@@ -24,8 +25,6 @@ export type TpSlOrderFormErrorType =
   | TpSlOrderFormAmountErrorType;
 
 export type TriggerPriceSource = 'price' | 'gainOrLossValue';
-
-export type GainOrLossInputType = 'percentage' | 'dollar';
 
 /**
  * Values associated with price inputs in the TP/SL order form.

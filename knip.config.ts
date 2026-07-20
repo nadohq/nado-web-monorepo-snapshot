@@ -17,8 +17,6 @@ const config: KnipConfig = {
     'i18next-cli',
     // image optimizer used by Next
     'sharp',
-    // peer dependency for wagmi
-    '@walletconnect/ethereum-provider',
     // testing-only dependencies
     '@happy-dom/global-registrator',
     '@testing-library/dom',

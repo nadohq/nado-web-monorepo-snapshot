@@ -20,6 +20,7 @@ export * from './ScrollShadowsContainer';
 export * from './SearchBox';
 export * from './Select';
 export * from './Spinner';
+export * from './StatusIndicator';
 export * from './Step';
 export * from './Switch';
 export * from './Tooltip';

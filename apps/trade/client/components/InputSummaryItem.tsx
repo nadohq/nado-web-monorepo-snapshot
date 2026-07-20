@@ -15,7 +15,7 @@ import { ReactNode } from 'react';
 export interface InputSummaryItemProps extends BaseTestProps, WithClassnames {
   label: string;
   definitionTooltipId?: DefinitionTooltipID;
-  formatSpecifier: NumberFormatSpecifier | string;
+  formatSpecifier: NumberFormatSpecifier;
   currentValue?: NumberFormatValue;
   valueClassName?: string;
   // Callback when clicking on value, commonly used to set max amount.

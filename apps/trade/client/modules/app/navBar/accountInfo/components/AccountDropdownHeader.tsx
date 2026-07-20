@@ -45,7 +45,7 @@ export function AccountDropdownHeader() {
         onClick={disconnect}
         colorVariant="secondary"
       >
-        {t(($) => $.buttons.disconnect)}
+        {t(($) => $.buttons.signOut)}
       </TextButton>
     </div>
   );

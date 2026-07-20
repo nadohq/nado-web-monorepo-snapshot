@@ -1,5 +1,6 @@
 import {
   formatNumber,
+  NumberFormatSpecifier,
   PresetNumberFormatSpecifier,
 } from '@nadohq/react-client';
 import { ChartTooltip } from 'client/components/ChartTooltip';
@@ -8,8 +9,8 @@ import { useTranslation } from 'react-i18next';
 import { useActiveTooltipDataPoints } from 'recharts';
 
 interface Props {
-  priceFormatSpecifier: string;
-  sizeFormatSpecifier: string;
+  priceFormatSpecifier: NumberFormatSpecifier;
+  sizeFormatSpecifier: NumberFormatSpecifier;
   symbol: string;
   quoteSymbol: string;
 }

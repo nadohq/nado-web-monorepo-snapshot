@@ -4,8 +4,13 @@ import {
   ProductEngineType,
   removeDecimals,
 } from '@nadohq/client';
-import { calcOrderFillPrice } from '@nadohq/react-client';
+import {
+  calcOrderFillPrice,
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
 import { nonNullFilter } from '@nadohq/web-common';
+import { BigNumber } from 'bignumber.js';
 import { useDataTablePaginatedQuery } from 'client/components/DataTable/hooks/useDataTablePaginatedQuery';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { AllMarketsStaticDataForChainEnv } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/types';
@@ -15,6 +20,7 @@ import { calcHistoricalIsoLeverage } from 'client/modules/tables/utils/calcHisto
 import { calcRealizedPnlInfo } from 'client/modules/tables/utils/calcRealizedPnlInfo';
 import { getOrderTableItem } from 'client/modules/tables/utils/getOrderTableItem';
 import { getProductTableItem } from 'client/modules/tables/utils/getProductTableItem';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { secondsToMilliseconds } from 'date-fns';
 import type { TFunction } from 'i18next';
 import { useMemo } from 'react';
@@ -37,6 +43,7 @@ export function useHistoricalEngineOrdersTable({
 
   const { data: allMarketsStaticData, isLoading: marketsDataLoading } =
     useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const {
     isLoading,
@@ -72,10 +79,11 @@ export function useHistoricalEngineOrdersTable({
             order,
             allMarketsStaticData,
             t,
+            exchangeRate: getExchangeRate(order.productId),
           });
         })
         .filter(nonNullFilter);
-    }, [historicalOrders, allMarketsStaticData, t]);
+    }, [historicalOrders, allMarketsStaticData, t, getExchangeRate]);
 
   return {
     isLoading: isLoading || marketsDataLoading || isFetchingCurrPage,
@@ -101,14 +109,19 @@ export function getHistoricalEngineOrderTableItem(params: {
   order: IndexerOrder;
   allMarketsStaticData: AllMarketsStaticDataForChainEnv;
   t: TFunction;
+  exchangeRate: BigNumber;
 }): HistoricalEngineOrderTableItem {
-  const { order, allMarketsStaticData, t } = params;
+  const { order, allMarketsStaticData, t, exchangeRate } = params;
 
   const productTableItem = getProductTableItem({
     productId: order.productId,
     allMarketsStaticData,
+    exchangeRate,
   });
-  const orderTableItem = getOrderTableItem({ indexerOrder: order });
+  const orderTableItem = getOrderTableItem({
+    indexerOrder: order,
+    exchangeRate,
+  });
 
   const preBase = order.preBalances.base;
   const decimalAdjustedPreBaseAmount = removeDecimals(preBase.amount);
@@ -118,11 +131,12 @@ export function getHistoricalEngineOrderTableItem(params: {
   const decimalAdjustedFilledQuoteSize = removeDecimals(
     order.quoteFilled,
   ).abs();
-  const filledAvgPrice = calcOrderFillPrice(
+  const rawFilledAvgPrice = calcOrderFillPrice(
     order.quoteFilled,
     order.totalFee,
     order.baseFilled,
   );
+  const filledAvgPrice = toXStocksDisplayPrice(rawFilledAvgPrice, exchangeRate);
   const decimalAdjustedTotalFee = removeDecimals(order.totalFee);
   const decimalAdjustedClosedSize = removeDecimals(order.closedAmount).abs();
   const hasClosedPosition = !decimalAdjustedClosedSize.isZero();
@@ -135,7 +149,7 @@ export function getHistoricalEngineOrderTableItem(params: {
   const isoLeverage = calcHistoricalIsoLeverage({
     decimalAdjustedPreCloseMargin,
     decimalAdjustedPreBaseAmount,
-    fillPrice: filledAvgPrice,
+    fillPrice: rawFilledAvgPrice,
     decimalAdjustedVQuoteBalance:
       preBase.type === ProductEngineType.PERP
         ? removeDecimals(preBase.vQuoteBalance)
@@ -144,11 +158,14 @@ export function getHistoricalEngineOrderTableItem(params: {
 
   // preBalances.base.amount is the signed position size before the order.
   const preClosePositionAmount = hasClosedPosition
-    ? decimalAdjustedPreBaseAmount
+    ? toXStocksDisplayAmount(decimalAdjustedPreBaseAmount, exchangeRate)
     : undefined;
 
   const entryPrice = hasClosedPosition
-    ? decimalAdjustedClosedNetEntry.div(decimalAdjustedClosedSize).abs()
+    ? toXStocksDisplayPrice(
+        decimalAdjustedClosedNetEntry.div(decimalAdjustedClosedSize).abs(),
+        exchangeRate,
+      )
     : undefined;
 
   return {
@@ -156,11 +173,16 @@ export function getHistoricalEngineOrderTableItem(params: {
     ...orderTableItem,
     timePlacedMillis: secondsToMilliseconds(order.recvTimeSeconds),
     filledAvgPrice,
-    filledBaseSize: decimalAdjustedFilledBaseSize,
+    filledBaseSize: toXStocksDisplayAmount(
+      decimalAdjustedFilledBaseSize,
+      exchangeRate,
+    ),
     filledQuoteSize: decimalAdjustedFilledQuoteSize,
     statusText: getStatusText(order, t),
     tradeFeeQuote: decimalAdjustedTotalFee,
-    closedBaseSize: hasClosedPosition ? decimalAdjustedClosedSize : undefined,
+    closedBaseSize: hasClosedPosition
+      ? toXStocksDisplayAmount(decimalAdjustedClosedSize, exchangeRate)
+      : undefined,
     preClosePositionAmount,
     entryPrice,
     isoLeverage,

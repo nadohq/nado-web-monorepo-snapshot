@@ -1,9 +1,10 @@
 import { CustomNumberFormatSpecifier } from '@nadohq/react-client';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HeaderCell } from 'client/components/DataTable/cells/HeaderCell';
-import { MarketProductInfoCell } from 'client/components/DataTable/cells/MarketProductInfoCell';
+import { TableCell } from 'client/components/DataTable/cells/TableCell';
 import { DataTable } from 'client/components/DataTable/DataTable';
 import { bigNumberSortFn } from 'client/components/DataTable/utils/sortingFns';
+import { ProductLabel } from 'client/components/ProductLabel';
 import { AmountWithSymbolCell } from 'client/modules/tables/cells/AmountWithSymbolCell';
 import { DateTimeCell } from 'client/modules/tables/cells/DateTimeCell';
 import { PercentageCell } from 'client/modules/tables/cells/PercentageCell';
@@ -55,7 +56,11 @@ export const PaginatedInterestPaymentsTable = ({
           const {
             token: { symbol, icon },
           } = getValue<InterestPaymentsTableItem['metadata']>();
-          return <MarketProductInfoCell symbol={symbol} iconSrc={icon.asset} />;
+          return (
+            <TableCell>
+              <ProductLabel symbol={symbol} iconSrc={icon.asset} />
+            </TableCell>
+          );
         },
         enableSorting: false,
         meta: {

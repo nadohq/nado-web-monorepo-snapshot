@@ -28,7 +28,7 @@ Before touching any files, collect the following for **each market** being liste
 | Product ID(s) | the numeric ID(s) assigned to this market |
 | Token address (spot only) | the token's contract address on Ink Sepolia (testnet) |
 | Token decimals (spot only) | e.g. `6` for USDC, `18` for WETH, `8` for kBTC |
-| Market category | one of: `chain`, `meme`, `defi`, `commodity`, `equities`, `forex`, `indices` |
+| Market category | one of: `crypto`, `stocks`, `commodities`, `forex` |
 | Alt search terms | human-readable names (e.g. `['Avalanche']` for AVAX, `['Litecoin']` for LTC) |
 
 If anything is missing for any market, stop and ask the requester before proceeding.
@@ -127,6 +127,12 @@ Add an entry for each new market, sorted alphabetically by key:
 This file maps lowercase symbol keys to arrays of human-readable search strings shown in the
 market search UI. For example: `avax: ['Avalanche']`, `ltc: ['Litecoin']`.
 
+Then add a matching entry, keyed by the same lowercase symbol, to `marketDescriptions.ts`. This is
+**required** on every market and is served from `/api/product-metadata` alongside `fullMarketName`
+(the full asset name, set inline on the metadata entry below). Follow
+[WRITE_MARKET_DESCRIPTIONS.md](WRITE_MARKET_DESCRIPTIONS.md) for description copy and naming rules
+(no em dashes, ~300–350 chars, single quotes, verified facts only).
+
 #### 3b. `perpMetadata.ts`
 
 Open:
@@ -141,23 +147,23 @@ export const <SYMBOL>_PERP_METADATA: PerpProductMetadata = {
   symbol: '<SYMBOL>',
   icon: TOKEN_ICONS.<symbol>,
   marketName: `<SYMBOL>`,
+  fullMarketName: '<Full Asset Name>',
+  marketDescription: MARKET_DESCRIPTIONS.<symbol>,
   altSearchTerms: COMMON_ALT_SEARCH_TERMS.<symbol>,
   quoteProductId: QUOTE_PRODUCT_ID,
-  marketCategories: new Set(['perp', '<category>']),
+  marketCategories: new Set(['<category>']),
 };
 ```
 
-`marketCategories` must always include `'perp'` plus **one** additional category from:
+`marketCategories` must always include **one** additional category from the
+`MarketCategory` union in `types.ts`:
 
 | Category | When to use |
 |---|---|
-| `chain` | L1/L2 native tokens (BTC, ETH, SOL, AVAX, LTC) |
-| `meme` | Meme tokens (DOGE, PEPE, FARTCOIN) |
-| `defi` | DeFi protocol tokens (AAVE, UNI, LIT) |
-| `commodity` | Real-world commodities (XAUT, OIL, SILVER) |
-| `equities` | Stocks (AAPL, TSLA, NVDA) |
+| `crypto` | All crypto tokens: L1/L2 natives, DeFi, and memes (BTC, ETH, SOL, AAVE, UNI, DOGE, PEPE) |
+| `stocks` | Equities and equity-like index products (AAPL, TSLA, NVDA, QQQ, SPY) |
+| `commodities` | Real-world commodities (XAUT, OIL, SILVER) |
 | `forex` | Forex pairs (EURUSD, GBPUSD, USDJPY) |
-| `indices` | Index products (QQQ, SPY) |
 
 #### 3c. `perpMetadataByProductId.ts`
 
@@ -218,14 +224,16 @@ packages/react-client/context/metadata/productMetadata/ink/spotMetadataByProduct
 <productId>: {
   token: <SYMBOL>_INK_SEPOLIA,
   marketName: `<SYMBOL>/${PRIMARY_QUOTE_SYMBOLS.usdt0}`,
+  fullMarketName: '<Full Asset Name>',
+  marketDescription: MARKET_DESCRIPTIONS.<symbol>,
   altSearchTerms: COMMON_ALT_SEARCH_TERMS.<symbol>,
   quoteProductId: QUOTE_PRODUCT_ID,
-  marketCategories: new Set(['spot', '<category>']),
+  marketCategories: new Set(['<category>']),
 },
 ```
 
-You also need to add the alt search terms entry to `commonAltSearchTerms.ts` (same as for perps
-above) before referencing it here.
+You also need to add the `commonAltSearchTerms.ts` and `marketDescriptions.ts` entries (same as for
+perps above) before referencing them here.
 
 Do **not** add to `INK_SPOT_METADATA_BY_PRODUCT_ID` (the mainnet section) — the market is
 testnet-only.

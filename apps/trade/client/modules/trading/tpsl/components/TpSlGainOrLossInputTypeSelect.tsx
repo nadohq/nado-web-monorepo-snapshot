@@ -1,9 +1,10 @@
 import { Select, SelectOption, useSelect } from '@nadohq/web-ui';
+import { useSavedUserState } from 'client/modules/localstorage/userState/useSavedUserState';
 import {
-  GainOrLossInputType,
   TpSlOrderFormPriceState,
   TpSlOrderFormValues,
 } from 'client/modules/trading/tpsl/hooks/useTpSlOrderForm/types';
+import { GainOrLossInputType } from 'client/modules/trading/types/GainOrLossInputType';
 import { useCallback } from 'react';
 import { UseFormReturn, useWatch } from 'react-hook-form';
 
@@ -26,6 +27,8 @@ const OPTIONS: SelectOption<GainOrLossInputType>[] = [
 export function TpSlGainOrLossInputTypeSelect({ form, priceState }: Props) {
   const formPriceValuesKey = priceState.formPriceValuesKey;
 
+  const { setSavedUserState } = useSavedUserState();
+
   const onSelectedValueChange = useCallback(
     (val: GainOrLossInputType) => {
       form.setValue(`${formPriceValuesKey}.gainOrLossInputType`, val);
@@ -36,8 +39,15 @@ export function TpSlGainOrLossInputTypeSelect({ form, priceState }: Props) {
       //      this is to avoid setting an unrealistic trigger price if we were to
       //      use 2000 % gain as source.
       form.setValue(`${formPriceValuesKey}.triggerPriceSource`, 'price');
+
+      const settingsKey =
+        formPriceValuesKey === 'tp' ? 'takeProfit' : 'stopLoss';
+      setSavedUserState((prev) => {
+        prev.trading.tpSlGainOrLossInputType[settingsKey] = val;
+        return prev;
+      });
     },
-    [form, formPriceValuesKey],
+    [form, formPriceValuesKey, setSavedUserState],
   );
 
   const selectedValue = useWatch({

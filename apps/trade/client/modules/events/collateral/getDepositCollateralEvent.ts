@@ -1,4 +1,3 @@
-import { assertEventType } from 'client/modules/events/collateral/assertEventType';
 import {
   getBaseCollateralEvent,
   GetBaseCollateralEventParams,
@@ -11,13 +10,8 @@ export function getDepositCollateralEvent({
   event,
   allMarketsStaticData,
 }: GetDepositCollateralEventParams): DepositCollateralEvent {
-  assertEventType(event, 'deposit_collateral');
-
-  return {
-    ...getBaseCollateralEvent({
-      event,
-      allMarketsStaticData,
-    }),
-    eventType: 'deposit_collateral',
-  };
+  return getBaseCollateralEvent({
+    event,
+    allMarketsStaticData,
+  });
 }

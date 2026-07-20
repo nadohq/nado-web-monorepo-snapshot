@@ -14,7 +14,7 @@ export function AdvancedOrderRequireActiveOneClickTradingInfo() {
   );
   const onKeywordClick = useRepeatedClickCountHandler({
     handler: (count) => {
-      if (count === 3) {
+      if (count >= 3) {
         setEnableDebugTriggerQueries(true);
       }
     },

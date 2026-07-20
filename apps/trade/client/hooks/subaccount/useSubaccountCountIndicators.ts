@@ -2,7 +2,7 @@ import { useQuerySubaccountOpenEngineOrders } from 'client/hooks/query/subaccoun
 import { useQuerySubaccountOpenTriggerOrders } from 'client/hooks/query/subaccount/useQuerySubaccountOpenTriggerOrders';
 import { usePerpPositions } from 'client/hooks/subaccount/usePerpPositions';
 import { useSpreadBalances } from 'client/hooks/subaccount/useSpreadBalances';
-import { ORDER_DISPLAY_TYPES } from 'client/modules/trading/consts/orderDisplayTypes';
+import { ORDER_DISPLAY_TYPES_BY_CATEGORY } from 'client/modules/trading/consts/orderDisplayTypesByCategory';
 import { getTriggerOrderDisplayType } from 'client/modules/trading/utils/trigger/getTriggerOrderDisplayType';
 import { includes, sum, sumBy } from 'lodash';
 import { useMemo } from 'react';
@@ -90,13 +90,17 @@ export function useSubaccountCountIndicators(): UseSubaccountCountIndicators {
       ordersForProduct.forEach((order) => {
         const orderDisplayType = getTriggerOrderDisplayType(order);
 
-        if (includes(ORDER_DISPLAY_TYPES.stop, orderDisplayType)) {
+        if (includes(ORDER_DISPLAY_TYPES_BY_CATEGORY.stop, orderDisplayType)) {
           numStopOrders++;
           numOpenPriceTriggerOrders++;
-        } else if (includes(ORDER_DISPLAY_TYPES.tpSl, orderDisplayType)) {
+        } else if (
+          includes(ORDER_DISPLAY_TYPES_BY_CATEGORY.tpSl, orderDisplayType)
+        ) {
           numTpslOrders++;
           numOpenPriceTriggerOrders++;
-        } else if (includes(ORDER_DISPLAY_TYPES.twap, orderDisplayType)) {
+        } else if (
+          includes(ORDER_DISPLAY_TYPES_BY_CATEGORY.twap, orderDisplayType)
+        ) {
           numOpenTimeTriggerOrders++;
         }
       });

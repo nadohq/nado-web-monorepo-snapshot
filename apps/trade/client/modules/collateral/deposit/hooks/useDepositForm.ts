@@ -94,12 +94,8 @@ export function useDepositForm({
   );
 
   // Data
-  const {
-    availableProducts,
-    hasLoadedDepositableBalances,
-    tokenAllowance,
-    selectedProduct,
-  } = useDepositFormData({ productIdInput });
+  const { availableProducts, tokenAllowance, selectedProduct } =
+    useDepositFormData({ productIdInput });
 
   const minDepositAmount = isInitialDeposit
     ? selectedProduct?.decimalAdjustedMinimumInitialDepositAmount
@@ -260,7 +256,6 @@ export function useDepositForm({
 
   const displayedInfoCardType = useDepositFormDisplayedInfoCardType({
     selectedProduct,
-    hasLoadedDepositableBalances,
   });
 
   return {

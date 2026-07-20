@@ -10,9 +10,9 @@ interface Props extends TableCellProps {
   symbol: string;
   size: BigNumber | undefined;
   /** Defaults to NUMBER_AUTO */
-  sizeFormatSpecifier?: string | NumberFormatSpecifier;
+  sizeFormatSpecifier?: NumberFormatSpecifier;
   /** Defaults to CURRENCY_2DP */
-  valueFormatSpecifier?: string | NumberFormatSpecifier;
+  valueFormatSpecifier?: NumberFormatSpecifier;
   valueUsd: BigNumber | undefined;
 }
 

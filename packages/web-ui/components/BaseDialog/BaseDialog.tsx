@@ -30,8 +30,9 @@ function DialogContainer({
       <RadixDialog.Overlay
         className={joinClassNames(
           'bg-overlay-dialog',
-          'fixed inset-0',
-          'flex items-center justify-center',
+          'fixed inset-0 flex',
+          'items-end justify-center',
+          'lg:items-center',
           Z_INDEX.dialogOverlay,
         )}
       >
@@ -39,13 +40,18 @@ function DialogContainer({
           // Need to pass this because we're not using `Radix.Description`.
           // See https://www.radix-ui.com/primitives/docs/components/dialog#description.
           aria-describedby={undefined}
-          // Sonner bug workaround: https://github.com/radix-ui/primitives/issues/2690#issuecomment-2009617202
           onPointerDownOutside={(e) => {
             // don't dismiss dialog when clicking inside the toast
+            // Sonner bug workaround: https://github.com/radix-ui/primitives/issues/2690#issuecomment-2009617202
             if (
               e.target instanceof Element &&
               e.target.closest('[data-sonner-toast]')
             ) {
+              e.preventDefault();
+            }
+
+            // don't dismiss dialog when any Privy modal is on screen
+            if (document.getElementById('privy-modal-content')) {
               e.preventDefault();
             }
           }}
@@ -54,12 +60,16 @@ function DialogContainer({
           <AnimationContainer.PopIn
             // Disabling the opacity change for a smoother transition during dialog navigation
             disableFadeIn
-            initialYOffset={20}
             className={mergeClassNames(
-              'w-120 max-w-[95vw]',
+              // on mobile, dialogs look like full-width bottom sheets, so we want to round the
+              // top corners and leave some space at the bottom for the safe area
+              'w-full max-w-[100vw] rounded-t-xl pb-4',
+              // on desktop, dialogs look like modals, so we want to round all corners
+              'lg:w-120 lg:max-w-[95vw] lg:rounded-xl lg:pb-0',
+              'bg-surface-card',
               'relative flex flex-col',
-              'overflow-hidden rounded-xl',
-              'bg-surface-card text-text-tertiary',
+              'overflow-hidden',
+              'text-text-tertiary',
               'shadow-elevation-dialog',
               className,
               Z_INDEX.dialogContainer,
@@ -79,7 +89,8 @@ function Title({ className, children }: BaseDialogTitleProps) {
     <RadixDialog.Title
       className={mergeClassNames(
         'text-text-primary text-lg font-medium',
-        'border-overlay-divider h-12 border-b',
+        'h-12',
+        'border-overlay-divider border-b',
         DIALOG_HORIZONTAL_PADDING,
         className,
       )}

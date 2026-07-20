@@ -1,3 +1,4 @@
+import { NumberFormatSpecifier } from '@nadohq/react-client';
 import { WithClassnames } from '@nadohq/web-common';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { BigNumber } from 'bignumber.js';
@@ -20,8 +21,8 @@ const columnHelper = createColumnHelper<PreviewScaledOrderTableItem>();
 
 interface Props extends WithClassnames {
   orders: PreviewScaledOrderTableItem[];
-  priceFormatSpecifier: string;
-  sizeFormatSpecifier: string;
+  priceFormatSpecifier: NumberFormatSpecifier;
+  sizeFormatSpecifier: NumberFormatSpecifier;
 }
 
 const COLUMN_CONTAINER_CLASSNAME = 'flex-1';

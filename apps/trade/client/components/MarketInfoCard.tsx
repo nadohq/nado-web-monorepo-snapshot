@@ -46,7 +46,7 @@ export function MarketInfoCard({
     <div
       className={joinClassNames(
         'flex h-full min-w-max flex-col',
-        'justify-center gap-y-0.5 px-2 py-0.5',
+        'justify-center gap-y-1.5 px-2 py-0.5',
         'transition',
         // Using `cursor-default` to prevent the cursor from rapidly changing when hovering over different elements of the card.
         'cursor-default',
@@ -60,7 +60,7 @@ export function MarketInfoCard({
         <DefinitionTooltip
           tooltipOptions={tooltipOptions}
           // Cards have a limited amount of vertical space, so use a lower offset for underline here
-          contentWrapperClassName="underline-offset-2 text-3xs text-text-tertiary min-w-max leading-3"
+          contentWrapperClassName="text-xs text-text-tertiary min-w-max leading-3.5"
           definitionId={definitionTooltipId}
         >
           {label}
@@ -76,8 +76,8 @@ export function MarketInfoCard({
         tooltipOptions={tooltipOptions}
         decoration="none"
         contentWrapperClassName={mergeClassNames(
-          'text-text-primary min-w-max text-xs leading-4 tracking-wide',
-          !value && 'animate-pulse',
+          'text-text-primary min-w-max text-xs leading-4 tracking-wider',
+          value == null && 'animate-pulse',
           valueClassName,
         )}
         dataTestId={dataTestId}

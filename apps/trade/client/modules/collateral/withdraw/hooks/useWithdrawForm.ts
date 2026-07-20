@@ -36,16 +36,18 @@ import { useIsSingleSignatureSession } from 'client/modules/singleSignatureSessi
 import { BaseActionButtonState } from 'client/types/BaseActionButtonState';
 import { resolveAmountFractionSubmitValue } from 'client/utils/form/resolveAmountFractionSubmitValue';
 import { watchFormError } from 'client/utils/form/watchFormError';
-import { positiveBigNumberValidator } from 'client/utils/inputValidators';
+import {
+  addressValidator,
+  positiveBigNumberValidator,
+} from 'client/utils/inputValidators';
 import { roundToString } from 'client/utils/rounding';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useForm, UseFormReturn, useWatch } from 'react-hook-form';
+import { Address, isAddress } from 'viem';
 
 interface UseWithdrawForm {
   // Form errors indicate when to show an input error state
   form: UseFormReturn<WithdrawFormValues>;
-  // Error for the info box
-  formError: WithdrawErrorType | undefined;
   // $ Value for amount input
   amountInputValueUsd: BigNumber | undefined;
   validAmountFraction: number | undefined;
@@ -60,6 +62,7 @@ interface UseWithdrawForm {
   enableBorrows: boolean;
   suggestBorrowing: boolean;
   validateAmount: InputValidatorFn<string, WithdrawErrorType>;
+  validateWithdrawAddress: InputValidatorFn<string, WithdrawErrorType>;
   onFractionSelected: OnFractionSelectedHandler;
   onMaxAmountSelected: () => void;
   onEnableBorrowsChange: (enabled: boolean) => void;
@@ -99,6 +102,7 @@ export function useWithdrawForm({
       amount: '',
       amountSource: 'absolute',
       enableBorrows: defaultEnableBorrows,
+      withdrawAddress: '',
     },
     mode: 'onTouched',
   });
@@ -196,6 +200,25 @@ export function useWithdrawForm({
     [maxInput, minInput, selectedProduct],
   );
 
+  // Validation for the optional custom recipient address
+  const validateWithdrawAddress = useCallback(
+    (input: string): WithdrawErrorType | undefined => {
+      // An empty input defaults to the subaccount owner.
+      if (!input) {
+        return;
+      }
+      if (!addressValidator.safeParse(input).success) {
+        return 'invalid_address';
+      }
+    },
+    [],
+  );
+
+  const withdrawAddressError: WithdrawErrorType | undefined = watchFormError(
+    useWithdrawForm,
+    'withdrawAddress',
+  );
+
   // Global form error state
   const formError: WithdrawErrorType | undefined = useMemo(() => {
     // Trigger the other validations only after user has interacted with the form,
@@ -203,8 +226,8 @@ export function useWithdrawForm({
       return;
     }
 
-    return amountInputError;
-  }, [selectedProduct, amountInputError]);
+    return amountInputError ?? withdrawAddressError;
+  }, [selectedProduct, amountInputError, withdrawAddressError]);
 
   const onFractionSelected = useOnFractionSelectedHandler({
     setValue: useWithdrawForm.setValue,
@@ -282,11 +305,18 @@ export function useWithdrawForm({
         selectedProduct.tokenDecimals,
       );
 
+      // An empty / invalid input leaves the execute hook to default to the
+      // subaccount owner.
+      const sendTo: Address | undefined = isAddress(values.withdrawAddress)
+        ? values.withdrawAddress
+        : undefined;
+
       const serverExecutionResult = executeWithdrawCollateral.mutateAsync(
         {
           productId: selectedProduct.productId,
           amount: roundToString(decimalAdjustedAmountToWithdraw, 0),
           spotLeverage: enableBorrows ?? false,
+          sendTo,
         },
         {
           // Reset the form on success
@@ -322,7 +352,6 @@ export function useWithdrawForm({
   return {
     form: useWithdrawForm,
     suggestBorrowing: !enableBorrows,
-    formError,
     amountInputValueUsd:
       selectedProduct && validAmount
         ? toBigNumber(validAmount).multipliedBy(selectedProduct.oraclePrice)
@@ -338,6 +367,7 @@ export function useWithdrawForm({
     estimateStateTxs,
     enableBorrows,
     validateAmount,
+    validateWithdrawAddress,
     onFractionSelected,
     onMaxAmountSelected: () => onFractionSelected(1),
     onEnableBorrowsChange,

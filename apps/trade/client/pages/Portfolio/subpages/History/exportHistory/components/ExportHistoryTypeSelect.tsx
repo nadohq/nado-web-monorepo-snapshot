@@ -18,8 +18,12 @@ export function ExportHistoryTypeSelect({
     useMemo(
       () => [
         {
-          value: 'trades',
-          label: t(($) => $.exportTypes.trades),
+          value: 'aggregated_trades',
+          label: t(($) => $.exportTypes.aggregatedTrades),
+        },
+        {
+          value: 'individual_trades',
+          label: t(($) => $.exportTypes.individualTrades),
         },
         {
           value: 'historical_engine_orders',

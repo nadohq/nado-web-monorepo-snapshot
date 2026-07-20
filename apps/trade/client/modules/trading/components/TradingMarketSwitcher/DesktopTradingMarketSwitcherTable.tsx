@@ -1,7 +1,4 @@
-import {
-  getMarketPriceFormatSpecifier,
-  PresetNumberFormatSpecifier,
-} from '@nadohq/react-client';
+import { PresetNumberFormatSpecifier } from '@nadohq/react-client';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HeaderCell } from 'client/components/DataTable/cells/HeaderCell';
 import { FixedHeaderDataTable } from 'client/components/DataTable/FixedHeaderDataTable';
@@ -9,7 +6,6 @@ import {
   bigNumberSortFn,
   booleanSortFn,
 } from 'client/components/DataTable/utils/sortingFns';
-import { FavoriteHeaderCell } from 'client/modules/tables/cells/FavoriteHeaderCell';
 import { FavoriteToggleCell } from 'client/modules/tables/cells/FavoriteToggleCell';
 import { NumberCell } from 'client/modules/tables/cells/NumberCell';
 import { PercentageChangeCell } from 'client/modules/tables/cells/PercentageChangeCell';
@@ -29,19 +25,14 @@ export function DesktopTradingMarketSwitcherTable({
   markets,
   isLoading,
   onRowClick,
+  emptyState,
 }: TradingMarketSwitcherTableProps) {
   const { t } = useTranslation();
 
   const columns: ColumnDef<MarketSwitcherItem, any>[] = useMemo(
     () => [
       columnHelper.accessor('isFavorited', {
-        header: ({ header }) => (
-          <FavoriteHeaderCell
-            header={header}
-            favoriteButtonSize={16}
-            disableFavoriteButton={disableFavoriteButton}
-          />
-        ),
+        header: () => null,
         cell: (context) => (
           <FavoriteToggleCell
             favoriteButtonSize={16}
@@ -62,8 +53,8 @@ export function DesktopTradingMarketSwitcherTable({
         ),
         cell: (context) => {
           const market = context.getValue<MarketSwitcherItem['market']>();
-          const isNew = context.row.original.isNew;
-          const maxLeverage = context.row.original.maxLeverage;
+          const { isNew, isXStock, isZeroFees, maxLeverage, pointsBoost } =
+            context.row.original;
 
           return (
             <TradingMarketSwitcherProductInfoCell
@@ -72,39 +63,46 @@ export function DesktopTradingMarketSwitcherTable({
               symbol={market.symbol}
               icon={market.icon}
               isNew={isNew}
+              isXStock={isXStock}
+              isZeroFees={isZeroFees}
               maxLeverage={maxLeverage}
+              pointsBoost={pointsBoost}
+              isMobile={false}
             />
           );
         },
         meta: {
-          cellContainerClassName: 'w-52',
+          cellContainerClassName: 'w-72 grow',
         },
       }),
       columnHelper.accessor('currentPrice', {
         header: ({ header }) => (
-          <HeaderCell header={header}>{t(($) => $.currentPrice)}</HeaderCell>
+          <HeaderCell sortingIconFirst header={header}>
+            {t(($) => $.price)}
+          </HeaderCell>
         ),
         cell: (context) => {
           const currentPrice =
             context.getValue<MarketSwitcherItem['currentPrice']>();
-          const priceIncrement = context.row.original.priceIncrement;
 
           return (
             <NumberCell
               value={currentPrice}
-              formatSpecifier={getMarketPriceFormatSpecifier(priceIncrement)}
+              formatSpecifier={context.row.original.priceFormatSpecifier}
               dataTestId="trading-market-switcher-current-price-cell"
             />
           );
         },
         sortingFn: bigNumberSortFn,
         meta: {
-          cellContainerClassName: 'w-28',
+          cellContainerClassName: 'w-26 flex justify-end',
         },
       }),
       columnHelper.accessor('priceChangeFrac', {
         header: ({ header }) => (
-          <HeaderCell header={header}>{t(($) => $.change24h)}</HeaderCell>
+          <HeaderCell sortingIconFirst header={header}>
+            {t(($) => $.change24h)}
+          </HeaderCell>
         ),
         cell: (context) => {
           const priceChangeFrac =
@@ -119,12 +117,14 @@ export function DesktopTradingMarketSwitcherTable({
         },
         sortingFn: bigNumberSortFn,
         meta: {
-          cellContainerClassName: 'w-24',
+          cellContainerClassName: 'w-26 flex justify-end',
         },
       }),
       columnHelper.accessor('volume24h', {
         header: ({ header }) => (
-          <HeaderCell header={header}>{t(($) => $.volume)}</HeaderCell>
+          <HeaderCell sortingIconFirst header={header}>
+            {t(($) => $.volume)}
+          </HeaderCell>
         ),
         cell: (context) => {
           const volume24h = context.getValue<MarketSwitcherItem['volume24h']>();
@@ -139,12 +139,12 @@ export function DesktopTradingMarketSwitcherTable({
         },
         sortingFn: bigNumberSortFn,
         meta: {
-          cellContainerClassName: 'w-24',
+          cellContainerClassName: 'w-26 flex justify-end',
         },
       }),
       columnHelper.accessor('annualizedFundingFrac', {
         header: ({ header }) => (
-          <HeaderCell header={header}>
+          <HeaderCell sortingIconFirst header={header}>
             {t(($) => $.annualAbbrevFunding)}
           </HeaderCell>
         ),
@@ -155,6 +155,7 @@ export function DesktopTradingMarketSwitcherTable({
           return (
             <PercentageChangeCell
               value={annualizedFundingFrac}
+              noColor
               formatSpecifier={
                 PresetNumberFormatSpecifier.SIGNED_PERCENTAGE_2DP
               }
@@ -164,7 +165,7 @@ export function DesktopTradingMarketSwitcherTable({
         },
         sortingFn: bigNumberSortFn,
         meta: {
-          cellContainerClassName: 'w-24',
+          cellContainerClassName: 'w-26 flex justify-end mr-1.5',
         },
       }),
     ],
@@ -176,14 +177,13 @@ export function DesktopTradingMarketSwitcherTable({
       data={markets}
       isLoading={isLoading}
       columns={columns}
-      initialSortingState={[{ id: 'isFavorited', desc: false }]}
+      initialSortingState={[
+        { id: 'isFavorited', desc: false },
+        { id: 'volume24h', desc: true },
+      ]}
       rowAsLinkHref={(row) => row.original.href}
       onRowClick={onRowClick}
-      emptyState={
-        <p className="text-text-tertiary p-2 text-xs">
-          {t(($) => $.emptyPlaceholders.noMarketsFound)}
-        </p>
-      }
+      emptyState={emptyState}
       headerClassName="px-1"
       rowClassName="py-0.5 px-1"
       scrollContainerClassName="gap-y-2.5"

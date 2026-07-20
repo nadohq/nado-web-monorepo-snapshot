@@ -1,3 +1,4 @@
+import { NumberFormatSpecifier } from '@nadohq/react-client';
 import { WithClassnames } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
 import {
@@ -10,7 +11,7 @@ interface Props extends TableCellProps {
   filledAvgPrice: BigNumber | undefined;
   orderPrice: BigNumber;
   isMarket: boolean;
-  formatSpecifier: string;
+  formatSpecifier: NumberFormatSpecifier;
 }
 
 export function OrderFilledPriceCell({

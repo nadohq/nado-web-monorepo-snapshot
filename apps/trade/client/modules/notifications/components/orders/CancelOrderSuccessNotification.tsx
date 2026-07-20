@@ -1,7 +1,7 @@
 import { ActionToast } from 'client/components/Toast/ActionToast/ActionToast';
 import { ToastProps } from 'client/components/Toast/types';
 import { CancelOrderNotificationData } from 'client/modules/notifications/types';
-import { ORDER_DISPLAY_TYPES } from 'client/modules/trading/consts/orderDisplayTypes';
+import { ORDER_DISPLAY_TYPES_BY_CATEGORY } from 'client/modules/trading/consts/orderDisplayTypesByCategory';
 import { getOrderDisplayTypeLabel } from 'client/modules/trading/utils/getOrderDisplayTypeLabel';
 import { includes } from 'lodash';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +20,10 @@ export function CancelOrderSuccessNotification({
   const { metadata, orderDisplayType } = data;
 
   const isPriceTriggerOrder = includes(
-    [...ORDER_DISPLAY_TYPES.tpSl, ...ORDER_DISPLAY_TYPES.stop],
+    [
+      ...ORDER_DISPLAY_TYPES_BY_CATEGORY.tpSl,
+      ...ORDER_DISPLAY_TYPES_BY_CATEGORY.stop,
+    ],
     orderDisplayType,
   );
   const bodyText = isPriceTriggerOrder

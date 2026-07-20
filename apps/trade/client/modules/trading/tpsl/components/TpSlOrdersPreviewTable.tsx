@@ -89,11 +89,13 @@ export function TpSlOrdersPreviewTable({
           order.triggerCriteria,
         );
 
-        const priceFormatSpecifier = getMarketPriceFormatSpecifier(
-          staticMarketData?.priceIncrement,
-        );
+        const priceFormatSpecifier = getMarketPriceFormatSpecifier({
+          priceIncrement: staticMarketData?.priceIncrement,
+          exchangeRate: undefined,
+        });
         const sizeFormatSpecifier = getMarketSizeFormatSpecifier({
           sizeIncrement: staticMarketData?.sizeIncrement,
+          exchangeRate: undefined,
         });
 
         const orderTypeLabel = getOrderTypeLabel({

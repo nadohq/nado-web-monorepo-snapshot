@@ -3,7 +3,6 @@ import { useIsConnected } from 'client/hooks/util/useIsConnected';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { LanguageSelectorDropdown } from 'client/modules/app/navBar/components/LanguageSelectorDropdown';
 import { useEnabledFeatures } from 'client/modules/envSpecificContent/hooks/useEnabledFeatures';
-import { clientEnv } from 'common/environment/clientEnv';
 
 interface NavBarActionButtonsProps {
   showDesktopActionButtons: boolean;
@@ -19,7 +18,6 @@ export function NavBarActionButtons({
   const canShowSettings = isConnected;
   const canShowNotifications = isNotifiEnabled && isConnected;
   const canShowMobileConnect = showDesktopActionButtons && isConnected;
-  const canShowLanguageSelector = clientEnv.base.enableExperimentalFeatures;
 
   return (
     <>
@@ -31,7 +29,7 @@ export function NavBarActionButtons({
           onClick={() => show({ type: 'command_center', params: {} })}
         />
       )}
-      {canShowLanguageSelector && <LanguageSelectorDropdown />}
+      <LanguageSelectorDropdown />
       {canShowNotifications && (
         <TextButton
           className="p-2.5"

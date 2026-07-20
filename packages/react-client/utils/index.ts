@@ -11,3 +11,4 @@ export * from './safeDiv';
 export * from './signDependentValue';
 export * from './toNonEmptyChainList';
 export * from './truncate';
+export * from './xStocks';

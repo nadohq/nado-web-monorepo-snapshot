@@ -2,9 +2,9 @@ import { BigNumbers, ProductEngineType } from '@nadohq/client';
 import {
   formatNumber,
   getMarketSizeFormatSpecifier,
+  NumberFormatSpecifier,
   PresetNumberFormatSpecifier,
 } from '@nadohq/react-client';
-import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import {
   PerpPositionItem,
   usePerpPositions,
@@ -55,8 +55,14 @@ export function useDrawChartPositionLines({
 
   const existingLinesByProductId = useRef<PositionLinesByProductId>(new Map());
 
+  // Serializes async draw runs onto a single FIFO chain. `createPositionLine` returns a
+  // Promise (TV Trading Platform v29+), so without serialization a second run can start
+  // before the previous run writes its result back to `existingLinesByProductId`,
+  // causing both runs to call `createPositionLine` for the same key and leaving an
+  // orphan line on the chart.
+  const inFlightDrawRef = useRef<Promise<unknown> | null>(null);
+
   const { data: perpPositionsData } = usePerpPositions();
-  const { data: marketsStaticData } = useAllMarketsStaticData();
   const isSingleSignatureSession = useIsSingleSignatureSession({
     requireActive: true,
   });
@@ -67,6 +73,8 @@ export function useDrawChartPositionLines({
   // When TV Widget reloads, clear any cached lines as they are all removed
   useEffect(() => {
     existingLinesByProductId.current.clear();
+    // Reset the FIFO chain so new draws don't wait on a draw queued against the old widget.
+    inFlightDrawRef.current = null;
   }, [tvWidget]);
 
   // When a user disables showing position lines, remove all existing lines
@@ -91,123 +99,135 @@ export function useDrawChartPositionLines({
    * - Disabled: Don't draw lines
    */
   return useCallback(() => {
-    if (
-      !loadedSymbolInfo ||
-      loadedSymbolInfo.productType === ProductEngineType.SPOT ||
-      !enableTradingPositionLines
-    ) {
-      return;
-    }
-
-    const selectedProductId = loadedSymbolInfo?.productId;
-    const marketData = marketsStaticData?.allMarkets[selectedProductId];
-
-    if (!tvWidget || !marketData || !selectedProductId || !perpPositionsData) {
-      return;
-    }
-
-    const activeChart = tvWidget.activeChart();
-
-    const openPositions = perpPositionsData.filter(
-      (position) => position.productId === selectedProductId,
-    );
-
-    const existingPositionLines: PositionLinesByMarginModeType =
-      existingLinesByProductId.current.get(selectedProductId) ?? new Map();
-
-    const newPositionLines: PositionLinesByMarginModeType = new Map();
-
-    openPositions.forEach((position) => {
-      const marginModeType: MarginModeType = !!position.iso
-        ? 'isolated'
-        : 'cross';
-      const hasNoPosition = position.amount.isZero();
-      const hasInvalidData = !position.price.averageEntryPrice?.toNumber(); // Undefined or 0.
-
-      // If there is no position or invalid data. This will remove the lines afterwards.
-      if (hasNoPosition || hasInvalidData) {
+    const drawTask = async () => {
+      if (
+        !loadedSymbolInfo ||
+        loadedSymbolInfo.marketData.type === ProductEngineType.SPOT ||
+        !enableTradingPositionLines
+      ) {
         return;
       }
 
-      const existingLines = existingPositionLines.get(marginModeType);
+      const selectedProductId = loadedSymbolInfo.marketData.productId;
+      const marketData = loadedSymbolInfo.marketData;
 
-      const sizeFormatSpecifier = getMarketSizeFormatSpecifier({
-        sizeIncrement: marketData.sizeIncrement,
-      });
+      if (!tvWidget || !perpPositionsData) {
+        return;
+      }
 
-      const onClosePositionClick = () => {
-        handleMarketClosePosition({
-          productId: position.productId,
-          isoSubaccountName: position.iso?.subaccountName,
-        });
-      };
+      const activeChart = tvWidget.activeChart();
 
-      const onTpSlClick = () => {
-        if (!isSingleSignatureSession) {
-          return;
+      const openPositions = perpPositionsData.filter(
+        (position) => position.productId === selectedProductId,
+      );
+
+      const existingPositionLines: PositionLinesByMarginModeType =
+        existingLinesByProductId.current.get(selectedProductId) ?? new Map();
+
+      const newPositionLines: PositionLinesByMarginModeType = new Map();
+
+      // createPositionLine returns a Promise in v29+
+      for (const position of openPositions) {
+        const marginModeType: MarginModeType = !!position.iso
+          ? 'isolated'
+          : 'cross';
+        const hasNoPosition = position.amount.isZero();
+        const hasInvalidData = !position.price.averageEntryPrice?.toNumber(); // Undefined or 0.
+
+        // If there is no position or invalid data. This will remove the lines afterwards.
+        if (hasNoPosition || hasInvalidData) {
+          continue;
         }
 
-        show({
-          type: 'manage_tp_sl',
-          params: {
-            productId: position.productId,
-            isIso: !!position.iso,
-          },
+        const existingLines = existingPositionLines.get(marginModeType);
+
+        const sizeFormatSpecifier = getMarketSizeFormatSpecifier({
+          sizeIncrement: marketData.sizeIncrement,
+          exchangeRate: loadedSymbolInfo.exchangeRate,
         });
-      };
 
-      const onReverseClick = () => {
-        show({
-          type: 'reverse_position',
-          params: {
+        const onClosePositionClick = () => {
+          handleMarketClosePosition({
             productId: position.productId,
-            isIso: !!position.iso,
-          },
+            isoSubaccountName: position.iso?.subaccountName,
+          });
+        };
+
+        const onTpSlClick = () => {
+          if (!isSingleSignatureSession) {
+            return;
+          }
+
+          show({
+            type: 'manage_tp_sl',
+            params: {
+              productId: position.productId,
+              isIso: !!position.iso,
+            },
+          });
+        };
+
+        const onReverseClick = () => {
+          show({
+            type: 'reverse_position',
+            params: {
+              productId: position.productId,
+              isIso: !!position.iso,
+            },
+          });
+        };
+
+        // Create or update entry line
+        const entryLine = await createOrUpdateEntryLine({
+          t,
+          activeChart,
+          position,
+          sizeFormatSpecifier,
+          onClosePositionClick,
+          isSingleSignatureSession,
+          onTpSlClick,
+          onReverseClick,
+          existingLine: existingLines?.entryLine,
         });
-      };
 
-      // Create or update entry line
-      const entryLine = createOrUpdateEntryLine({
-        t,
-        activeChart,
-        position,
-        sizeFormatSpecifier,
-        onClosePositionClick,
-        isSingleSignatureSession,
-        onTpSlClick,
-        onReverseClick,
-        existingLine: existingLines?.entryLine,
-      });
+        const liquidationLine = await upsertOrRemoveLiquidationLine({
+          t,
+          activeChart,
+          position,
+          existingLine: existingLines?.liquidationLine,
+        });
 
-      const liquidationLine = upsertOrRemoveLiquidationLine({
-        t,
-        activeChart,
-        position,
-        existingLine: existingLines?.liquidationLine,
-      });
+        newPositionLines.set(marginModeType, { entryLine, liquidationLine });
+      }
 
-      newPositionLines.set(marginModeType, { entryLine, liquidationLine });
-    });
+      // Remove lines no longer relevant ie) those in existingPositionLines but not in newPositionLines
+      existingPositionLines.forEach(
+        ({ entryLine, liquidationLine }, marginModeType) => {
+          if (!newPositionLines.has(marginModeType)) {
+            console.debug(
+              '[useDrawChartPositionLines]: Removing position lines:',
+              marginModeType,
+            );
+            entryLine.remove();
+            liquidationLine?.remove();
+          }
+        },
+      );
 
-    // Remove lines no longer relevant ie) those in existingPositionLines but not in newPositionLines
-    existingPositionLines.forEach(
-      ({ entryLine, liquidationLine }, marginModeType) => {
-        if (!newPositionLines.has(marginModeType)) {
-          console.debug(
-            '[useDrawChartPositionLines]: Removing position lines:',
-            marginModeType,
-          );
-          entryLine.remove();
-          liquidationLine?.remove();
-        }
-      },
+      existingLinesByProductId.current.set(selectedProductId, newPositionLines);
+    };
+
+    // Chain this draw onto the in-flight FIFO queue so concurrent calls run sequentially.
+    // The stored ref is always the `.catch()`-masked version (or `null` when the chain
+    // is fresh), so it can only fulfill — no need to handle rejection in `then`.
+    const queued = (inFlightDrawRef.current ?? Promise.resolve()).then(
+      drawTask,
     );
-
-    existingLinesByProductId.current.set(selectedProductId, newPositionLines);
+    inFlightDrawRef.current = queued.catch(() => undefined);
+    return queued;
   }, [
     loadedSymbolInfo,
     enableTradingPositionLines,
-    marketsStaticData?.allMarkets,
     tvWidget,
     perpPositionsData,
     show,
@@ -221,7 +241,7 @@ interface CreateOrUpdateEntryLineParams {
   t: TFunction;
   activeChart: IChartWidgetApi;
   position: PerpPositionItem;
-  sizeFormatSpecifier: string;
+  sizeFormatSpecifier: NumberFormatSpecifier;
   onClosePositionClick: () => void;
   isSingleSignatureSession: boolean;
   onTpSlClick: () => void;
@@ -229,7 +249,7 @@ interface CreateOrUpdateEntryLineParams {
   existingLine?: IPositionLineAdapter;
 }
 
-function createOrUpdateEntryLine({
+async function createOrUpdateEntryLine({
   t,
   activeChart,
   position,
@@ -279,7 +299,7 @@ function createOrUpdateEntryLine({
     ? t(($) => $.tradingChart.tooltips.manageTpSl)
     : t(($) => $.tradingChart.tooltips.enableOneClickTrading);
 
-  const entryLine = existingLine ?? activeChart.createPositionLine();
+  const entryLine = existingLine ?? (await activeChart.createPositionLine());
 
   return entryLine
     .setPrice(averageEntryPrice)
@@ -316,7 +336,7 @@ interface UpsertOrRemoveLiquidationLineParams {
   existingLine?: IPositionLineAdapter;
 }
 
-function upsertOrRemoveLiquidationLine({
+async function upsertOrRemoveLiquidationLine({
   t,
   activeChart,
   position,
@@ -347,7 +367,8 @@ function upsertOrRemoveLiquidationLine({
     ? t(($) => $.tradingChart.tooltips.isoLiquidationPriceDesc)
     : t(($) => $.tradingChart.tooltips.crossLiquidationPriceDesc);
 
-  const liquidationLine = existingLine ?? activeChart.createPositionLine();
+  const liquidationLine =
+    existingLine ?? (await activeChart.createPositionLine());
 
   return liquidationLine
     .setPrice(estimatedLiquidationPrice)

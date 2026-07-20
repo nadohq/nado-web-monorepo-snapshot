@@ -9,12 +9,16 @@ import {
   formatNumber,
   getMarketPriceFormatSpecifier,
   getMarketSizeFormatSpecifier,
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
   usePrimaryChainNadoClient,
   useSubaccountContext,
 } from '@nadohq/react-client';
 import { formatTimestamp, TimeFormatSpecifier } from '@nadohq/web-ui';
+import { useInterval } from 'ahooks';
 import { BigNumber } from 'bignumber.js';
-import { useQueryAllMarketsByChainEnv } from 'client/hooks/query/markets/allMarketsForChainEnv/useQueryAllMarketsByChainEnv';
+import { useQueryAllMarketsStaticDataByChainEnv } from 'client/hooks/query/markets/allMarketsStaticDataByChainEnv/useQueryAllMarketsStaticDataByChainEnv';
+import { useQueryAllMarketsLatestPrices } from 'client/hooks/query/markets/useQueryAllMarketsLatestPrices';
 import { useGetNowTimeInSeconds } from 'client/hooks/util/useGetNowTime';
 import { useOperationTimeLogger } from 'client/hooks/util/useOperationTimeLogger';
 import { useSyncedRef } from 'client/hooks/util/useSyncedRef';
@@ -26,31 +30,50 @@ import {
   RESOLUTIONS_TO_INTERVALS,
   TradingViewSymbolInfo,
 } from 'client/modules/trading/chart/config/datafeedConfig';
+import { useBrokerDependencies } from 'client/modules/trading/chart/hooks/useBrokerDependencies';
 import {
   BACKFILL_END_DATE_SECONDS_BY_PRODUCT_ID,
   DEFAULT_BACKFILL_END_DATE_SECONDS,
 } from 'client/modules/trading/chart/hooks/useTradingViewData/consts';
 import { BarSubscriber } from 'client/modules/trading/chart/hooks/useTradingViewData/types';
 import {
+  applyMidPriceToBar,
   getProductIdIntervalKey,
   syncBarOpenWithValue,
   toTVCandlestick,
   toTVCandlesticks,
 } from 'client/modules/trading/chart/hooks/useTradingViewData/utils';
+import {
+  NadoBrokerDeps,
+  TradingViewDataFeed,
+} from 'client/modules/trading/chart/types';
 import { useEnableChartMarks } from 'client/modules/trading/hooks/useEnableChartMarks';
 import { useEngineSubscriptionsWebSocket } from 'client/modules/webSockets/hooks/useEngineSubscriptionsWebSocket';
 import { getEngineSubscriptionEventData } from 'client/modules/webSockets/utils/getEngineSubscriptionEventData';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { last } from 'lodash';
-import type { Bar, IBasicDataFeed, Mark } from 'public/charting_library';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import type { Bar, Mark, QuoteData } from 'public/charting_library';
+import { RefObject, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import safeStringify from 'safe-stable-stringify';
 
-interface UseTradingViewData {
-  symbolInfoByProductId?: Record<number, TradingViewSymbolInfo>;
-  datafeed: IBasicDataFeed | undefined;
+interface QuoteListener {
+  productIds: Set<number>;
+  callback: (data: QuoteData[]) => void;
 }
 
+interface UseTradingViewData {
+  symbolInfoByProductId: Record<number, TradingViewSymbolInfo> | undefined;
+  datafeed: TradingViewDataFeed | undefined;
+  brokerDepsRef: RefObject<NadoBrokerDeps>;
+}
+
+/**
+ * Builds the TradingView datafeed (candlesticks, quotes, marks) and broker
+ * dependencies. BBO subscription for the active product is handled by
+ * useTradingWebSocketSubscriptions at the page level; quote data is read
+ * from the latestMarketPrices query cache.
+ */
 export function useTradingViewData(): UseTradingViewData {
   const { t } = useTranslation();
 
@@ -72,28 +95,64 @@ export function useTradingViewData(): UseTradingViewData {
   const { enableChartMarks } = useEnableChartMarks();
   const enableChartMarksRef = useSyncedRef(enableChartMarks);
 
-  const { data: allMarketsByChainEnv } = useQueryAllMarketsByChainEnv();
+  // Static data per chainEnv carries StaticMarketData + the quotes map, both
+  // needed to build a complete TradingViewSymbolInfo (see datafeedConfig).
+  const { data: allMarketsStaticDataByChainEnv } =
+    useQueryAllMarketsStaticDataByChainEnv();
+
+  // xStocks exchange rates — needed to convert raw (wQQQx) backend values
+  // to display (QQQx) space before handing them to TradingView. Returns 1
+  // for non-xStocks markets so the toXStocks* helpers become no-ops.
+  const { getExchangeRate, hasLoaded: hasLoadedExchangeRates } =
+    useGetXStocksExchangeRate();
+  const getExchangeRateRef = useSyncedRef(getExchangeRate);
+
+  // Source for `getQuotes` snapshots — read from the polled query cache so
+  // bid/ask are available immediately on symbol switch, before the first
+  // BBO websocket event lands. The query is already polled elsewhere so
+  // reading from its cache costs nothing extra here.
+  const { data: latestMarketPrices } = useQueryAllMarketsLatestPrices();
+  const latestMarketPricesRef = useSyncedRef(latestMarketPrices);
+
+  const hasLoadedMarketsStaticData = allMarketsStaticDataByChainEnv != null;
 
   // Construct symbol info for all markets across edge. This means that we don't need to reload the datafeed when changing chain env
   const symbolInfoByProductId = useMemo(
     () => {
-      if (!allMarketsByChainEnv) {
+      if (!hasLoadedMarketsStaticData || !hasLoadedExchangeRates) {
         return;
       }
 
       const mapping: Record<number, TradingViewSymbolInfo> = {};
-      Object.values(allMarketsByChainEnv).forEach((marketsForChainEnv) => {
-        Object.values(marketsForChainEnv.allMarkets).forEach((market) => {
-          mapping[market.productId] = getTradingViewSymbolInfo(market);
-        });
-      });
+      Object.values(allMarketsStaticDataByChainEnv).forEach(
+        (staticDataForChainEnv) => {
+          Object.values(staticDataForChainEnv.allMarkets).forEach(
+            (marketData) => {
+              const quoteSymbol =
+                staticDataForChainEnv.quotes[marketData.productId]?.symbol;
+
+              if (!quoteSymbol) {
+                return;
+              }
+
+              mapping[marketData.productId] = getTradingViewSymbolInfo(
+                marketData,
+                quoteSymbol,
+                getExchangeRate(marketData.productId),
+              );
+            },
+          );
+        },
+      );
 
       return mapping;
     },
-    // We want this to run ONCE when all edge markets are loaded
+    // Only re-run when both data sources finish loading for the first time
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [allMarketsByChainEnv == null],
+    [hasLoadedMarketsStaticData, hasLoadedExchangeRates],
   );
+
+  const brokerDepsRef = useBrokerDependencies(symbolInfoByProductId);
 
   // This is used to retrieve the correct subscriber when unsubscribing from updates
   const tvUIDToBarSubscriber = useRef<Map<string, BarSubscriber>>(new Map());
@@ -104,68 +163,182 @@ export function useTradingViewData(): UseTradingViewData {
   // This is used to connect candles (i.e. make the open of a new bar equal to the close of the previous)
   const productIdIntervalKeyToLastBar = useRef<Map<string, Bar>>(new Map());
 
-  // Maintain a websocket connection to subscribe to candlestick updates
-  const onCandlestickUpdateMessage = useCallback((message: MessageEvent) => {
-    const data = getEngineSubscriptionEventData(message);
-    if (data?.type !== 'latest_candlestick') {
-      return;
-    }
-    // Given product ID + resolution, find all relevant subscribers and update their latest bar
-    const productIdIntervalKey = getProductIdIntervalKey(
-      data.product_id,
-      data.granularity,
-    );
-    const barSubscriber =
-      productIdIntervalKeyToBarSubscriber.current.get(productIdIntervalKey);
-    if (!barSubscriber) {
-      console.warn(
-        `[useTradingViewData] No bar subscriber found for product ID ${data.product_id} and interval ${data.granularity}`,
-      );
-      return;
-    }
+  // Quotes API state — backs `getQuotes` / `subscribeQuotes` for the
+  // Buy/Sell buttons and Order Panel. BBO updates flow through the
+  // latestMarketPrices query cache (updated by useTradingWebSocketSubscriptions).
+  const quoteListenersByUidRef = useRef<Map<string, QuoteListener>>(new Map());
 
-    let newCandlestick = toTVCandlestick({
-      close: removeDecimals(data.close_x18),
-      high: removeDecimals(data.high_x18),
-      low: removeDecimals(data.low_x18),
-      open: removeDecimals(data.open_x18),
-      time: toBigNumber(data.timestamp),
-      volume: toBigNumber(data.volume),
-    });
-    const lastBar =
-      productIdIntervalKeyToLastBar.current.get(productIdIntervalKey);
-    if (lastBar) {
-      // Sync the open price with the last bar's close to prevent gaps
-      // Candlesticks within the same period will have the same timestamp
-      if (newCandlestick.time > lastBar.time) {
-        // This is a new bar
-        newCandlestick = syncBarOpenWithValue(newCandlestick, lastBar.close);
-      } else {
-        // This is an update to the existing last bar
-        newCandlestick = syncBarOpenWithValue(newCandlestick, lastBar.open);
-      }
+  // Last traded price per product, used as `lp` in the Quotes API. Engine
+  // pushes a new `latest_candlestick` event on every match, so the running
+  // bar's `close` is the freshest trade price we have client-side. Seeded
+  // from getBars history (last close in the fetched window) and updated
+  // live by the candlestick branch of onSubscriptionMessage. Stored in
+  // display (QQQx) space so it can be passed straight to TV.
+  const lastTradedPriceByProductIdRef = useRef<Map<number, BigNumber>>(
+    new Map(),
+  );
 
-      // Clone to prevent TradingView from mutating our stored reference
-      // (TV can modify bar properties in place, e.g. normalizing timestamps)
-      productIdIntervalKeyToLastBar.current.set(productIdIntervalKey, {
-        ...newCandlestick,
+  const buildQuoteData = useCallback(
+    (productIds: number[]): QuoteData[] => {
+      return productIds.map((productId) => {
+        const symbol = String(productId);
+        const lastTradedPrice =
+          lastTradedPriceByProductIdRef.current.get(productId);
+        // Bid/ask come from the latestMarketPrices query cache, which is
+        // kept fresh by BBO websocket events via useTradingWebSocketSubscriptions.
+        // Convert to display space — TV's Buy/Sell buttons render these
+        // directly and the broker compares against them in the same space.
+        const exchangeRate = getExchangeRateRef.current(productId);
+        const marketPrice = latestMarketPricesRef.current?.[productId];
+        const bid = toXStocksDisplayPrice(marketPrice?.safeBid, exchangeRate);
+        const ask = toXStocksDisplayPrice(marketPrice?.safeAsk, exchangeRate);
+
+        return {
+          s: 'ok' as const,
+          n: symbol,
+          v: {
+            lp: lastTradedPrice?.toNumber(),
+            ask: ask?.toNumber(),
+            bid: bid?.toNumber(),
+            spread: bid && ask ? ask.minus(bid).toNumber() : undefined,
+          },
+        };
       });
-    } else {
-      console.warn(
-        `[useTradingViewData] No last bar found during candlestick update for ${productIdIntervalKey}, skipping open price sync`,
-      );
-    }
+    },
+    [latestMarketPricesRef, getExchangeRateRef],
+  );
 
-    barSubscriber.updateLatestBar(newCandlestick);
-  }, []);
+  // Periodically push fresh data sourced from the latestMarketPrices query
+  // cache (polled by useQueryAllMarketsLatestPrices) — two consumers:
+  //   1. Quote listeners: bid/ask for Buy/Sell buttons and Order Panel.
+  //      Polling covers productIds that may not be receiving BBO/candlestick
+  //      events on the shared socket (or while the WS is disconnected) —
+  //      without it, their bid/ask would never reach TV.
+  //   2. Running bar close: driven from mid-price between trades.
+  //      `latest_candlestick` is only emitted on a match, so without this
+  //      the close is pinned to the last trade price and visibly drifts
+  //      from the book on thin markets. Does not touch
+  //      `lastTradedPriceByProductIdRef` — the Quotes API's `lp` stays tied
+  //      to actual trade prints.
+  const pushLatestPriceUpdates = useCallback(() => {
+    quoteListenersByUidRef.current.forEach((listener) => {
+      const quoteData = buildQuoteData(Array.from(listener.productIds));
+      listener.callback(quoteData);
+    });
+
+    productIdIntervalKeyToBarSubscriber.current.forEach(
+      (barSubscriber, productIdIntervalKey) => {
+        const safeMidPrice =
+          latestMarketPricesRef.current?.[barSubscriber.productId]
+            ?.safeMidPrice;
+        if (!safeMidPrice) {
+          return;
+        }
+
+        const midPrice = toXStocksDisplayPrice(
+          safeMidPrice,
+          getExchangeRateRef.current(barSubscriber.productId),
+        ).toNumber();
+
+        const lastBar =
+          productIdIntervalKeyToLastBar.current.get(productIdIntervalKey);
+        if (!lastBar) {
+          return;
+        }
+
+        const updatedBar = applyMidPriceToBar(lastBar, midPrice);
+        productIdIntervalKeyToLastBar.current.set(
+          productIdIntervalKey,
+          updatedBar,
+        );
+        barSubscriber.updateLatestBar(updatedBar);
+      },
+    );
+  }, [buildQuoteData, getExchangeRateRef, latestMarketPricesRef]);
+
+  useInterval(pushLatestPriceUpdates, 1000);
+
+  // Single message handler for the shared engine subscriptions socket —
+  // dispatches by `type` to the relevant branch.
+  const onSubscriptionMessage = useCallback(
+    (message: MessageEvent) => {
+      const data = getEngineSubscriptionEventData(message);
+
+      if (data?.type === 'latest_candlestick') {
+        // Given product ID + resolution, find all relevant subscribers and update their latest bar
+        const productIdIntervalKey = getProductIdIntervalKey(
+          data.product_id,
+          data.granularity,
+        );
+        const barSubscriber =
+          productIdIntervalKeyToBarSubscriber.current.get(productIdIntervalKey);
+        if (!barSubscriber) {
+          console.warn(
+            `[useTradingViewData] No bar subscriber found for product ID ${data.product_id} and interval ${data.granularity}`,
+          );
+          return;
+        }
+
+        const exchangeRate = getExchangeRateRef.current(data.product_id);
+        let newCandlestick = toTVCandlestick(
+          {
+            close: removeDecimals(data.close_x18),
+            high: removeDecimals(data.high_x18),
+            low: removeDecimals(data.low_x18),
+            open: removeDecimals(data.open_x18),
+            time: toBigNumber(data.timestamp),
+            volume: toBigNumber(data.volume),
+          },
+          exchangeRate,
+        );
+        // The running bar's close = most recent trade price (display space).
+        lastTradedPriceByProductIdRef.current.set(
+          data.product_id,
+          toBigNumber(newCandlestick.close),
+        );
+        const lastBar =
+          productIdIntervalKeyToLastBar.current.get(productIdIntervalKey);
+        if (lastBar) {
+          // Sync the open price with the last bar's close to prevent gaps
+          // Candlesticks within the same period will have the same timestamp
+          if (newCandlestick.time > lastBar.time) {
+            // This is a new bar
+            newCandlestick = syncBarOpenWithValue(
+              newCandlestick,
+              lastBar.close,
+            );
+          } else {
+            // This is an update to the existing last bar
+            newCandlestick = syncBarOpenWithValue(newCandlestick, lastBar.open);
+          }
+
+          // Clone to prevent TradingView from mutating our stored reference
+          // (TV can modify bar properties in place, e.g. normalizing timestamps)
+          productIdIntervalKeyToLastBar.current.set(productIdIntervalKey, {
+            ...newCandlestick,
+          });
+        } else {
+          console.warn(
+            `[useTradingViewData] No last bar found during candlestick update for ${productIdIntervalKey}, skipping open price sync`,
+          );
+        }
+
+        barSubscriber.updateLatestBar(newCandlestick);
+        return;
+      }
+    },
+    [getExchangeRateRef],
+  );
   const { isActiveWebSocket, sendJsonMessage } =
     useEngineSubscriptionsWebSocket({
-      onMessage: onCandlestickUpdateMessage,
+      onMessage: onSubscriptionMessage,
     });
   const isActiveWebSocketRef = useSyncedRef(isActiveWebSocket);
   const sendJsonMessageRef = useSyncedRef(sendJsonMessage);
 
-  // Resubscribe to all active subscriptions when WebSocket becomes active
+  // Resubscribe to candlestick streams when WebSocket reconnects.
+  // BBO subscription is handled by useTradingWebSocketSubscriptions at
+  // the page level; the chart reads bid/ask from the query cache.
   useEffect(() => {
     if (!isActiveWebSocket) {
       console.debug(
@@ -182,17 +355,16 @@ export function useTradingViewData(): UseTradingViewData {
       return;
     }
 
-    const subscribers = Array.from(tvUIDToBarSubscriber.current.values());
-    if (subscribers.length === 0) {
+    const barSubscribers = Array.from(tvUIDToBarSubscriber.current.values());
+    if (barSubscribers.length === 0) {
       return;
     }
 
     console.debug(
-      `[useTradingViewData] Resubscribing to ${subscribers.length} active subscriptions`,
+      `[useTradingViewData] Resubscribing to ${barSubscribers.length} candlestick streams`,
     );
 
-    // Resubscribe to all active subscriptions
-    subscribers.forEach((subscriber) => {
+    barSubscribers.forEach((subscriber) => {
       const subscriptionParams =
         nadoClient.ws.subscription.buildSubscriptionParams(
           'latest_candlestick',
@@ -211,7 +383,7 @@ export function useTradingViewData(): UseTradingViewData {
     });
   }, [isActiveWebSocket, nadoClientRef, sendJsonMessageRef]);
 
-  const datafeed = useMemo((): IBasicDataFeed | undefined => {
+  const datafeed = useMemo((): TradingViewDataFeed | undefined => {
     if (!hasLoadedNadoClient || !symbolInfoByProductId) {
       return;
     }
@@ -277,7 +449,7 @@ export function useTradingViewData(): UseTradingViewData {
 
         nadoClientRef.current?.market
           .getEdgeCandlesticks({
-            productId: marketInfo.productId,
+            productId: marketInfo.marketData.productId,
             maxTimeInclusive: beforeTime,
             period: chartIntervalSeconds,
             limit: countBack,
@@ -289,7 +461,10 @@ export function useTradingViewData(): UseTradingViewData {
             );
             endProfiling();
 
-            const tvCandlesticks = toTVCandlesticks(candlesticks);
+            const tvCandlesticks = toTVCandlesticks(
+              candlesticks,
+              marketInfo.exchangeRate,
+            );
 
             // Store lastBar before onHistoryCallback — TradingView mutates
             // bar objects in place (e.g. normalizing timestamps), so we clone
@@ -297,12 +472,19 @@ export function useTradingViewData(): UseTradingViewData {
             const lastBar = last(tvCandlesticks);
             if (firstDataRequest && lastBar) {
               const productIdIntervalKey = getProductIdIntervalKey(
-                marketInfo.productId,
+                marketInfo.marketData.productId,
                 chartIntervalSeconds,
               );
               productIdIntervalKeyToLastBar.current.set(productIdIntervalKey, {
                 ...lastBar,
               });
+              // Seed last traded price for the Quotes API. Subsequent
+              // candlestick events keep this fresh; without the seed the
+              // first quote after subscribe would have no `lp`.
+              lastTradedPriceByProductIdRef.current.set(
+                marketInfo.marketData.productId,
+                toBigNumber(lastBar.close),
+              );
             }
 
             onHistoryCallback(tvCandlesticks, {
@@ -321,7 +503,7 @@ export function useTradingViewData(): UseTradingViewData {
               errorMsg = String(err);
             }
             onErrorCallback(
-              `[useTradingViewData] Error fetching data for product ${marketInfo.productId}: ${errorMsg}`,
+              `[useTradingViewData] Error fetching data for product ${marketInfo.marketData.productId}: ${errorMsg}`,
             );
           });
       },
@@ -349,7 +531,7 @@ export function useTradingViewData(): UseTradingViewData {
         const barSubscriber: BarSubscriber = {
           chartIntervalSeconds,
           updateLatestBar,
-          productId: marketInfo.productId,
+          productId: marketInfo.marketData.productId,
           subscribeUID,
         };
 
@@ -361,13 +543,16 @@ export function useTradingViewData(): UseTradingViewData {
         );
         tvUIDToBarSubscriber.current.set(subscribeUID, barSubscriber);
         productIdIntervalKeyToBarSubscriber.current.set(
-          getProductIdIntervalKey(marketInfo.productId, chartIntervalSeconds),
+          getProductIdIntervalKey(
+            marketInfo.marketData.productId,
+            chartIntervalSeconds,
+          ),
           barSubscriber,
         );
 
         if (!isActiveWebSocketRef.current) {
           console.warn(
-            `[useTradingViewData] WebSocket is not connected, cannot subscribe to updates for product ${marketInfo.productId}`,
+            `[useTradingViewData] WebSocket is not connected, cannot subscribe to updates for product ${marketInfo.marketData.productId}`,
           );
           return;
         }
@@ -389,7 +574,7 @@ export function useTradingViewData(): UseTradingViewData {
           nadoClient.ws.subscription.buildSubscriptionParams(
             'latest_candlestick',
             {
-              product_id: marketInfo.productId,
+              product_id: marketInfo.marketData.productId,
               granularity: chartIntervalSeconds,
             },
           );
@@ -498,7 +683,7 @@ export function useTradingViewData(): UseTradingViewData {
           nadoClient.context.indexerClient.getPaginatedSubaccountMatchEvents({
             subaccountOwner,
             subaccountName,
-            productIds: [marketInfo.productId],
+            productIds: [marketInfo.marketData.productId],
             maxTimestampInclusive,
             limit: 50,
           }),
@@ -577,7 +762,7 @@ export function useTradingViewData(): UseTradingViewData {
               );
             }
 
-            const avgFillPrice = weightedPriceSum.dividedBy(totalBaseSize);
+            const rawAvgFillPrice = weightedPriceSum.dividedBy(totalBaseSize);
             const isBuy = firstFill.baseFilled.isPositive();
             const color = isBuy ? positiveColor : negativeColor;
             const label = isBuy
@@ -592,8 +777,14 @@ export function useTradingViewData(): UseTradingViewData {
                 border: color,
               },
               text: getAggregatedTradeMarkTooltip({
-                totalBaseSize,
-                avgFillPrice,
+                totalBaseSize: toXStocksDisplayAmount(
+                  totalBaseSize,
+                  marketInfo.exchangeRate,
+                ),
+                avgFillPrice: toXStocksDisplayPrice(
+                  rawAvgFillPrice,
+                  marketInfo.exchangeRate,
+                ),
                 candleTimeInSeconds,
                 marketInfo,
               }),
@@ -606,10 +797,35 @@ export function useTradingViewData(): UseTradingViewData {
 
         onDataCallback(marks);
       },
+
+      // Quotes API — provides bid/ask data for Buy/Sell buttons and Order Panel
+      getQuotes: (symbols, onDataCallback, _onErrorCallback) => {
+        onDataCallback(buildQuoteData(symbols.map(Number)));
+      },
+      subscribeQuotes: (
+        symbols,
+        fastSymbols,
+        onRealtimeCallback,
+        listenerGUID,
+      ) => {
+        // Register the callback; the pushQuoteUpdates interval will
+        // periodically call it with fresh data from the query cache.
+        const productIds = new Set<number>(
+          [...symbols, ...fastSymbols].map(Number),
+        );
+        quoteListenersByUidRef.current.set(listenerGUID, {
+          productIds,
+          callback: onRealtimeCallback,
+        });
+      },
+      unsubscribeQuotes: (listenerGUID) => {
+        quoteListenersByUidRef.current.delete(listenerGUID);
+      },
     };
   }, [
     hasLoadedNadoClient,
     symbolInfoByProductId,
+    buildQuoteData,
     startProfiling,
     nadoClientRef,
     endProfiling,
@@ -624,6 +840,7 @@ export function useTradingViewData(): UseTradingViewData {
   return {
     datafeed,
     symbolInfoByProductId,
+    brokerDepsRef,
   };
 }
 
@@ -645,12 +862,16 @@ function getAggregatedTradeMarkTooltip({
   marketInfo,
 }: AggregatedTradeMarkTooltipParams): string {
   const formattedPrice = formatNumber(avgFillPrice, {
-    formatSpecifier: getMarketPriceFormatSpecifier(marketInfo.priceIncrement),
+    formatSpecifier: getMarketPriceFormatSpecifier({
+      priceIncrement: marketInfo.marketData.priceIncrement,
+      exchangeRate: marketInfo.exchangeRate,
+    }),
   });
 
   const formattedSize = formatNumber(totalBaseSize, {
     formatSpecifier: getMarketSizeFormatSpecifier({
-      sizeIncrement: marketInfo.sizeIncrement,
+      sizeIncrement: marketInfo.marketData.sizeIncrement,
+      exchangeRate: marketInfo.exchangeRate,
     }),
   });
 

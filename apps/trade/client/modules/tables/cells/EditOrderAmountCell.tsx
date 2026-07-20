@@ -1,4 +1,4 @@
-import { formatNumber } from '@nadohq/react-client';
+import { formatNumber, NumberFormatSpecifier } from '@nadohq/react-client';
 import { BaseTestProps } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
 import { AmountWithSymbol } from 'client/components/AmountWithSymbol';
@@ -11,7 +11,7 @@ import { EditOrderFieldPopover } from 'client/modules/tables/components/EditOrde
 interface Props extends BaseTestProps, TableCellProps {
   /** Signed amount (negative for shorts) */
   amount: BigNumber;
-  formatSpecifier: string;
+  formatSpecifier: NumberFormatSpecifier;
   symbol: string;
   productId: number;
   digest: string;

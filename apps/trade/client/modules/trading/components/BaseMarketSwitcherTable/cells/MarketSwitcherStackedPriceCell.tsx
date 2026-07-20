@@ -1,15 +1,15 @@
 import {
   formatNumber,
-  getMarketPriceFormatSpecifier,
+  NumberFormatSpecifier,
   PresetNumberFormatSpecifier,
 } from '@nadohq/react-client';
-import { joinClassNames } from '@nadohq/web-common';
 import { BigNumber } from 'bignumber.js';
-import { StackedTableCell } from 'client/components/DataTable/cells/StackedTableCell';
+import { TableCell } from 'client/components/DataTable/cells/TableCell';
+import { StackedValues } from 'client/modules/tables/components/StackedValues';
 import { getSignDependentColorClassName } from 'client/utils/ui/getSignDependentColorClassName';
 
 interface Props {
-  priceIncrement: BigNumber | undefined;
+  priceFormatSpecifier: NumberFormatSpecifier;
   currentPrice: BigNumber | undefined;
   priceChangeFrac: BigNumber | undefined;
 }
@@ -17,22 +17,26 @@ interface Props {
 export function MobileMarketSwitcherStackedPriceCell({
   currentPrice,
   priceChangeFrac,
-  priceIncrement,
+  priceFormatSpecifier,
 }: Props) {
   const color = getSignDependentColorClassName(priceChangeFrac);
 
   return (
-    <StackedTableCell
-      top={formatNumber(currentPrice, {
-        formatSpecifier: getMarketPriceFormatSpecifier(priceIncrement),
-      })}
-      bottom={
-        <span className={joinClassNames('text-2xs', color)}>
-          {formatNumber(priceChangeFrac, {
-            formatSpecifier: PresetNumberFormatSpecifier.SIGNED_PERCENTAGE_2DP,
-          })}
-        </span>
-      }
-    />
+    <TableCell>
+      <StackedValues
+        className="items-end"
+        top={formatNumber(currentPrice, {
+          formatSpecifier: priceFormatSpecifier,
+        })}
+        bottom={
+          <span className={color}>
+            {formatNumber(priceChangeFrac, {
+              formatSpecifier:
+                PresetNumberFormatSpecifier.SIGNED_PERCENTAGE_2DP,
+            })}
+          </span>
+        }
+      />
+    </TableCell>
   );
 }

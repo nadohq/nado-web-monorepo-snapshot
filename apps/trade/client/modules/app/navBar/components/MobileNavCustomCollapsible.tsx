@@ -3,7 +3,12 @@ import {
   WithChildren,
   WithClassnames,
 } from '@nadohq/web-common';
-import { Button, ButtonAsLinkProps, IconComponent } from '@nadohq/web-ui';
+import {
+  Button,
+  ButtonAsLinkProps,
+  IconComponent,
+  StatusIndicator,
+} from '@nadohq/web-ui';
 import * as NavigationMenu from '@radix-ui/react-navigation-menu';
 import Link from 'next/link';
 import { ReactNode } from 'react';
@@ -50,11 +55,17 @@ function CollapsibleLinksContainer({
 interface CollapsibleLinkButtonProps extends Omit<ButtonAsLinkProps, 'as'> {
   icon?: IconComponent;
   active?: boolean;
+  /**
+   * When enabled, renders a pulsing status indicator to call attention to the
+   * item (e.g. a "live" page).
+   */
+  showLiveIndicator?: boolean;
 }
 
 function CollapsibleLinkButton({
   active,
   icon: Icon,
+  showLiveIndicator,
   children,
   className,
   ...rest
@@ -77,6 +88,9 @@ function CollapsibleLinkButton({
         {...rest}
       >
         {children}
+        {showLiveIndicator && (
+          <StatusIndicator sizeVariant="sm" colorVariant="positive" pulse />
+        )}
       </Button>
     </NavigationMenu.Link>
   );

@@ -24,7 +24,6 @@ function PerpTradingPageContent() {
   return (
     <TradingPageLayout
       productId={currentMarket?.productId}
-      marketSwitcherDefaultCategory="perp"
       InfoCards={PerpMarketInfoCards}
       OrderPlacement={PerpOrderPlacementSection}
       ChartComponent={TradingChartTabs}

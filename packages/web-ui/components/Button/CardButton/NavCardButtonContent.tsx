@@ -1,4 +1,5 @@
 import { mergeClassNames } from '@nadohq/web-common';
+import { StatusIndicator } from '../../StatusIndicator';
 import { NavCardBaseProps } from './types';
 
 interface Props extends Pick<
@@ -8,6 +9,7 @@ interface Props extends Pick<
   descriptionClassName?: string;
   titleClassName?: string;
   iconClassName?: string;
+  showLiveIndicator?: boolean;
 }
 
 export function NavCardButtonContent({
@@ -17,6 +19,7 @@ export function NavCardButtonContent({
   titleClassName,
   descriptionClassName,
   iconClassName,
+  showLiveIndicator,
   className,
 }: Props) {
   return (
@@ -31,6 +34,9 @@ export function NavCardButtonContent({
           <Icon className={mergeClassNames('h-4 w-auto', iconClassName)} />
         )}
         {title}
+        {showLiveIndicator && (
+          <StatusIndicator sizeVariant="sm" colorVariant="positive" pulse />
+        )}
       </div>
       {description && (
         <div

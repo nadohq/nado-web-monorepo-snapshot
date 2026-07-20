@@ -3,7 +3,7 @@ import { ValueWithLabel } from 'client/components/ValueWithLabel/ValueWithLabel'
 import { useSubaccountOverview } from 'client/hooks/subaccount/useSubaccountOverview/useSubaccountOverview';
 import { useSubaccountTimespanMetrics } from 'client/hooks/subaccount/useSubaccountTimespanMetrics';
 import { getTimespanMetadata } from 'client/modules/charts/utils/timespan';
-import { usePrivacySetting } from 'client/modules/privacy/hooks/usePrivacySetting';
+import { usePrivacyMode } from 'client/modules/privacy/hooks/usePrivacyMode';
 import { PortfolioOverviewPnlChart } from 'client/pages/Portfolio/subpages/Overview/charts/PortfolioOverviewPnlChart';
 import { usePortfolioChartData } from 'client/pages/Portfolio/subpages/Overview/charts/usePortfolioChartData';
 import { OverviewTabContent } from 'client/pages/Portfolio/subpages/Overview/OverviewHeroTabs/components/OverviewTabContent';
@@ -19,9 +19,7 @@ export function OverviewPnlMetricItemsContent() {
     t,
     timespan,
   );
-  const [areAccountValuesPrivate] = usePrivacySetting(
-    'areAccountValuesPrivate',
-  );
+  const { isPrivacyModeEnabled } = usePrivacyMode();
   const { data: chartData } = usePortfolioChartData(timespan);
   const { data: subaccountOverview } = useSubaccountOverview();
   const { data: subaccountTimespanMetrics } =
@@ -36,7 +34,7 @@ export function OverviewPnlMetricItemsContent() {
     <>
       <ValueWithLabel.Horizontal
         tooltip={{ id: 'overviewAccountCumulativePnl' }}
-        isValuePrivate={areAccountValuesPrivate}
+        isValuePrivate={isPrivacyModeEnabled}
         sizeVariant="sm"
         valueClassName={getSignDependentColorClassName(
           subaccountTimespanMetrics?.deltas.cumulativeAccountPnlUsd,
@@ -47,7 +45,7 @@ export function OverviewPnlMetricItemsContent() {
       />
       <ValueWithLabel.Horizontal
         tooltip={{ id: 'overviewTotalUnrealizedPnl' }}
-        isValuePrivate={areAccountValuesPrivate}
+        isValuePrivate={isPrivacyModeEnabled}
         sizeVariant="sm"
         valueClassName={getSignDependentColorClassName(
           subaccountOverview?.totalUnrealizedPnlUsd,
@@ -58,7 +56,7 @@ export function OverviewPnlMetricItemsContent() {
       />
       <ValueWithLabel.Horizontal
         tooltip={{ id: 'overviewCrossUnrealizedPnl' }}
-        isValuePrivate={areAccountValuesPrivate}
+        isValuePrivate={isPrivacyModeEnabled}
         sizeVariant="sm"
         valueClassName={getSignDependentColorClassName(
           totalCrossUnrealizedPnlUsd,
@@ -69,7 +67,7 @@ export function OverviewPnlMetricItemsContent() {
       />
       <ValueWithLabel.Horizontal
         tooltip={{ id: 'overviewIsoUnrealizedPnl' }}
-        isValuePrivate={areAccountValuesPrivate}
+        isValuePrivate={isPrivacyModeEnabled}
         sizeVariant="sm"
         valueClassName={getSignDependentColorClassName(
           subaccountOverview?.perp.iso.totalUnrealizedPnlUsd,
@@ -86,7 +84,7 @@ export function OverviewPnlMetricItemsContent() {
       metricsContent={metricsContent}
       ChartComponent={PortfolioOverviewPnlChart}
       chartData={chartData}
-      isPrivate={areAccountValuesPrivate}
+      isPrivate={isPrivacyModeEnabled}
     />
   );
 }

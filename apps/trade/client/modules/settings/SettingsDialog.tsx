@@ -33,7 +33,7 @@ export function SettingsDialog() {
         {t(($) => $.dialogTitles.settings)}
       </BaseAppDialog.Title>
       <TabsRoot value={selectedTabId} onValueChange={setSelectedUntypedTabId}>
-        <BaseAppDialog.Body className="min-h-65 p-0">
+        <BaseAppDialog.Body className="min-h-74 p-0">
           <SettingsTabsList tabs={tabs} selectedTabId={selectedTabId} />
           {tabs.map(({ id, content }) => (
             <TabsContent

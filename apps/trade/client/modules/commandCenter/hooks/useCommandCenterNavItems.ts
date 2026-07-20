@@ -91,7 +91,7 @@ export function useCommandCenterNavItems() {
             {
               label: t(($) => $.navigation.deposit),
               icon: Icons.ArrowDownLeft,
-              action: () => show({ type: 'deposit_options', params: {} }),
+              action: () => show({ type: 'deposit_entrypoint', params: {} }),
               actionText: t(($) => $.buttons.openDialog),
               searchKey: t(($) => $.navigation.deposit),
               type: 'navItems' as const,

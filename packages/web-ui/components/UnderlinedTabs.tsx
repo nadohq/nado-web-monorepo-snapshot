@@ -1,5 +1,11 @@
 import { joinClassNames } from '@nadohq/web-common';
-import { Button as BaseButton, TabButtonProps } from './Button';
+import { DistributedOmit } from 'type-fest';
+import { Button as BaseButton, ButtonProps } from './Button';
+
+type UnderlinedTabsButtonProps = DistributedOmit<ButtonProps, 'isLoading'> & {
+  active?: boolean;
+  dataTestId?: string;
+};
 
 function Button({
   className,
@@ -7,7 +13,7 @@ function Button({
   disabled,
   dataTestId,
   ...rest
-}: TabButtonProps) {
+}: UnderlinedTabsButtonProps) {
   const activeButtonClasses = 'text-text-primary after:scale-x-100';
   const inactiveButtonClasses = joinClassNames(
     'text-text-tertiary after:scale-x-0',

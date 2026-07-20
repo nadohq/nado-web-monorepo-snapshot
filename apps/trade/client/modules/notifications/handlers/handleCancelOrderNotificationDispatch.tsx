@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 
 export async function handleCancelOrderNotificationDispatch(
   cancelOrderNotificationData: CancelOrderNotificationData,
-  { t, enableTradingNotifications }: NotificationDispatchContext,
+  { t, enableTradingNotifications, sendGTMEvent }: NotificationDispatchContext,
 ) {
   const { cancelOrderParams } = cancelOrderNotificationData;
 
@@ -37,13 +37,19 @@ export async function handleCancelOrderNotificationDispatch(
         { duration: DEFAULT_TOAST_TTL },
       );
     }
+
+    sendGTMEvent({
+      event: 'cancel_order',
+      market: cancelOrderParams.metadata.marketName,
+    });
   } else if (!isUserDeniedError(serverStatusError)) {
+    const parsedError = parseExecuteError(t, serverStatusError);
     toast.custom(
       (toastId) => {
         return (
           <ActionErrorNotification
             title={t(($) => $.errors.cancelOrderFailed)}
-            error={parseExecuteError(t, serverStatusError)}
+            error={parsedError}
             ttl={DEFAULT_TOAST_TTL}
             onDismiss={() => {
               toast.dismiss(toastId);
@@ -53,5 +59,11 @@ export async function handleCancelOrderNotificationDispatch(
       },
       { duration: DEFAULT_TOAST_TTL },
     );
+
+    sendGTMEvent({
+      event: 'cancel_order_error',
+      market: cancelOrderParams.metadata.marketName,
+      errorMessage: parsedError.errorMessage,
+    });
   }
 }

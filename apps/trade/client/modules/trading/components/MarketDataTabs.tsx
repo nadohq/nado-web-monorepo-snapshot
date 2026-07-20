@@ -20,9 +20,15 @@ import { useTranslation } from 'react-i18next';
 interface Props extends WithClassnames {
   productId?: number;
   withChartTabs?: boolean;
+  enableOrderbookHoverDetails?: boolean;
 }
 
-export function MarketDataTabs({ className, productId, withChartTabs }: Props) {
+export function MarketDataTabs({
+  className,
+  productId,
+  withChartTabs,
+  enableOrderbookHoverDetails,
+}: Props) {
   const { t } = useTranslation();
   const { data: market } = useMarket({ productId });
 
@@ -33,7 +39,13 @@ export function MarketDataTabs({ className, productId, withChartTabs }: Props) {
       {
         id: 'book',
         title: t(($) => $.orderbookAbbrev),
-        content: <Orderbook className="h-full" productId={productId} />,
+        content: (
+          <Orderbook
+            className="h-full"
+            productId={productId}
+            enableHoverDetails={enableOrderbookHoverDetails}
+          />
+        ),
       },
       {
         id: 'trades',
@@ -72,7 +84,7 @@ export function MarketDataTabs({ className, productId, withChartTabs }: Props) {
             : []),
         ]
       : defaultTabs;
-  }, [t, productId, withChartTabs, isPerpProduct]);
+  }, [t, productId, withChartTabs, isPerpProduct, enableOrderbookHoverDetails]);
 
   const { selectedTabId, setSelectedUntypedTabId, tabs } =
     useTabs(marketDataTabs);

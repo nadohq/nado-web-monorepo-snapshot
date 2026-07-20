@@ -1,7 +1,9 @@
 import {
   BigNumberish,
+  EngineServerExecuteSuccessResult,
   PriceTriggerCriteria,
   TimeTriggerCriteria,
+  TriggerServerExecuteSuccessResult,
 } from '@nadohq/client';
 import { BigNumber } from 'bignumber.js';
 import { TimeInForceType } from 'client/modules/trading/types/orderFormTypes';
@@ -44,7 +46,7 @@ export interface ExecutePlacePriceTriggerOrderParams extends ExecutePlaceOrderCo
 
 export interface ExecutePlaceTimeTriggerOrderParams extends ExecutePlaceOrderCommonParams {
   orderType: Extract<PlaceOrderType, 'twap'>;
-  triggerCriteria: TimeTriggerCriteria;
+  triggerCriteria: Required<TimeTriggerCriteria>;
   /** Slippage fraction for the TWAP orders. */
   slippageFraction: number;
   /** Number of TWAP orders to be placed. */
@@ -72,3 +74,8 @@ export type ExecutePlaceOrderParams =
   | ExecutePlacePriceTriggerOrderParams
   | ExecutePlaceTimeTriggerOrderParams
   | ExecuteMultiLimitOrderParams;
+
+/** Result of a successful place order execution, engine or trigger. */
+export type ExecutePlaceOrderResult =
+  | EngineServerExecuteSuccessResult<'place_orders'>
+  | TriggerServerExecuteSuccessResult<'place_orders'>;

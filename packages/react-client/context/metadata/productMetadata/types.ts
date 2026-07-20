@@ -11,6 +11,9 @@ import { TokenIconMetadata } from './tokenIcons';
 
 export interface SharedProductMetadata<TAsset = ImageSrc> {
   marketName: string;
+
+  fullMarketName: string;
+  marketDescription: string;
   symbol: string;
   icon: TokenIconMetadata<TAsset>;
   /**
@@ -27,22 +30,16 @@ export interface Token<TAsset = ImageSrc> {
   icon: TokenIconMetadata<TAsset>;
 }
 
-export type MarketCategory =
-  | 'spot'
-  | 'perp'
-  | 'meme'
-  | 'defi'
-  | 'chain'
-  | 'commodity'
-  | 'equities'
-  | 'forex'
-  | 'indices';
+export type MarketCategory = 'crypto' | 'commodities' | 'stocks' | 'forex';
 
 export interface SpotProductMetadata<TAsset = ImageSrc> {
   token: Token<TAsset>;
   /** For usual cases, this is the product ID of 0 */
   quoteProductId: number;
   marketName: string;
+  /** Full, human-readable asset name (e.g. `Bitcoin` for the `BTC` market). */
+  fullMarketName: string;
+  marketDescription: string;
   /**
    * Alternative search terms associated with the market.
    */

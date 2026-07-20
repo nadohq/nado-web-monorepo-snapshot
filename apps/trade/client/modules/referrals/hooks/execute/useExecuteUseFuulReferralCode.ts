@@ -7,13 +7,9 @@ import {
 } from 'client/hooks/execute/util/useExecuteInValidContext';
 import { useUpdateQueries } from 'client/hooks/execute/util/useUpdateQueries';
 import { addressFuulReferralStatusQueryKey } from 'client/modules/referrals/hooks/query/useQueryAddressFuulReferralStatus';
-import { fuulReferralCodeStatusQueryKey } from 'client/modules/referrals/hooks/query/useQueryFuulReferralCodeStatus';
 import { useCallback } from 'react';
 
-const UPDATE_QUERY_KEYS = [
-  addressFuulReferralStatusQueryKey(),
-  fuulReferralCodeStatusQueryKey(),
-];
+const UPDATE_QUERY_KEYS = [addressFuulReferralStatusQueryKey()];
 
 interface Params {
   onSuccess?: () => void;

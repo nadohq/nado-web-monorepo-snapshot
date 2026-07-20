@@ -25,6 +25,7 @@ Handle all markets in a single branch and PR.
 |---|---|
 | Product ID(s) | the numeric IDs currently in the mainnet hidden list |
 | Release date | the date these markets go live on mainnet — required for the notification key |
+| Mainnet token address(es) | spot markets only — the deployed Ink mainnet ERC-20 address for each market (see Phase 4) |
 
 Confirm each product ID is currently in the `inkMainnet` set in
 `packages/react-client/context/metadata/consts/hiddenProductIdsByChainEnv.ts` before touching
@@ -82,28 +83,85 @@ Open:
 packages/react-client/context/metadata/consts/newProductIdsByChainEnv.ts
 ```
 
-Add all new product IDs to the `inkMainnet` set. Only `inkMainnet` should be populated — leave
-`inkTestnet` and `local` as empty sets.
+Replace both `inkMainnet` and `inkTestnet` sets with **only** the product IDs being released now
+— remove any IDs from previous release cycles. `local` stays empty.
 
 ```ts
 export const NEW_PRODUCT_IDS_BY_CHAIN_ENV: Record<ChainEnv, Set<number>> = {
-  inkMainnet: new Set([...existing IDs..., <productId1>, <productId2>]),
-  inkTestnet: new Set([...existing IDs...]),
+  inkMainnet: new Set([<productId1>, <productId2>]),
+  inkTestnet: new Set([<productId1>, <productId2>]),
   local: new Set(),
 };
 ```
 
-These IDs drive the `isNew` badge shown on market cards. They stay here until the next market
-release cycle, when they get replaced by the newer batch.
+These IDs drive the `isNew` badge shown on market cards. Each release cycle replaces the previous
+batch entirely. `inkTestnet` must mirror `inkMainnet` so the badge is visible in testnet previews.
 
 ---
 
-## Phase 4 — Wire up the release notification
+## Phase 4 — Add mainnet spot metadata (spot markets only)
+
+> Skip this phase for perp-only releases.
+
+Spot markets need entries in the **mainnet** `INK_SPOT_METADATA_BY_PRODUCT_ID` map, keyed by product
+ID. Markets that were only ever listed on testnet usually have entries in the *testnet* map
+(`INK_TESTNET_SPOT_METADATA_BY_PRODUCT_ID`) but **not** the mainnet one — don't assume they are
+already present. If the mainnet entry is missing, the market will not render once it's unhidden.
+
+### 4a. Add the mainnet token constants
+
+Open:
+```
+packages/react-client/context/metadata/productMetadata/ink/tokens.ts
+```
+
+Each spot metadata entry references a `Token` constant. Testnet constants use the `_SEPOLIA` suffix
+(e.g. `WAAPLX_INK_SEPOLIA`); mainnet constants use the bare `_INK` suffix (e.g. `WAAPLX_INK`). Under
+the `Ink mainnet` section, add one constant per market using the **deployed mainnet token address**:
+
+```ts
+export const WAAPLX_INK: Token = {
+  address: '0x...', // deployed Ink mainnet token address
+  chainId: inkChainId,
+  tokenDecimals: 18,
+  // xStocks - the token is the wrapped version but we show unwrapped in UI
+  symbol: 'AAPLx',
+  icon: TOKEN_ICONS.aaplx,
+};
+```
+
+> If the mainnet addresses aren't available yet, scaffold with `zeroAddress` (imported from `viem`)
+> as a placeholder so the rest of the work can proceed — but the real addresses **must** be filled in
+> before merge. Remove the `zeroAddress` import again once the addresses are in.
+
+### 4b. Add the mainnet metadata entries
+
+Open:
+```
+packages/react-client/context/metadata/productMetadata/ink/spotMetadataByProductId.ts
+```
+
+Import the new mainnet token constants and add an entry to `INK_SPOT_METADATA_BY_PRODUCT_ID` for
+each product ID, mirroring the existing testnet entry but pointing at the mainnet token:
+
+```ts
+143: {
+  token: WAAPLX_INK,
+  marketName: `AAPLx/${PRIMARY_QUOTE_SYMBOLS.usdt0}`,
+  altSearchTerms: COMMON_ALT_SEARCH_TERMS.aaplx,
+  quoteProductId: QUOTE_PRODUCT_ID,
+  marketCategories: new Set(['stocks']),
+},
+```
+
+---
+
+## Phase 5 — Wire up the release notification
 
 The in-app notification tells users about newly available markets when they connect their wallet.
 It requires changes to **three files**.
 
-### 4a. Register the disclosure key
+### 5a. Register the disclosure key
 
 Open:
 ```
@@ -127,7 +185,7 @@ export const FEATURE_NOTIFICATION_DISCLOSURE_KEYS = [
 ] as const;
 ```
 
-### 4b. Register which chain envs should show the notification
+### 5b. Register which chain envs should show the notification
 
 Open:
 ```
@@ -146,26 +204,30 @@ const ENABLED_NOTIFICATION_CHAIN_ENVS: Record<string, EnabledChainEnvsFilter> =
 
 Remove the old key entry entirely.
 
-### 4c. Add the notification handler case
+### 5c. Add the notification handler case
 
 Open:
 ```
 apps/trade/client/modules/notifications/handlers/handleFeatureNotificationDispatch.tsx
 ```
 
-Add a `case` for the new disclosure key. Choose the component based on market type:
+Add a `case` for the new disclosure key. `NewMarketsFeatureNotification` is the single component for
+both perp and spot markets — it resolves each product from `allMarkets` and supports multiple IDs at
+once via the `productIds` array. Pass `marketType` (`ProductEngineType.PERP` or
+`ProductEngineType.SPOT`) so the toast renders the right copy ("New Perp Markets" vs "New Collateral
+& Spot Markets"):
 
-**For perp markets** (supports multiple at once via `productIds` array):
 ```ts
 case 'new_mkts_<mmm>_<dd>_<yyyy>':
   return toast.custom(
     (t) => (
-      <PerpMarketsFeatureNotification
+      <NewMarketsFeatureNotification
         onDismiss={() => {
           toast.dismiss(t);
         }}
         ttl={Infinity}
         disclosureKey={feature}
+        marketType={ProductEngineType.SPOT}
         productIds={[<productId1>, <productId2>]}
       />
     ),
@@ -176,32 +238,12 @@ case 'new_mkts_<mmm>_<dd>_<yyyy>':
   );
 ```
 
-**For a single spot market** (takes a single `productId`):
-```ts
-case 'new_mkts_<mmm>_<dd>_<yyyy>':
-  return toast.custom(
-    (t) => (
-      <SpotMarketFeatureNotification
-        onDismiss={() => {
-          toast.dismiss(t);
-        }}
-        ttl={Infinity}
-        disclosureKey={feature}
-        productId={<productId>}
-      />
-    ),
-    {
-      duration: Infinity,
-      id: feature,
-    },
-  );
-```
-
-Replace the old `case` block entirely.
+> A release batch is either all-perp or all-spot, so a single `marketType` covers the case. Replace
+> the old `case` block entirely.
 
 ---
 
-## Phase 5 — Verify and commit
+## Phase 6 — Verify and commit
 
 ```bash
 bun typecheck
@@ -218,7 +260,36 @@ git commit -m "feat: release <SYMBOL1>, <SYMBOL2> to mainnet"
 
 ---
 
-## Phase 6 — Open a PR
+## Phase 7 — Add preview commit
+
+Vercel previews default to `nadoTestnet`, so BD can't see the released markets on the preview URL
+without an extra commit that pins `dataEnv` to `nadoMainnet`. Add this as a **separate second
+commit** on the same branch so it can be easily dropped before merge.
+
+Open:
+```
+apps/trade/common/environment/baseClientEnv.ts
+```
+
+Hardcode `dataEnv` to `'nadoMainnet'`, ignoring the env var:
+
+```ts
+const dataEnv: DataEnv = 'nadoMainnet';
+```
+
+Commit on its own:
+
+```bash
+git add apps/trade/common/environment/baseClientEnv.ts
+git commit -m "chore: hardcode dataEnv to nadoMainnet for BD preview"
+```
+
+> **Do not merge this commit.** Drop it (e.g. `git rebase -i` or revert) before merging the PR to
+> `staging`. Call this out in the PR description so reviewers know to expect it.
+
+---
+
+## Phase 8 — Open a PR
 
 ```bash
 git push -u origin release/<symbols>-mainnet
@@ -238,14 +309,20 @@ Releases the following markets to mainnet:
 - Added to `inkMainnet` new list
 - Notification key: `new_mkts_<mmm>_<dd>_<yyyy>`
 
+> **Note:** Last commit (`chore: hardcode dataEnv to nadoMainnet for BD preview`) is for the Vercel
+> preview only — drop it before merging to `staging`.
+
 ## Checklist
 - [ ] Product IDs removed from `inkMainnet` in `hiddenProductIdsByChainEnv.ts`
 - [ ] Product IDs added to `inkMainnet` in `newProductIdsByChainEnv.ts`
+- [ ] (Spot only) Mainnet token constants added to `tokens.ts` with **real** addresses (no `zeroAddress` placeholders)
+- [ ] (Spot only) Product IDs present in `INK_SPOT_METADATA_BY_PRODUCT_ID` in `spotMetadataByProductId.ts`
 - [ ] New disclosure key added to `userDisclosureTypes.ts`
 - [ ] New key registered in `FeatureNotificationsEmitter.tsx`
 - [ ] Notification handler case added in `handleFeatureNotificationDispatch.tsx`
 - [ ] `bun typecheck` passes
 - [ ] `bun lint:fix` passes
+- [ ] BD preview commit dropped before merge
 EOF
 )"
 ```
@@ -258,6 +335,10 @@ EOF
 |---|---|
 | Mainnet hidden list | `packages/react-client/context/metadata/consts/hiddenProductIdsByChainEnv.ts` |
 | New markets list | `packages/react-client/context/metadata/consts/newProductIdsByChainEnv.ts` |
+| Spot metadata (spot only) | `packages/react-client/context/metadata/productMetadata/ink/spotMetadataByProductId.ts` |
+| Token constants (spot only) | `packages/react-client/context/metadata/productMetadata/ink/tokens.ts` |
 | Disclosure key registry | `apps/trade/client/modules/localstorage/userState/types/userDisclosureTypes.ts` |
 | Notification chain env filter | `apps/trade/client/modules/notifications/emitters/FeatureNotificationsEmitter.tsx` |
 | Notification toast handler | `apps/trade/client/modules/notifications/handlers/handleFeatureNotificationDispatch.tsx` |
+| Notification component | `apps/trade/client/modules/notifications/components/newFeature/features/NewMarketsFeatureNotification.tsx` |
+| `dataEnv` (BD preview commit) | `apps/trade/common/environment/baseClientEnv.ts` |

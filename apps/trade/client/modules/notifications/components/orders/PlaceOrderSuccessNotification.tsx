@@ -16,6 +16,7 @@ import { OrderSuccessIcon } from 'client/modules/notifications/components/OrderS
 import { PlaceOrderNotificationData } from 'client/modules/notifications/types';
 import { PRICE_TRIGGER_PLACE_ORDER_TYPES } from 'client/modules/trading/types/placeOrderTypes';
 import { getPlaceOrderTypeLabel } from 'client/modules/trading/utils/getPlaceOrderTypeLabel';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { first, last } from 'lodash';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -36,6 +37,11 @@ export function PlaceOrderSuccessNotification({
     toBigNumber(placeOrderParams.amount),
   );
 
+  const { getExchangeRate } = useGetXStocksExchangeRate();
+  const exchangeRate = useMemo(() => {
+    return getExchangeRate(placeOrderParams.productId);
+  }, [getExchangeRate, placeOrderParams.productId]);
+
   const isPriceTriggerOrder =
     PRICE_TRIGGER_PLACE_ORDER_TYPES.includes(orderType);
 
@@ -51,6 +57,7 @@ export function PlaceOrderSuccessNotification({
   const formattedAmount = formatNumber(decimalAdjustedAmount.abs(), {
     formatSpecifier: getMarketSizeFormatSpecifier({
       sizeIncrement: metadata.sizeIncrement,
+      exchangeRate,
     }),
   });
 
@@ -61,9 +68,10 @@ export function PlaceOrderSuccessNotification({
       return t(($) => $.market);
     }
 
-    const formatSpecifier = getMarketPriceFormatSpecifier(
-      metadata.priceIncrement,
-    );
+    const formatSpecifier = getMarketPriceFormatSpecifier({
+      priceIncrement: metadata.priceIncrement,
+      exchangeRate,
+    });
 
     // For scaled orders, show price range from start to end
     if (orderType === 'multi_limit') {
@@ -85,10 +93,11 @@ export function PlaceOrderSuccessNotification({
   }, [
     showMarketPrice,
     metadata.priceIncrement,
+    exchangeRate,
     orderType,
     price,
-    placeOrderParams,
     t,
+    placeOrderParams,
   ]);
 
   const sideLabel = decimalAdjustedAmount.isPositive()

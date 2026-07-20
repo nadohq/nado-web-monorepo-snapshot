@@ -6,7 +6,7 @@ import { Fragment, Key, ReactNode } from 'react';
 interface Props<TRow> extends WithClassnames {
   rows: TRow[] | undefined;
   numRows: number;
-  renderRow: (row: TRow) => ReactNode;
+  renderRow: (row: TRow, index: number) => ReactNode;
   skeletonRow: ReactNode;
   reverseRows?: boolean;
   /** Optional key function for rows. When omitted, index-based keys are used, which preserves DOM nodes by position. */
@@ -34,7 +34,7 @@ export function MarketOrderRows<TRow>({
     return rows.slice(0, numRows).map((row, index) => {
       return (
         <Fragment key={getRowKey?.(row, index) ?? index}>
-          {renderRow(row)}
+          {renderRow(row, index)}
         </Fragment>
       );
     });

@@ -1,0 +1,46 @@
+/* TradingView UI — override blue defaults with Nado brand palette.
+   Loaded into the TV iframe via `custom_css_url` in widgetConfig.ts.
+
+   --nado-color-* vars are bridged from the host app by
+   `useApplyChartCssVars` (the iframe can't see the host's `--color-*`). */
+
+/* Buy/Sell pill buttons on the chart (header overlay). */
+[class*='buyButton-']:not([class*='loading-']) {
+  background-color: var(--nado-color-positive) !important;
+  border-color: var(--nado-color-positive) !important;
+  color: var(--nado-color-text-button-primary) !important;
+}
+
+[class*='sellButton-']:not([class*='loading-']) {
+  background-color: var(--nado-color-negative) !important;
+  border-color: var(--nado-color-negative) !important;
+  color: var(--nado-color-text-button-primary) !important;
+}
+
+/* Order ticket Buy/Sell segmented toggle — active state.
+   Scoped to TV's stable data-name attributes to avoid [class*='active-']
+   accidentally matching classes like `inactive-*`. */
+[data-name='side-control-buy'][class*='active-'] {
+  background-color: var(--nado-color-positive) !important;
+  color: var(--nado-color-text-button-primary) !important;
+}
+
+[data-name='side-control-sell'][class*='active-'] {
+  background-color: var(--nado-color-negative) !important;
+  color: var(--nado-color-text-button-primary) !important;
+}
+
+/* Order ticket submit button — TV's primary CTA is hardcoded "blue".
+   We re-color it; if a side variant (`red-`) is present in Sell mode, the
+   second rule catches it. */
+[data-name='place-and-modify-button'][class*='blue-'] {
+  background-color: var(--nado-color-positive) !important;
+  border-color: var(--nado-color-positive) !important;
+  color: var(--nado-color-text-button-primary) !important;
+}
+
+[data-name='place-and-modify-button'][class*='red-'] {
+  background-color: var(--nado-color-negative) !important;
+  border-color: var(--nado-color-negative) !important;
+  color: var(--nado-color-text-button-primary) !important;
+}

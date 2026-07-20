@@ -1,4 +1,5 @@
 import { ProductEngineType } from '@nadohq/client';
+import { NumberFormatSpecifier } from '@nadohq/react-client';
 
 export interface ProductTableItem {
   productId: number;
@@ -9,7 +10,7 @@ export interface ProductTableItem {
   quoteSymbol: string;
   isPrimaryQuote: boolean;
   formatSpecifier: {
-    price: string;
-    size: string;
+    price: NumberFormatSpecifier;
+    size: NumberFormatSpecifier;
   };
 }

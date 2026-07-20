@@ -11,3 +11,7 @@
 - Code conventions: flag deviations from established patterns in the codebase (naming, structure, error handling, etc.)
 - Error handling: does the code handle partial failures gracefully, or does it assume the happy path? Are errors surfaced meaningfully, or silently swallowed?
 - Performance: flag N+1 queries, unnecessary re-renders, or expensive operations in hot paths
+
+## Don't flag
+
+- **Lack of localization** — English-only copy in `packages/i18n/locales/en/` is the source of truth. All other languages are served externally via the Phrase translation tool. Do not flag PRs for missing translations or non-English locale files.

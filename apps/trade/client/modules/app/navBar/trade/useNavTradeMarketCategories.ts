@@ -1,4 +1,3 @@
-import { MarketCategory } from '@nadohq/react-client';
 import { ROUTES } from 'client/modules/app/consts/routes';
 import { useEnabledFeatures } from 'client/modules/envSpecificContent/hooks/useEnabledFeatures';
 import { ReactNode, useMemo } from 'react';
@@ -9,7 +8,6 @@ interface NavMarketCategory {
   description: string;
   // Destination link when clicking on the mobile nav item
   href: string;
-  marketCategory: MarketCategory;
 }
 
 export function useNavTradeMarketCategories() {
@@ -21,14 +19,12 @@ export function useNavTradeMarketCategories() {
       title: t(($) => $.perps),
       description: t(($) => $.tradePerpContracts),
       href: ROUTES.perpTrading,
-      marketCategory: 'perp',
     };
 
     const spot: NavMarketCategory = {
       title: t(($) => $.spot),
       description: t(($) => $.buyAndSellTokens),
       href: ROUTES.spotTrading,
-      marketCategory: 'spot',
     };
     return isSpotTradingEnabled ? [perps, spot] : [perps];
   }, [isSpotTradingEnabled, t]);

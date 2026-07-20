@@ -37,6 +37,7 @@ interface Params {
   enableMaxSizeLogic: boolean;
   sizeDenom: OrderFormSizeDenom;
   roundAssetAmount: RoundAmountFn;
+  isXStocksMarket: boolean;
 }
 
 export function useOrderFormValidators({
@@ -49,6 +50,7 @@ export function useOrderFormValidators({
   enableMaxSizeLogic,
   sizeDenom,
   roundAssetAmount,
+  isXStocksMarket,
 }: Params): OrderFormValidators {
   const [
     orderType,
@@ -76,7 +78,7 @@ export function useOrderFormValidators({
     validateScaledOrderStartPrice,
     validateScaledOrderEndPrice,
     validateScaledOrderNumberOfOrders,
-  } = useScaledOrderFormValidators({ priceIncrement });
+  } = useScaledOrderFormValidators({ priceIncrement, isXStocksMarket });
 
   const validateSize = useCallback<
     InputValidatorFn<string, OrderFormInputError>
@@ -114,6 +116,7 @@ export function useOrderFormValidators({
       // This error is only possible if we have asset denom.
       // As we round quote amounts to the nearest increment of asset amount in convertOrderSizeToAssetAmount.
       if (
+        !isXStocksMarket &&
         decimalAdjustedSizeIncrement &&
         !isValidIncrementAmount(assetAmount, decimalAdjustedSizeIncrement)
       ) {
@@ -184,6 +187,7 @@ export function useOrderFormValidators({
       roundAssetAmount,
       minAssetOrderSize,
       enableMaxSizeLogic,
+      isXStocksMarket,
       decimalAdjustedSizeIncrement,
       twapDurationHoursInput,
       twapDurationMinutesInput,
@@ -204,13 +208,13 @@ export function useOrderFormValidators({
       const parsed = positiveBigNumberValidator.safeParse(val);
       if (!parsed.success) {
         return 'invalid_limit_price_input';
-      } else if (priceIncrement) {
+      } else if (!isXStocksMarket && priceIncrement) {
         if (!isValidIncrementAmount(val, priceIncrement)) {
           return 'invalid_limit_price_increment';
         }
       }
     },
-    [priceIncrement],
+    [priceIncrement, isXStocksMarket],
   );
 
   const validateTriggerPrice = useCallback<
@@ -224,13 +228,13 @@ export function useOrderFormValidators({
       const parsed = positiveBigNumberValidator.safeParse(val);
       if (!parsed.success) {
         return 'invalid_trigger_price_input';
-      } else if (priceIncrement) {
+      } else if (!isXStocksMarket && priceIncrement) {
         if (!isValidIncrementAmount(val, priceIncrement)) {
           return 'invalid_trigger_price_increment';
         }
       }
     },
-    [priceIncrement],
+    [priceIncrement, isXStocksMarket],
   );
 
   const validateTimeInForceInDays = useCallback<

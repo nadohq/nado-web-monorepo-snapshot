@@ -81,7 +81,9 @@ export function useLifiWidgetConfig({
       }
     });
 
-    return () => widgetEvents.all.clear();
+    return () => {
+      widgetEvents.removeAllListeners();
+    };
   }, [allowedToTokens, currentChainId, widgetEvents]);
 
   return useMemo(() => {

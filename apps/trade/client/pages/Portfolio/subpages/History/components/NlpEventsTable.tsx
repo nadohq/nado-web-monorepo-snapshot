@@ -7,11 +7,11 @@ import { WithClassnames } from '@nadohq/web-common';
 import { Pill } from '@nadohq/web-ui';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HeaderCell } from 'client/components/DataTable/cells/HeaderCell';
-import { StackedTableCell } from 'client/components/DataTable/cells/StackedTableCell';
 import { TableCell } from 'client/components/DataTable/cells/TableCell';
 import { DataTable } from 'client/components/DataTable/DataTable';
 import { AmountWithSymbolCell } from 'client/modules/tables/cells/AmountWithSymbolCell';
 import { DateTimeCell } from 'client/modules/tables/cells/DateTimeCell';
+import { StackedValues } from 'client/modules/tables/components/StackedValues';
 import { TABLE_CELL_CONTAINER_CLASSNAME } from 'client/modules/tables/consts';
 import { EmptyTablePlaceholder } from 'client/modules/tables/EmptyTablePlaceholder';
 import {
@@ -89,26 +89,28 @@ export function NlpEventsTable({ className, pageSize, showPagination }: Props) {
               context.getValue<HistoricalNlpEventsTableItem['amountChanges']>();
 
             return (
-              <StackedTableCell
-                top={
-                  <AmountWithSymbolCell
-                    amount={nlpAmount}
-                    symbol={NLP_TOKEN_INFO.symbol}
-                    formatSpecifier={
-                      CustomNumberFormatSpecifier.SIGNED_NUMBER_AUTO
-                    }
-                  />
-                }
-                bottom={
-                  <AmountWithSymbolCell
-                    amount={primaryQuoteAmount}
-                    symbol={primaryQuoteSymbol}
-                    formatSpecifier={
-                      CustomNumberFormatSpecifier.SIGNED_NUMBER_AUTO
-                    }
-                  />
-                }
-              />
+              <TableCell>
+                <StackedValues
+                  top={
+                    <AmountWithSymbolCell
+                      amount={nlpAmount}
+                      symbol={NLP_TOKEN_INFO.symbol}
+                      formatSpecifier={
+                        CustomNumberFormatSpecifier.SIGNED_NUMBER_AUTO
+                      }
+                    />
+                  }
+                  bottom={
+                    <AmountWithSymbolCell
+                      amount={primaryQuoteAmount}
+                      symbol={primaryQuoteSymbol}
+                      formatSpecifier={
+                        CustomNumberFormatSpecifier.SIGNED_NUMBER_AUTO
+                      }
+                    />
+                  }
+                />
+              </TableCell>
             );
           },
           enableSorting: false,

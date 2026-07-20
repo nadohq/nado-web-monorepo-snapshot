@@ -5,21 +5,26 @@ import {
   removeDecimals,
   toBigNumber,
 } from '@nadohq/client';
-import { safeDiv } from '@nadohq/react-client';
+import {
+  safeDiv,
+  toXStocksDisplayAmount,
+  toXStocksDisplayPrice,
+} from '@nadohq/react-client';
 import { BigNumber } from 'bignumber.js';
 import { useAllMarketsStaticData } from 'client/hooks/markets/useAllMarketsStaticData';
 import { useQueryMarketLiquidity } from 'client/hooks/query/markets/useQueryMarketLiquidity';
 import { useQuerySubaccountFeeRates } from 'client/hooks/query/subaccount/useQuerySubaccountFeeRates';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { first } from 'lodash';
 import { useMemo } from 'react';
 
 export interface EstimateEntryParams {
   productId: number | undefined;
-  /** Limit price submitted to book */
+  /** Limit price, in display units */
   executionLimitPrice: BigNumber | undefined;
   /** Order side buy/sell */
   orderSide: BalanceSide;
-  /** Validated asset amount */
+  /** Validated asset amount, in display units */
   validAssetAmount: BigNumber | undefined;
 }
 
@@ -59,6 +64,7 @@ export function useEstimateTradeEntry({
   const marketStaticData = productId
     ? allMarketsStaticData?.allMarkets[productId]
     : undefined;
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   return useMemo((): TradeEntryEstimate | undefined => {
     if (
@@ -71,6 +77,7 @@ export function useEstimateTradeEntry({
       return;
     }
 
+    const exchangeRate = getExchangeRate(marketStaticData.productId);
     const decimalAdjustedAmount = addDecimals(validAssetAmount);
 
     // Adjust signage depending if sell/short or buy/long
@@ -83,6 +90,7 @@ export function useEstimateTradeEntry({
     let currAmountAbs = initialAmountAbs;
 
     // Look at sell orders if buying, vice versa, assume these are sorted in order of book traversal (i.e. if buying, lowest price first)
+    // These are in RAW units, must be converted
     const liquidityLevels = signAdjustedAmount.isPositive()
       ? marketLiquidity.asks
       : marketLiquidity.bids;
@@ -90,35 +98,45 @@ export function useEstimateTradeEntry({
     // We use the top-of-book price (best bid when buying, best ask when selling)
     // for calculating slippage. This reflects the actual market execution price including spread,
     // providing a more accurate slippage estimate relative to the market's best available price.
-    const topOfBookPrice =
+    const rawTopOfBookPrice =
       first(
         signAdjustedAmount.isPositive()
           ? marketLiquidity.bids
           : marketLiquidity.asks,
       )?.price ?? BigNumbers.ZERO;
+    const topOfBookPrice = toXStocksDisplayPrice(
+      rawTopOfBookPrice,
+      exchangeRate,
+    );
 
     let avgFillPrice = BigNumbers.ZERO;
     let lastFilledPrice = BigNumbers.ZERO;
 
     for (const level of liquidityLevels) {
+      const levelPrice = toXStocksDisplayPrice(level.price, exchangeRate);
+      const levelLiquidity = toXStocksDisplayAmount(
+        level.liquidity,
+        exchangeRate,
+      );
+
       // No more relevant levels
       const pastSellLimitPrice =
-        signAdjustedAmount.isNegative() && level.price.lt(executionLimitPrice);
+        signAdjustedAmount.isNegative() && levelPrice.lt(executionLimitPrice);
       const pastBuyLimitPrice =
-        signAdjustedAmount.isPositive() && level.price.gt(executionLimitPrice);
+        signAdjustedAmount.isPositive() && levelPrice.gt(executionLimitPrice);
       if (pastSellLimitPrice || pastBuyLimitPrice || currAmountAbs.isZero()) {
         break;
       }
 
       // Amount filled at this book level
-      const filledAmount = BigNumber.min(currAmountAbs, level.liquidity);
+      const filledAmount = BigNumber.min(currAmountAbs, levelLiquidity);
 
       // Update tracked vals
       // weighted average fill price += (filled/total) * price
       avgFillPrice = avgFillPrice.plus(
-        filledAmount.div(initialAmountAbs).times(level.price),
+        filledAmount.div(initialAmountAbs).times(levelPrice),
       );
-      lastFilledPrice = level.price;
+      lastFilledPrice = levelPrice;
 
       // Update amount still left
       currAmountAbs = currAmountAbs.minus(filledAmount);
@@ -215,6 +233,7 @@ export function useEstimateTradeEntry({
     marketLiquidity,
     subaccountFeeRates,
     marketStaticData,
+    getExchangeRate,
     orderSide,
     productId,
   ]);

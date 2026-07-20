@@ -13,6 +13,7 @@ import { BaseAppDialog } from 'client/modules/app/dialogs/BaseAppDialog';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { PreviewScaledOrdersTable } from 'client/modules/trading/components/scaledOrder/PreviewScaledOrdersDialog/components/PreviewScaledOrdersTable';
 import { BuildScaledOrdersResultItem } from 'client/modules/trading/utils/scaledOrderUtils';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { getSharedProductMetadata } from 'client/utils/getSharedProductMetadata';
 import { first, last } from 'lodash';
 import { useMemo } from 'react';
@@ -36,6 +37,9 @@ export function PreviewScaledOrdersDialog({
   const sharedProductMetadata = marketData
     ? getSharedProductMetadata(marketData.metadata)
     : undefined;
+
+  const { getExchangeRate } = useGetXStocksExchangeRate();
+  const exchangeRate = getExchangeRate(productId);
 
   const { startPrice, endPrice, totalSize, avgFillPrice, numberOfOrders } =
     useMemo(() => {
@@ -80,12 +84,14 @@ export function PreviewScaledOrdersDialog({
     [previewScaledOrders, totalSize],
   );
 
-  const priceFormatSpecifier = getMarketPriceFormatSpecifier(
-    marketData?.priceIncrement,
-  );
+  const priceFormatSpecifier = getMarketPriceFormatSpecifier({
+    priceIncrement: marketData?.priceIncrement,
+    exchangeRate,
+  });
 
   const sizeFormatSpecifier = getMarketSizeFormatSpecifier({
     sizeIncrement: marketData?.sizeIncrement,
+    exchangeRate,
   });
 
   return (

@@ -12,6 +12,7 @@ import { AllMarketsStaticDataForChainEnv } from 'client/hooks/query/markets/allM
 import { usePaginatedSubaccountSettlementEvents } from 'client/hooks/query/subaccount/usePaginatedSubaccountSettlementEvents';
 import { ProductTableItem } from 'client/modules/tables/types/ProductTableItem';
 import { getProductTableItem } from 'client/modules/tables/utils/getProductTableItem';
+import { useGetXStocksExchangeRate } from 'client/modules/xStocks/hooks/useGetXStocksExchangeRate';
 import { createRowId } from 'client/utils/createRowId';
 import { secondsToMilliseconds } from 'date-fns';
 import { useMemo } from 'react';
@@ -42,6 +43,7 @@ interface Params {
 export function useSettlementEventsTable({ pageSize }: Params) {
   const { data: marketsStaticData, isLoading: marketsDataLoading } =
     useAllMarketsStaticData();
+  const { getExchangeRate } = useGetXStocksExchangeRate();
 
   const { isLoading, isFetchingCurrPage, currentPageData, pagination } =
     useDataTablePaginatedQuery({
@@ -59,13 +61,15 @@ export function useSettlementEventsTable({ pageSize }: Params) {
       }
       return currentPageData
         .map((event): HistoricalSettlementsTableItem | undefined => {
+          const productId = event.snapshot.market.productId;
           return getHistoricalSettlementsTableItem({
             event,
             allMarketsStaticData: marketsStaticData,
+            exchangeRate: getExchangeRate(productId),
           });
         })
         .filter(nonNullFilter);
-    }, [currentPageData, marketsStaticData]);
+    }, [currentPageData, marketsStaticData, getExchangeRate]);
 
   return {
     isLoading: isLoading || marketsDataLoading || isFetchingCurrPage,
@@ -77,11 +81,13 @@ export function useSettlementEventsTable({ pageSize }: Params) {
 interface GetHistoricalSettlementsTableItemParams {
   event: IndexerSettlementEvent;
   allMarketsStaticData: AllMarketsStaticDataForChainEnv;
+  exchangeRate: BigNumber;
 }
 
 export function getHistoricalSettlementsTableItem({
   event,
   allMarketsStaticData,
+  exchangeRate,
 }: GetHistoricalSettlementsTableItemParams): HistoricalSettlementsTableItem {
   const { timestamp, snapshot, quoteDelta } = event;
   const productId = snapshot.market.productId;
@@ -90,6 +96,7 @@ export function getHistoricalSettlementsTableItem({
     ...getProductTableItem({
       productId,
       allMarketsStaticData,
+      exchangeRate,
     }),
     submissionIndex: event.submissionIndex,
     positionAmount: removeDecimals(event.snapshot.postBalance.amount),

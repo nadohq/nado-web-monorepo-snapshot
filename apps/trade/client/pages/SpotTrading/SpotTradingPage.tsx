@@ -24,7 +24,6 @@ function SpotTradingPageContent() {
   return (
     <TradingPageLayout
       productId={currentMarket?.productId}
-      marketSwitcherDefaultCategory="spot"
       InfoCards={SpotMarketInfoCards}
       OrderPlacement={SpotOrderPlacementSection}
       ChartComponent={TradingChartTabs}

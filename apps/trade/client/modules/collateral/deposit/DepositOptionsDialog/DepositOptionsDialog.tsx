@@ -1,3 +1,4 @@
+import { useAnalyticsContext } from 'client/modules/analytics/AnalyticsContext';
 import { BaseAppDialog } from 'client/modules/app/dialogs/BaseAppDialog';
 import { useDialog } from 'client/modules/app/dialogs/hooks/useDialog';
 import { DepositAssetSelect } from 'client/modules/collateral/deposit/DepositOptionsDialog/components/DepositAssetSelect';
@@ -5,6 +6,7 @@ import { DepositChainSelect } from 'client/modules/collateral/deposit/DepositOpt
 import { DepositOptionCardButton } from 'client/modules/collateral/deposit/DepositOptionsDialog/components/DepositOptionCardButton';
 import { DepositOptionsDialogParams } from 'client/modules/collateral/deposit/DepositOptionsDialog/types';
 import { useDepositOptionsDialog } from 'client/modules/collateral/deposit/DepositOptionsDialog/useDepositOptionsDialog';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export function DepositOptionsDialog({
@@ -12,6 +14,7 @@ export function DepositOptionsDialog({
 }: DepositOptionsDialogParams) {
   const { hide } = useDialog();
   const { t } = useTranslation();
+  const { sendGTMEvent } = useAnalyticsContext();
 
   const {
     selectedProductId,
@@ -23,6 +26,17 @@ export function DepositOptionsDialog({
     onProductSelected,
     onChainSelected,
   } = useDepositOptionsDialog({ initialProductId });
+
+  useEffect(() => {
+    if (!selectedChainId) {
+      return;
+    }
+
+    sendGTMEvent({
+      event: 'set_sourceChainId',
+      sourceChainId: selectedChainId,
+    });
+  }, [sendGTMEvent, selectedChainId]);
 
   return (
     <BaseAppDialog.Container onClose={hide}>

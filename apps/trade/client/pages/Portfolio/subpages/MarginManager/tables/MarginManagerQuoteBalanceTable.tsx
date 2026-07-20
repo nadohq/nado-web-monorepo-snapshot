@@ -7,8 +7,9 @@ import {
 import { WithClassnames } from '@nadohq/web-common';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { HeaderCell } from 'client/components/DataTable/cells/HeaderCell';
-import { MarketProductInfoCell } from 'client/components/DataTable/cells/MarketProductInfoCell';
+import { TableCell } from 'client/components/DataTable/cells/TableCell';
 import { DataTable } from 'client/components/DataTable/DataTable';
+import { ProductLabel } from 'client/components/ProductLabel';
 import { CurrencyCell } from 'client/modules/tables/cells/CurrencyCell';
 import { TitleHeaderCell } from 'client/modules/tables/cells/TitleHeaderCell';
 import { EmptyTablePlaceholder } from 'client/modules/tables/EmptyTablePlaceholder';
@@ -47,10 +48,12 @@ export function MarginManagerQuoteBalanceTable({ className }: WithClassnames) {
             const metadata =
               getValue<MarginManagerQuoteBalanceTableItem['metadata']>();
             return (
-              <MarketProductInfoCell
-                symbol={metadata.token.symbol}
-                iconSrc={metadata.token.icon.asset}
-              />
+              <TableCell>
+                <ProductLabel
+                  symbol={metadata.token.symbol}
+                  iconSrc={metadata.token.icon.asset}
+                />
+              </TableCell>
             );
           },
           enableSorting: false,
@@ -149,7 +152,7 @@ export function MarginManagerQuoteBalanceTable({ className }: WithClassnames) {
               {
                 positive: [
                   {
-                    type: 'deposit_options',
+                    type: 'deposit_entrypoint',
                     label: t(($) => $.buttons.deposit),
                     productId,
                   },
@@ -171,7 +174,7 @@ export function MarginManagerQuoteBalanceTable({ className }: WithClassnames) {
                     productId,
                   },
                   {
-                    type: 'deposit_options',
+                    type: 'deposit_entrypoint',
                     label: t(($) => $.buttons.deposit),
                     productId,
                   },
@@ -183,7 +186,7 @@ export function MarginManagerQuoteBalanceTable({ className }: WithClassnames) {
                 ],
                 zero: [
                   {
-                    type: 'deposit_options',
+                    type: 'deposit_entrypoint',
                     label: t(($) => $.buttons.deposit),
                     productId,
                   },
